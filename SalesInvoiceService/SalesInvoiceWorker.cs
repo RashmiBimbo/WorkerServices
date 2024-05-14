@@ -49,7 +49,8 @@ namespace SalesInvoiceService
                     var elapsedTime = endTime - startTime;
 
                     LogInfo($"Task execution time: {elapsedTime}"
-                        + $"Data migration completed at : {DateTime.Now}"
+                        + $"\r\nData migration completed at : {DateTime.Now}"
+                        +$"\r\n Next iteration will start after {timer.Period.Minutes} at {DateTime.Now.AddMinutes(timer.Period.Minutes)}"
                     + "\r\n**********************************************\r\n");
                 }
                 while (await timer.WaitForNextTickAsync(stoppingToken));
