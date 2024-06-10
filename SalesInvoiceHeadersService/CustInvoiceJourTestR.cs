@@ -2,11 +2,15 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SalesInvoiceService
+namespace SalesInvoiceHeaderService
 {
     public partial class CustInvoiceJourTestR
     {
         [Key]
+        [JsonProperty("RecId1", NullValueHandling = NullValueHandling.Ignore)]
+        //[JsonConverter(typeof(ParseStringConverter<long>))]
+        public long? RecId1 { get; set; }
+
         [JsonProperty("@odata.etag", NullValueHandling = NullValueHandling.Ignore)]
         public string? Etag { get; set; }
 
@@ -181,10 +185,6 @@ namespace SalesInvoiceService
 
         [JsonProperty("DeliveryName", NullValueHandling = NullValueHandling.Ignore)]
         public string? DeliveryName { get; set; }
-
-        [JsonProperty("RecId1", NullValueHandling = NullValueHandling.Ignore)]
-        //[JsonConverter(typeof(ParseStringConverter<long>))]
-        public long? RecId1 { get; set; }
 
         [JsonProperty("SalesStatus", NullValueHandling = NullValueHandling.Ignore)]
         public string? SalesStatus { get; set; }

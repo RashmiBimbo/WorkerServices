@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/SalesInvoiceHeadersService/SalesInvoiceHeaders_JSON.txt
+/SalesInvoiceHeadersService - Copy/Properties/launchSettings.json
+/SalesInvoiceHeadersService - Copy/appsettings.Development.json
+/SalesInvoiceHeadersService - Copy/appsettings.json
+/SalesInvoiceHeadersService - Copy/CustInvoiceJourTestR2.cs
+/SalesInvoiceHeadersService - Copy/SalesInvoiceHeadersContext - Copy.cs
+/SalesInvoiceHeadersService - Copy/SalesInvoiceHeadersProgram - Copy.cs
+/SalesInvoiceHeadersService - Copy/SalesInvoiceHeadersService - Copy.csproj
+/SalesInvoiceHeadersService - Copy/SalesInvoiceWorker - Copy.cs

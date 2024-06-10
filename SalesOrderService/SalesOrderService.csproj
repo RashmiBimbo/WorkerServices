@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="CommonCode" />
+    <Using Include="CommonCode.Common">
+      <Static>True</Static>
+    </Using>
     <Using Include="Microsoft.EntityFrameworkCore" />
     <Using Include="Newtonsoft.Json" />
     <Using Include="SalesOrderService" />

@@ -1,4 +1,3 @@
-using CommonCode;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 
@@ -82,11 +81,11 @@ public class SalesOrderWorker : BackgroundService
         string resource = "https://modernuat.sandbox.operations.dynamics.com";
         string source = "SalesOrderHeadersV2";
         string restUrl = $"{resource}/data/{source}";
-        string result = string.Empty;
+        string result = Emp;
         for (int cnt = 1; cnt <= 2; cnt++)
         {
             result = await Common.GetJson(resource, restUrl);
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!IsEmpty(result))
                 break;
             else if (cnt < 2)
             {
@@ -148,7 +147,7 @@ public class SalesOrderWorker : BackgroundService
 
     private async Task JsonToDb(string result)
     {
-        if (string.IsNullOrWhiteSpace(result))
+        if (IsEmpty(result))
         {
             LogInfo($"Error: The response JSON string is empty");
             return;
@@ -547,15 +546,15 @@ public class SalesOrderWorker : BackgroundService
 
     private string PrepareJson(string inputStr)
     {
-        string jsn = string.Empty;
+        string jsn = Emp;
         try
         {
             inputStr = inputStr.Replace("\r\n", null);
             string[] strs = inputStr.Split(",", 2);
-            string odata = strs[0].Replace("{  ", string.Empty);
+            string odata = strs[0].Replace("{  ", Emp);
             string props = Replace(strs[1], "", ["  \"value\": [    ", "  ]}",]);
 
-            jsn = "[" + string.Join(",", props.Split("},").Select(str => !string.IsNullOrWhiteSpace(str) ? str.Replace("}", "") + "," + odata + "}" : null)) + "]";
+            jsn = "[" + string.Join(",", props.Split("},").Select(str => !IsEmpty(str) ? str.Replace("}", "") + "," + odata + "}" : null)) + "]";
             return jsn;
         }
         catch (Exception ex)
