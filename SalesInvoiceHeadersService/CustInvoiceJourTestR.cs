@@ -2,11 +2,15 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SalesInvoiceService
+namespace SalesInvoiceHeaderService
 {
-    public partial class CustInvoiceJourTestR
+    public partial class CustInvoiceJourBase
     {
         [Key]
+        [JsonProperty("RecId1", NullValueHandling = NullValueHandling.Ignore)]
+        //[JsonConverter(typeof(ParseStringConverter<long>))]
+        public long? RecId1 { get; set; }
+
         [JsonProperty("@odata.etag", NullValueHandling = NullValueHandling.Ignore)]
         public string? Etag { get; set; }
 
@@ -182,10 +186,6 @@ namespace SalesInvoiceService
         [JsonProperty("DeliveryName", NullValueHandling = NullValueHandling.Ignore)]
         public string? DeliveryName { get; set; }
 
-        [JsonProperty("RecId1", NullValueHandling = NullValueHandling.Ignore)]
-        //[JsonConverter(typeof(ParseStringConverter<long>))]
-        public long? RecId1 { get; set; }
-
         [JsonProperty("SalesStatus", NullValueHandling = NullValueHandling.Ignore)]
         public string? SalesStatus { get; set; }
 
@@ -209,10 +209,13 @@ namespace SalesInvoiceService
         public string? ParentReference { get; set; }
     }
 
-    public partial class CustInvoiceJourTestR
+    public partial class CustInvoiceJourBase
     {
-        public static CustInvoiceJourTestR FromJson(string json) => JsonConvert.DeserializeObject<CustInvoiceJourTestR>(json, Converter.Settings);
+        public static CustInvoiceJourBase FromJson(string json) => JsonConvert.DeserializeObject<CustInvoiceJourBase>(json, Converter.Settings);
     }
 
+    public class CustInvoiceJour: CustInvoiceJourBase { }
+
+    public class CustInvoiceJourTestR: CustInvoiceJourBase { }
 }
 

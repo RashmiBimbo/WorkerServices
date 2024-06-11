@@ -1,6 +1,4 @@
-﻿using Azure;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using Newtonsoft.Json.Converters;
 using System.Globalization;
 using System.Net.Http.Headers;
 
@@ -8,6 +6,20 @@ namespace CommonCode
 {
     public class Common
     {
+        public const string Emp = "";
+
+        public static bool IsEmpty(string input)
+        {
+            try
+            {
+                return string.IsNullOrWhiteSpace(input);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public static DateTimeOffset? TryCastDTO(dynamic itm)
         {
             try
@@ -50,14 +62,14 @@ namespace CommonCode
             }
         }
 
-        public static async Task<string?> GetJson(string resource, string restUrl, string logFile = null)
+        public static async Task<string?> GetJson(string resource, string url, string logFile = null)
         {
             string? result = null;
             string clientId = "f59652f6-fd73-411b-ba47-5002f217eff9";
             string clientSecret = "R1Z8Q~-nETEjRazu1X4qxi6C1~PTJsCkz-y~ccid";
             string tenantId = "cc53a9a2-48fc-49e7-8f12-ef5a565cbcbe";
             string authority = $"https://login.microsoftonline.com/{tenantId}/oauth2/token";
-            string url = $"{resource}/{restUrl}";
+            //string url = $"{resource}/{url}";
 
             using var client = new HttpClient();
             var content = new FormUrlEncodedContent(
@@ -89,7 +101,7 @@ namespace CommonCode
                     {
                         string msg = $"HTTP request failed with status code: {response.StatusCode}";
                         Console.WriteLine(msg);
-                        if(!string.IsNullOrWhiteSpace(logFile))
+                        if (!IsEmpty(logFile))
                             File.AppendAllText(logFile, "\r\n" + msg);
                         return null;
                     }
@@ -101,7 +113,7 @@ namespace CommonCode
             {
                 string msg = $"Error: {ex?.ToString()}";
                 Console.WriteLine(msg);
-                if (!string.IsNullOrWhiteSpace(logFile))
+                if (!IsEmpty(logFile))
                     File.AppendAllText(logFile, "\r\n" + msg);
                 return null;
             }
