@@ -1,6 +1,4 @@
-﻿using Azure;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using Newtonsoft.Json.Converters;
 using System.Globalization;
 using System.Net.Http.Headers;
 

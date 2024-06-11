@@ -1,24 +1,24 @@
 using Newtonsoft.Json.Linq;
 using static System.DateTime;
 
-namespace SalesInvoiceHeaderService
+namespace BudgetModelService
 {
-    public class SalesInvoiceWorker : BackgroundService
+    public class BudgetModelWorker : BackgroundService
     {
         private int _executionCount;
-        private SalesInvoiceHeadersContext cntxt;
+        private BudgetModelContext cntxt;
         string msg, logFile;
         double period = 30;
         private readonly IServiceScopeFactory serviceScopeFactory;
-        private readonly ILogger<SalesInvoiceWorker> logger;
-        private CustInvoiceJourBase Poco;
+        private readonly ILogger<BudgetModelWorker> logger;
+        private BudgetModelPoco Poco;
 
-        public SalesInvoiceWorker(IServiceScopeFactory serviceScopeFactory, ILogger<SalesInvoiceWorker> logger)
+        public BudgetModelWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BudgetModelWorker> logger)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             //Poco = cust;
-            logFile = AppDomain.CurrentDomain.BaseDirectory + "SalesInvoiceHeadersService_Log.txt";
+            logFile = AppDomain.CurrentDomain.BaseDirectory + "BudgetModelService_Log.txt";
             try
             {
                 if (!File.Exists(logFile)) File.Create(logFile);
@@ -49,7 +49,7 @@ namespace SalesInvoiceHeaderService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"{Now}: Sales Invoice Headers Service running.");
+                LogInfo($"{Now}: Budget Model Service running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -57,9 +57,9 @@ namespace SalesInvoiceHeaderService
                 {
                     int count = Interlocked.Increment(ref _executionCount);
 
-                    string url = $"{resource}/data/SalesInvoiceHeadersV2?$filter=dataAreaId eq 'BBI' and InvoiceDate ge {lstMnth} and InvoiceDate le {now:yyyy-MM-ddTHH:mm:ssZ} &cross-company=true";
+                    string url = $"{resource}/data/BudgetModels";
 
-                    string msg = $"{Now}: Sales Invoice Headers Service is working; Count: {count}";
+                    string msg = $"{Now}: Budget Model Service is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -67,7 +67,7 @@ namespace SalesInvoiceHeaderService
                     LogInfo(msg);
 
                     int i = 0;
-                    while (!IsEmpty(url))
+                    while ( !IsEmpty(url))
                     {
                         url = await DoWork(resource, url);
                         i++;
@@ -90,7 +90,7 @@ namespace SalesInvoiceHeaderService
             }
             finally
             {
-                LogInfo($"{Now}: Sales Invoice Headers Service stopped.");
+                LogInfo($"{Now}: Budget Model Service stopped.");
             }
         }
 
@@ -129,7 +129,7 @@ namespace SalesInvoiceHeaderService
             try
             {
                 using var scope = serviceScopeFactory.CreateScope();
-                cntxt = scope.ServiceProvider.GetRequiredService<SalesInvoiceHeadersContext>();
+                cntxt = scope.ServiceProvider.GetRequiredService<BudgetModelContext>();
 
                 JObject obj = JObject.Parse(result);
                 JArray Items = (JArray)obj["value"];
@@ -139,31 +139,31 @@ namespace SalesInvoiceHeaderService
                 foreach (var itm in Items)
                 {
                     string itmJsn;
-                    CustInvoiceJour existingEntity = null;
+                    BudgetModelTestR existingEntity = null;
                     for (int cnt = 1; cnt <= 2; cnt++)
                     {
                         try
                         {
                             itmJsn = Serialize.ToJson(itm);
-                            CustInvoiceJour poco = JsonConvert.DeserializeObject<CustInvoiceJour>(itmJsn);
+                            BudgetModelTestR poco = JsonConvert.DeserializeObject<BudgetModelTestR>(itmJsn);
                             if (poco is null) continue;
 
                             // Find existing entity in the database
-                            existingEntity = await cntxt.CustInvoiceJour.FindAsync(poco.RecId1);
+                            existingEntity = await cntxt.BudgetModelTestR.FindAsync([poco.BudgetModel, poco.DataAreaId]);
 
                             // Check if the entity exists in the database
                             if (existingEntity == null) // Add the new entity
                             {
-                                cntxt.CustInvoiceJour.Add(poco);
+                                cntxt.BudgetModelTestR.Add(poco);
                                 addCnt++;
                             }
                             else // Update the existing entity if modified
                             {
-                                if (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1)
-                                {
-                                    cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
-                                    updtCnt++;
-                                }
+                                //if (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1)
+                                //{
+                                //    cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
+                                //    updtCnt++;
+                                //}
                             }
                             break;
                         }
@@ -178,7 +178,7 @@ namespace SalesInvoiceHeaderService
                 try
                 {
                     // Try to access the poco table
-                    var testQuery = await cntxt.CustInvoiceJour.FirstOrDefaultAsync();
+                    var testQuery = await cntxt.BudgetModelTestR.FirstOrDefaultAsync();
                 }
                 catch (Exception)
                 {

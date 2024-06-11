@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SalesInvoiceHeaderService
 {
-    public partial class CustInvoiceJourTestR
+    public partial class CustInvoiceJourBase
     {
         [Key]
         [JsonProperty("RecId1", NullValueHandling = NullValueHandling.Ignore)]
@@ -209,10 +209,13 @@ namespace SalesInvoiceHeaderService
         public string? ParentReference { get; set; }
     }
 
-    public partial class CustInvoiceJourTestR
+    public partial class CustInvoiceJourBase
     {
-        public static CustInvoiceJourTestR FromJson(string json) => JsonConvert.DeserializeObject<CustInvoiceJourTestR>(json, Converter.Settings);
+        public static CustInvoiceJourBase FromJson(string json) => JsonConvert.DeserializeObject<CustInvoiceJourBase>(json, Converter.Settings);
     }
 
+    public class CustInvoiceJour: CustInvoiceJourBase { }
+
+    public class CustInvoiceJourTestR: CustInvoiceJourBase { }
 }
 

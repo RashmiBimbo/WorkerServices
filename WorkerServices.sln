@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesOrderService", "SalesO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesInvoiceHeadersService", "SalesInvoiceHeadersService\SalesInvoiceHeadersService.csproj", "{16CB2FF1-8C08-4584-9E37-00EC5AE33C5A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetModelService", "BudgetModels\BudgetModelService.csproj", "{3EDB8D81-BF70-4FC0-B832-9C358F62F5E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{16CB2FF1-8C08-4584-9E37-00EC5AE33C5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16CB2FF1-8C08-4584-9E37-00EC5AE33C5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16CB2FF1-8C08-4584-9E37-00EC5AE33C5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EDB8D81-BF70-4FC0-B832-9C358F62F5E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EDB8D81-BF70-4FC0-B832-9C358F62F5E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EDB8D81-BF70-4FC0-B832-9C358F62F5E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EDB8D81-BF70-4FC0-B832-9C358F62F5E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
