@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetModelService", "Budge
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetRegisterEntryHeadersService", "BudgetRegisterEntryHeaders\BudgetRegisterEntryHeadersService.csproj", "{DD9BB7DC-F192-4706-9B33-778DF6125467}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetRegisterEntryLinesService", "SalesInvoiceHeadersService - Copy\BudgetRegisterEntryLinesService.csproj", "{EE18C550-A4D9-46B1-B82F-223868485601}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetRegisterEntryLinesService", "BudgetRegisterEntryLinesService\BudgetRegisterEntryLinesService.csproj", "{356E3240-7DD9-4A9A-AE5A-82040687BB75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{DD9BB7DC-F192-4706-9B33-778DF6125467}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD9BB7DC-F192-4706-9B33-778DF6125467}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD9BB7DC-F192-4706-9B33-778DF6125467}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EE18C550-A4D9-46B1-B82F-223868485601}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE18C550-A4D9-46B1-B82F-223868485601}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE18C550-A4D9-46B1-B82F-223868485601}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE18C550-A4D9-46B1-B82F-223868485601}.Release|Any CPU.Build.0 = Release|Any CPU
+		{356E3240-7DD9-4A9A-AE5A-82040687BB75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{356E3240-7DD9-4A9A-AE5A-82040687BB75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{356E3240-7DD9-4A9A-AE5A-82040687BB75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{356E3240-7DD9-4A9A-AE5A-82040687BB75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
