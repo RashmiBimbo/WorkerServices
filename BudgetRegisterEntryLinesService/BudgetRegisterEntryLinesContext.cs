@@ -9,6 +9,6 @@ namespace BudgetRegisterEntryLinesService
 
         public DbSet<BudgetRegisterEntryLinesTestR> BudgetRegisterEntryLinesTestR { get; set; } = default!;
 
-        public DbSet<BudgetRegisterEntryLines> BudgetRegisterEntryLines { get; set; } = default!;
+        //public DbSet<BudgetRegisterEntryLines> BudgetRegisterEntryLines { get; set; } = default!;
     }
 }

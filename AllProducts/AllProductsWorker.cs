@@ -1,24 +1,24 @@
 using Newtonsoft.Json.Linq;
 using static System.DateTime;
 
-namespace BudgetModelService
+namespace BudgetRegisterEntryLinesService
 {
-    public class BudgetModelWorker : BackgroundService
+    public class AllProductsWorker : BackgroundService
     {
         private int _executionCount;
-        private BudgetModelContext cntxt;
+        private AllProductsContext cntxt;
         string msg, logFile;
         double period = 30;
         private readonly IServiceScopeFactory serviceScopeFactory;
-        private readonly ILogger<BudgetModelWorker> logger;
-        private BudgetModelPoco Poco;
+        private readonly ILogger<AllProductsWorker> logger;
+        private AllProductsBase Poco;
 
-        public BudgetModelWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BudgetModelWorker> logger)
+        public AllProductsWorker(IServiceScopeFactory serviceScopeFactory, ILogger<AllProductsWorker> logger)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             //Poco = cust;
-            logFile = AppDomain.CurrentDomain.BaseDirectory + "BudgetModelService_Log.txt";
+            logFile = AppDomain.CurrentDomain.BaseDirectory + "CustomerItemsService_Log.txt";
             try
             {
                 if (!File.Exists(logFile)) File.Create(logFile);
@@ -49,7 +49,7 @@ namespace BudgetModelService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Budget Model Service running.");
+                LogInfo($"\r\n{Now}: Customer Items Service running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -57,9 +57,9 @@ namespace BudgetModelService
                 {
                     int count = Interlocked.Increment(ref _executionCount);
 
-                    string url = $"{resource}/data/BudgetModels";
+                    string url = $"{resource}/data/AllProducts";
 
-                    string msg = $"{Now}: Budget Model Service is working; Count: {count}";
+                    string msg = $"{Now}: Customer Items Service is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -90,7 +90,7 @@ namespace BudgetModelService
             }
             finally
             {
-                LogInfo($"{Now}: Budget Model Service stopped.");
+                LogInfo($"{Now}: Customer Items Service stopped.");
             }
         }
 
@@ -129,7 +129,7 @@ namespace BudgetModelService
             try
             {
                 using var scope = serviceScopeFactory.CreateScope();
-                cntxt = scope.ServiceProvider.GetRequiredService<BudgetModelContext>();
+                cntxt = scope.ServiceProvider.GetRequiredService<AllProductsContext>();
 
                 if (!await CheckTableExists(cntxt)) return;
 
@@ -141,33 +141,32 @@ namespace BudgetModelService
                 foreach (var itm in Items)
                 {
                     string itmJsn;
-                    BudgetModelTestR existingEntity = null;
+                    AllProductsTestR existingEntity = null;
                     for (int cnt = 1; cnt <= 2; cnt++)
                     {
                         try
                         {
                             itmJsn = Serialize.ToJson(itm);
-                            BudgetModelTestR poco = JsonConvert.DeserializeObject<BudgetModelTestR>(itmJsn);
+                            AllProductsTestR poco = JsonConvert.DeserializeObject<AllProductsTestR>(itmJsn);
                             if (poco is null) continue;
 
                             // Find existing entity in the database
-                            //existingEntity = await cntxt.BudgetModelTestR.FindAsync([poco.BudgetModel, poco.DataAreaId]);
-                            if (cntxt.BudgetModelTestR.Local.Count > 0)
-                                existingEntity = await cntxt.BudgetModelTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.BudgetModel == poco.BudgetModel) && (e.DataAreaId == poco.DataAreaId));
+                            if (cntxt.AllProductsTestR.Local.Count > 0)
+                                existingEntity = await cntxt.AllProductsTestR.FindAsync([poco.ProductNumber]);
 
                             // Check if the entity exists in the database
                             if (existingEntity == null) // Add the new entity
                             {
-                                cntxt.BudgetModelTestR.Add(poco);
+                                cntxt.AllProductsTestR.Add(poco);
                                 addCnt++;
                             }
                             else // Update the existing entity if modified
                             {
-                                //if (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1)
-                                //{
-                                //    cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
-                                //    updtCnt++;
-                                //}
+                                if ((poco.ModifiedDateTime1 != null) && !(existingEntity.ModifiedDateTime1 != null) && (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1))
+                                {
+                                    cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
+                                    updtCnt++;
+                                }
                             }
                             break;
                         }
@@ -209,8 +208,7 @@ namespace BudgetModelService
                 LogInfo($"{Now} : Error: {ex?.Message} + \r\n {ex?.StackTrace}");
             }
         }
-
-        private async Task<bool> CheckTableExists(BudgetModelContext cntxt)
+        private async Task<bool> CheckTableExists(AllProductsContext cntxt)
         {
             for (int i = 0; i < 3; i++)
             {
@@ -218,7 +216,7 @@ namespace BudgetModelService
                 try
                 {
                     // Try to access the poco table
-                    var testQuery = await cntxt.BudgetModelTestR.FirstOrDefaultAsync();
+                    var testQuery = await cntxt.AllProductsTestR.FirstOrDefaultAsync();
                     break;
                 }
                 catch (Exception ex1)
@@ -237,7 +235,7 @@ namespace BudgetModelService
             return true;
         }
 
-        private async Task ApplyMigration(BudgetModelContext cntxt)
+        private async Task ApplyMigration(AllProductsContext cntxt)
         {
             try
             {

@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
-
-
+﻿
 namespace BudgetModelService
 {
     // Composite key defined using the [PrimaryKey] attribute (EF Core 7+)

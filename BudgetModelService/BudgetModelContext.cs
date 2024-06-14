@@ -8,6 +8,6 @@
 
         public DbSet<BudgetModelTestR> BudgetModelTestR { get; set; } = default!;
 
-        public DbSet<BudgetModel> BudgetModel { get; set; } = default!;
+        //public DbSet<BudgetModel> BudgetModel { get; set; } = default!;
     }
 }

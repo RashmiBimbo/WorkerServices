@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using static System.DateTime;
 
 namespace SalesOrderWorker;
 
@@ -628,6 +629,44 @@ public class SalesOrderWorker : BackgroundService
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task<bool> CheckTableExists(SalesOrderContext cntxt)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            try
+            {
+                // Try to access the poco table
+                var testQuery = await cntxt.SalesOrderTestPoco.FirstOrDefaultAsync();
+                break;
+            }
+            catch (Exception ex1)
+            {
+                LogInfo($"{Now}: Error: {ex1?.Message} + \r\n {ex1.StackTrace}");
+                if (i < 2)
+                {
+                    LogInfo($"{Now}: Applying migration...");
+                    await ApplyMigration(cntxt);
+                }
+                else return false;
+                // If an exception occurs, the table doesn't exist, Apply migrations to create it
+
+            }
+        }
+        return true;
+    }
+
+    private async Task ApplyMigration(SalesOrderContext cntxt)
+    {
+        try
+        {
+            await cntxt.Database.MigrateAsync();
+        }
+        catch (Exception ex1)
+        {
+            LogInfo($"{Now}: Error: {ex1?.Message} + \r\n {ex1.StackTrace}");
         }
     }
 }

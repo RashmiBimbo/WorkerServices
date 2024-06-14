@@ -49,7 +49,7 @@ namespace BudgetRegisterEntryLinesService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"{Now}: Budget Register Entry Lines Service running.");
+                LogInfo($"\r\n{Now}: Budget Register Entry Lines Service running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -131,30 +131,35 @@ namespace BudgetRegisterEntryLinesService
                 using var scope = serviceScopeFactory.CreateScope();
                 cntxt = scope.ServiceProvider.GetRequiredService<BudgetRegisterEntryLinesContext>();
 
+                if (!await CheckTableExists(cntxt)) return;
+
                 JObject obj = JObject.Parse(result);
                 JArray Items = (JArray)obj["value"];
 
                 long updtCnt = 0, addCnt = 0;
                 int i = Items.Count;
+
                 foreach (var itm in Items)
                 {
                     string itmJsn;
-                    BudgetRegisterEntryLines existingEntity = null;
+                    BudgetRegisterEntryLinesTestR existingEntity = null;
                     for (int cnt = 1; cnt <= 2; cnt++)
                     {
                         try
                         {
                             itmJsn = Serialize.ToJson(itm);
-                            BudgetRegisterEntryLines poco = JsonConvert.DeserializeObject<BudgetRegisterEntryLines>(itmJsn);
+                            BudgetRegisterEntryLinesTestR poco = JsonConvert.DeserializeObject<BudgetRegisterEntryLinesTestR>(itmJsn);
                             if (poco is null) continue;
 
                             // Find existing entity in the database
-                            existingEntity = await cntxt.BudgetRegisterEntryLines.FindAsync([poco.DataAreaId, poco.LineNumber, poco.LegalEntityId, poco.EntryNumber]);
+                            //existingEntity = await cntxt.BudgetRegisterEntryLinesTestR.FindAsync([poco.DataAreaId, poco.LineNumber, poco.LegalEntityId, poco.EntryNumber]);
+                            if (cntxt.BudgetRegisterEntryLinesTestR.Local.Count > 0)
+                                existingEntity = await cntxt.BudgetRegisterEntryLinesTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.DataAreaId == poco.DataAreaId) && (e.LineNumber == poco.LineNumber) && (e.LegalEntityId == poco.LegalEntityId) && (e.EntryNumber == poco.EntryNumber));
 
                             // Check if the entity exists in the database
                             if (existingEntity == null) // Add the new entity
                             {
-                                cntxt.BudgetRegisterEntryLines.Add(poco);
+                                cntxt.BudgetRegisterEntryLinesTestR.Add(poco);
                                 addCnt++;
                             }
                             else // Update the existing entity if modified
@@ -173,24 +178,6 @@ namespace BudgetRegisterEntryLinesService
                             if (cnt < 2)
                                 LogInfo($"{Now}: Saving entity failed. Retrying...");
                         }
-                    }
-                }
-                try
-                {
-                    // Try to access the poco table
-                    var testQuery = await cntxt.BudgetRegisterEntryLines.FirstOrDefaultAsync();
-                }
-                catch (Exception)
-                {
-                    // If an exception occurs, the table doesn't exist, Apply migrations to create it
-                    try
-                    {
-                        await cntxt.Database.MigrateAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex.StackTrace}");
-                        return;
                     }
                 }
                 for (int cnt = 1; cnt <= 2; cnt++)
@@ -223,5 +210,45 @@ namespace BudgetRegisterEntryLinesService
                 LogInfo($"{Now} : Error: {ex?.Message} + \r\n {ex?.StackTrace}");
             }
         }
+
+        private async Task<bool> CheckTableExists(BudgetRegisterEntryLinesContext cntxt)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+
+                try
+                {
+                    // Try to access the poco table
+                    var testQuery = await cntxt.BudgetRegisterEntryLinesTestR.FirstOrDefaultAsync();
+                    break;
+                }
+                catch (Exception ex1)
+                {
+                    LogInfo($"{Now}: Error: {ex1?.Message} + \r\n {ex1.StackTrace}");
+                    if (i < 2)
+                    {
+                        LogInfo($"{Now}: Applying migration...");
+                        await ApplyMigration(cntxt);
+                    }
+                    else return false;
+                    // If an exception occurs, the table doesn't exist, Apply migrations to create it
+
+                }
+            }
+            return true;
+        }
+
+        private async Task ApplyMigration(BudgetRegisterEntryLinesContext cntxt)
+        {
+            try
+            {
+                await cntxt.Database.MigrateAsync();
+            }
+            catch (Exception ex1)
+            {
+                LogInfo($"{Now}: Error: {ex1?.Message} + \r\n {ex1.StackTrace}");
+            }
+        }
+
     }
 }

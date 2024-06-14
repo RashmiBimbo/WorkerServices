@@ -1,24 +1,24 @@
 using Newtonsoft.Json.Linq;
 using static System.DateTime;
 
-namespace BudgetModelService
+namespace SubledgerVoucherGeneralJournalEntryEntitiesService
 {
-    public class BudgetModelWorker : BackgroundService
+    public class SubledgerVoucherGeneralJournalEntryEntitiesWorker : BackgroundService
     {
         private int _executionCount;
-        private BudgetModelContext cntxt;
+        private SubledgerVoucherGeneralJournalEntryEntitiesContext cntxt;
         string msg, logFile;
         double period = 30;
         private readonly IServiceScopeFactory serviceScopeFactory;
-        private readonly ILogger<BudgetModelWorker> logger;
-        private BudgetModelPoco Poco;
+        private readonly ILogger<SubledgerVoucherGeneralJournalEntryEntitiesWorker> logger;
+        private SubledgerVoucherGeneralJournalEntryEntitiesBase Poco;
 
-        public BudgetModelWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BudgetModelWorker> logger)
+        public SubledgerVoucherGeneralJournalEntryEntitiesWorker(IServiceScopeFactory serviceScopeFactory, ILogger<SubledgerVoucherGeneralJournalEntryEntitiesWorker> logger)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             //Poco = cust;
-            logFile = AppDomain.CurrentDomain.BaseDirectory + "BudgetModelService_Log.txt";
+            logFile = AppDomain.CurrentDomain.BaseDirectory + "SubledgerVoucherGeneralJournalEntryEntitiesService_Log.txt";
             try
             {
                 if (!File.Exists(logFile)) File.Create(logFile);
@@ -49,7 +49,7 @@ namespace BudgetModelService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Budget Model Service running.");
+                LogInfo($"\r\n{Now}: Subledger Voucher General Journal Entry Entities Service running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -57,9 +57,9 @@ namespace BudgetModelService
                 {
                     int count = Interlocked.Increment(ref _executionCount);
 
-                    string url = $"{resource}/data/BudgetModels";
+                    string url = $"{resource}/data/SubledgerVoucherGeneralJournalEntryEntities";
 
-                    string msg = $"{Now}: Budget Model Service is working; Count: {count}";
+                    string msg = $"{Now}: Subledger Voucher General Journal Entry Entities Service is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -90,7 +90,7 @@ namespace BudgetModelService
             }
             finally
             {
-                LogInfo($"{Now}: Budget Model Service stopped.");
+                LogInfo($"{Now}: Subledger Voucher General Journal Entry Entities Service stopped.");
             }
         }
 
@@ -129,7 +129,7 @@ namespace BudgetModelService
             try
             {
                 using var scope = serviceScopeFactory.CreateScope();
-                cntxt = scope.ServiceProvider.GetRequiredService<BudgetModelContext>();
+                cntxt = scope.ServiceProvider.GetRequiredService<SubledgerVoucherGeneralJournalEntryEntitiesContext>();
 
                 if (!await CheckTableExists(cntxt)) return;
 
@@ -141,33 +141,33 @@ namespace BudgetModelService
                 foreach (var itm in Items)
                 {
                     string itmJsn;
-                    BudgetModelTestR existingEntity = null;
+                    SubledgerVoucherGeneralJournalEntryEntitiesTestR existingEntity = null;
                     for (int cnt = 1; cnt <= 2; cnt++)
                     {
                         try
                         {
                             itmJsn = Serialize.ToJson(itm);
-                            BudgetModelTestR poco = JsonConvert.DeserializeObject<BudgetModelTestR>(itmJsn);
+                            SubledgerVoucherGeneralJournalEntryEntitiesTestR poco = JsonConvert.DeserializeObject<SubledgerVoucherGeneralJournalEntryEntitiesTestR>(itmJsn);
                             if (poco is null) continue;
 
                             // Find existing entity in the database
-                            //existingEntity = await cntxt.BudgetModelTestR.FindAsync([poco.BudgetModel, poco.DataAreaId]);
-                            if (cntxt.BudgetModelTestR.Local.Count > 0)
-                                existingEntity = await cntxt.BudgetModelTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.BudgetModel == poco.BudgetModel) && (e.DataAreaId == poco.DataAreaId));
+                            //existingEntity = await cntxt.SubledgerVoucherGeneralJournalEntryEntitiesTestR.FindAsync([poco.Voucher, poco.RecId1]);
+                            if (cntxt.SubledgerVoucherGeneralJournalEntryEntitiesTestR.Local.Count > 0)
+                                existingEntity = await cntxt.SubledgerVoucherGeneralJournalEntryEntitiesTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.Voucher == poco.Voucher) && (e.RecId1 == poco.RecId1));
 
                             // Check if the entity exists in the database
                             if (existingEntity == null) // Add the new entity
                             {
-                                cntxt.BudgetModelTestR.Add(poco);
+                                cntxt.SubledgerVoucherGeneralJournalEntryEntitiesTestR.Add(poco);
                                 addCnt++;
                             }
                             else // Update the existing entity if modified
                             {
-                                //if (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1)
-                                //{
-                                //    cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
-                                //    updtCnt++;
-                                //}
+                                if ((poco.ModifiedDateTime1 != null) && !(existingEntity.ModifiedDateTime1 != null) && (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1))
+                                {
+                                    cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
+                                    updtCnt++;
+                                }
                             }
                             break;
                         }
@@ -209,8 +209,7 @@ namespace BudgetModelService
                 LogInfo($"{Now} : Error: {ex?.Message} + \r\n {ex?.StackTrace}");
             }
         }
-
-        private async Task<bool> CheckTableExists(BudgetModelContext cntxt)
+        private async Task<bool> CheckTableExists(SubledgerVoucherGeneralJournalEntryEntitiesContext cntxt)
         {
             for (int i = 0; i < 3; i++)
             {
@@ -218,7 +217,7 @@ namespace BudgetModelService
                 try
                 {
                     // Try to access the poco table
-                    var testQuery = await cntxt.BudgetModelTestR.FirstOrDefaultAsync();
+                    var testQuery = await cntxt.SubledgerVoucherGeneralJournalEntryEntitiesTestR.FirstOrDefaultAsync();
                     break;
                 }
                 catch (Exception ex1)
@@ -237,7 +236,7 @@ namespace BudgetModelService
             return true;
         }
 
-        private async Task ApplyMigration(BudgetModelContext cntxt)
+        private async Task ApplyMigration(SubledgerVoucherGeneralJournalEntryEntitiesContext cntxt)
         {
             try
             {

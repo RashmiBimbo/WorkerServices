@@ -66,7 +66,7 @@ namespace BudgetRegisterEntryHeadersService
                     LogInfo(msg);
 
                     int i = 0;
-                    while ( !IsEmpty(url))
+                    while (!IsEmpty(url))
                     {
                         url = await DoWork(resource, url);
                         i++;
@@ -130,6 +130,8 @@ namespace BudgetRegisterEntryHeadersService
                 using var scope = serviceScopeFactory.CreateScope();
                 cntxt = scope.ServiceProvider.GetRequiredService<BudgetRegisterEntryHeadersContext>();
 
+                if (!await CheckTableExists(cntxt)) return;
+
                 JObject obj = JObject.Parse(result);
                 JArray Items = (JArray)obj["value"];
 
@@ -138,17 +140,19 @@ namespace BudgetRegisterEntryHeadersService
                 foreach (var itm in Items)
                 {
                     string itmJsn;
-                    BudgetRegisterEntryHeadersTestR existingEntity = null;
+                    BudgetRegisterEntryHeadersTestR existingEntity = null, poco = null;
                     for (int cnt = 1; cnt <= 2; cnt++)
                     {
                         try
                         {
                             itmJsn = Serialize.ToJson(itm);
-                            BudgetRegisterEntryHeadersTestR poco = JsonConvert.DeserializeObject<BudgetRegisterEntryHeadersTestR>(itmJsn);
+                            poco = JsonConvert.DeserializeObject<BudgetRegisterEntryHeadersTestR>(itmJsn);
+
                             if (poco is null) continue;
 
                             // Find existing entity in the database
-                            existingEntity = await cntxt.BudgetRegisterEntryHeadersTestR.FindAsync([poco.EntryNumber, poco.LegalEntityId, poco.DataAreaId]);
+                            if (cntxt.BudgetRegisterEntryHeadersTestR.Local.Count > 0)
+                                existingEntity = await cntxt.BudgetRegisterEntryHeadersTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.DataAreaId == poco.DataAreaId) && (e.LegalEntityId == poco.LegalEntityId) && (e.EntryNumber == poco.EntryNumber));
 
                             // Check if the entity exists in the database
                             if (existingEntity == null) // Add the new entity
@@ -172,24 +176,6 @@ namespace BudgetRegisterEntryHeadersService
                             if (cnt < 2)
                                 LogInfo($"{Now}: Saving entity failed. Retrying...");
                         }
-                    }
-                }
-                try
-                {
-                    // Try to access the poco table
-                    var testQuery = await cntxt.BudgetRegisterEntryHeadersTestR.FirstOrDefaultAsync();
-                }
-                catch (Exception)
-                {
-                    // If an exception occurs, the table doesn't exist, Apply migrations to create it
-                    try
-                    {
-                        await cntxt.Database.MigrateAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex.StackTrace}");
-                        return;
                     }
                 }
                 for (int cnt = 1; cnt <= 2; cnt++)
@@ -222,5 +208,45 @@ namespace BudgetRegisterEntryHeadersService
                 LogInfo($"{Now} : Error: {ex?.Message} + \r\n {ex?.StackTrace}");
             }
         }
+
+        private async Task<bool> CheckTableExists(BudgetRegisterEntryHeadersContext cntxt)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+
+                try
+                {
+                    // Try to access the poco table
+                    var testQuery = await cntxt.BudgetRegisterEntryHeadersTestR.FirstOrDefaultAsync();
+                    break;
+                }
+                catch (Exception ex1)
+                {
+                    LogInfo($"{Now}: Error: {ex1?.Message} + \r\n {ex1.StackTrace}");
+                    if (i < 2)
+                    {
+                        LogInfo($"{Now}: Applying migration...");
+                        await ApplyMigration(cntxt);
+                    }
+                    else return false;
+                    // If an exception occurs, the table doesn't exist, Apply migrations to create it
+
+                }
+            }
+            return true;
+        }
+
+        private async Task ApplyMigration(BudgetRegisterEntryHeadersContext cntxt)
+        {
+            try
+            {
+                await cntxt.Database.MigrateAsync();
+            }
+            catch (Exception ex1)
+            {
+                LogInfo($"{Now}: Error: {ex1?.Message} + \r\n {ex1.StackTrace}");
+            }
+        }
+
     }
 }
