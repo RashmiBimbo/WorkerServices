@@ -4,7 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>dotnet-SalesInvoiceHeaders-4e9d9a0a-f3bb-42d0-a768-ca67d36961fb</UserSecretsId>
+		<UserSecretsId>dotnet-SalesInvoiceHeadersService-4e9d9a0a-f3bb-42d0-a768-ca67d36961fb</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -5,21 +5,21 @@
     [PrimaryKey(nameof(DataAreaId), nameof(EntryNumber), nameof(LegalEntityId))]
     public class BudgetRegisterEntryHeadersPoco
     { 
-        // JSON Property: "@odata.etag"
-        [JsonProperty("@odata.etag")]
-        public string? Etag { get; set; }
-
         // JSON Property: "dataAreaId"
         [JsonProperty("dataAreaId")]
         public string DataAreaId { get; set; }
+
+        // JSON Property: "EntryNumber"
+        [JsonProperty("EntryNumber")]
+        public string EntryNumber { get; set; }
 
         // JSON Property: "LegalEntityId"
         [JsonProperty("LegalEntityId")]
         public string LegalEntityId { get; set; }
 
-        // JSON Property: "EntryNumber"
-        [JsonProperty("EntryNumber")]
-        public string EntryNumber { get; set; }
+        // JSON Property: "@odata.etag"
+        [JsonProperty("@odata.etag")]
+        public string? Etag { get; set; }
 
         // JSON Property: "ReasonCode"
         [JsonProperty("ReasonCode")]
@@ -43,11 +43,11 @@
 
         // JSON Property: "RevenueBudgetTotal"
         [JsonProperty("RevenueBudgetTotal")]
-        public decimal RevenueBudgetTotal { get; set; }
+        public decimal? RevenueBudgetTotal { get; set; }
 
         // JSON Property: "DefaultDate"
         [JsonProperty("DefaultDate")]
-        public DateTime DefaultDate { get; set; }
+        public DateTime? DefaultDate { get; set; }
 
         // JSON Property: "BudgetModelId"
         [JsonProperty("BudgetModelId")]
@@ -63,7 +63,7 @@
 
         // JSON Property: "ExpenseBudgetTotal"
         [JsonProperty("ExpenseBudgetTotal")]
-        public decimal ExpenseBudgetTotal { get; set; }
+        public decimal? ExpenseBudgetTotal { get; set; }
 
         // JSON Property: "OneTimeRevision"
         [JsonProperty("OneTimeRevision")]

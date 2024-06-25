@@ -1,5 +1,6 @@
 ﻿
-namespace BudgetRegisterEntryLinesService
+namespace AllProductsService
+
 {
     // For EF Core 7+ use [PrimaryKey] to define composite keys at the class level.
     [PrimaryKey(nameof(CustVendRelation), nameof(DataAreaId), nameof(FromDate), nameof(ItemId), nameof(ToDate))]

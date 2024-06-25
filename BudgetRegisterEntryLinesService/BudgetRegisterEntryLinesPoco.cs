@@ -1,5 +1,5 @@
 ﻿
-namespace BudgetRegisterEntryLinesService
+namespace CustomerItemsService
 {
     // For EF Core 7+ use [PrimaryKey] to define composite keys at the class level.
     [PrimaryKey(nameof(DataAreaId), nameof(LineNumber), nameof(LegalEntityId), nameof(EntryNumber))]
@@ -22,7 +22,7 @@ namespace BudgetRegisterEntryLinesService
 
         // JSON Property: "LineNumber"
         [JsonProperty("LineNumber")]
-        public int LineNumber { get; set; }
+        public decimal? LineNumber { get; set; }
 
         // JSON Property: "WorkflowStatus"
         [JsonProperty("WorkflowStatus")]

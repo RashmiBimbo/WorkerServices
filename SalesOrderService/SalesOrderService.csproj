@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-DemoWorkerService-04d0a70a-6926-471b-bc38-8df5791643c5</UserSecretsId>
+    <UserSecretsId>dotnet-SalesOrderService-04d0a70a-6926-471b-bc38-8df5791643c5</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

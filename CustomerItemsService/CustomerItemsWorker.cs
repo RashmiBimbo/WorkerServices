@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 using static System.DateTime;
 
-namespace BudgetRegisterEntryLinesService
+namespace AllProductsService
 {
     public class CustomerItemsWorker : BackgroundService
     {
@@ -131,78 +131,96 @@ namespace BudgetRegisterEntryLinesService
                 using var scope = serviceScopeFactory.CreateScope();
                 cntxt = scope.ServiceProvider.GetRequiredService<CustomerItemsContext>();
 
-                if (!await CheckTableExists(cntxt)) return;
+                //if (!await CheckTableExists(cntxt)) return;
 
                 JObject obj = JObject.Parse(result);
                 JArray Items = (JArray)obj["value"];
 
                 long updtCnt = 0, addCnt = 0;
                 int i = Items.Count;
-                foreach (var itm in Items)
+
+                var strategy = cntxt.Database.CreateExecutionStrategy();
+
+                await strategy.ExecuteAsync(async () =>
                 {
-                    string itmJsn;
-                    CustomerItemsTestR existingEntity = null;
-                    for (int cnt = 1; cnt <= 2; cnt++)
+                    using (var transaction = await cntxt.Database.BeginTransactionAsync())
                     {
-                        try
+                        foreach (var itm in Items)
                         {
-                            itmJsn = Serialize.ToJson(itm);
-                            CustomerItemsTestR poco = JsonConvert.DeserializeObject<CustomerItemsTestR>(itmJsn);
-                            if (poco is null) continue;
-
-                            // Find existing entity in the database
-                            //existingEntity = await cntxt.CustomerItemsTestR.FindAsync([poco.CustVendRelation, poco.DataAreaId, poco.FromDate, poco.ItemId, poco.ToDate]);
-                            if (cntxt.CustomerItemsTestR.Local.Count > 0)
-                                existingEntity = await cntxt.CustomerItemsTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate));
-
-                            // Check if the entity exists in the database
-                            if (existingEntity == null) // Add the new entity
+                            string itmJsn;
+                            CustomerItemsTestR existingEntity = null;
+                            for (int cnt = 1; cnt <= 2; cnt++)
                             {
-                                cntxt.CustomerItemsTestR.Add(poco);
-                                addCnt++;
-                            }
-                            else // Update the existing entity if modified
-                            {
-                                if ((poco.ModifiedDateTime1 != null) && !(existingEntity.ModifiedDateTime1 != null) && (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1))
+                                try
                                 {
-                                    cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
-                                    updtCnt++;
+                                    itmJsn = Serialize.ToJson(itm);
+                                    CustomerItemsTestR poco = JsonConvert.DeserializeObject<CustomerItemsTestR>(itmJsn);
+                                    if (poco is null) continue;
+
+                                    // Find existing entity in the database
+
+                                    if (cntxt.CustomerItemsTestR.Any())
+                                        existingEntity = await cntxt.CustomerItemsTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate));
+
+                                    if (!cntxt.CustomerItemsTestR.Local.Any(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate)))
+                                    {
+                                        // Check if the entity exists in the database
+                                        if (existingEntity == null) // Add the new entity
+                                        {
+                                            cntxt.CustomerItemsTestR.Add(poco);
+                                            addCnt++;
+                                        }
+                                        else // Update the existing entity if modified
+                                        {
+                                            if ((poco.ModifiedDateTime1 != null) && !(existingEntity.ModifiedDateTime1 != null) && (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1))
+                                            {
+                                                cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
+                                                updtCnt++;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                                catch (Exception ex)
+                                {
+                                    string inrExMsg = ex.InnerException is null ? string.Empty : $"{ex.InnerException.Message} + \r\n";
+                                    LogInfo($"{Now}: Error: {ex?.Message} + \r\n + {inrExMsg} + {ex?.StackTrace}");
+                                    if (cnt < 2)
+                                        LogInfo($"{Now}: Saving entity failed. Retrying...");
                                 }
                             }
-                            break;
                         }
-                        catch (Exception ex)
+                        for (int cnt = 1; cnt <= 2; cnt++)
                         {
-                            LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex?.StackTrace}");
-                            if (cnt < 2)
-                                LogInfo($"{Now}: Saving entity failed. Retrying...");
+                            try
+                            {
+                                await cntxt.SaveChangesAsync();
+                                await transaction.CommitAsync();
+                                break;
+                            }
+                            catch (Exception ex)
+                            {
+                                LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex.StackTrace}");
+                                if (cnt < 2)
+                                {
+                                    string msg = $"{Now}: Error: Saving changes failed! Retrying...";
+                                    LogInfo(msg);
+                                }
+                                else
+                                {
+                                    await transaction.RollbackAsync();
+                                    return;
+                                }
+                            }
                         }
-                    }
-                }
-                for (int cnt = 1; cnt <= 2; cnt++)
-                {
-                    try
-                    {
-                        await cntxt.SaveChangesAsync();
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex.StackTrace}");
-                        if (cnt < 2)
-                        {
-                            string msg = $"{Now}: Error: Saving changes failed! Retrying...";
-                            LogInfo(msg);
-                        }
-                        return;
-                    }
-                }
-                msg = $"\r\n{Now}: Success: Saved data successfully.\r\n" +
-                      $"{Now}: Total no. of records tracked:{i}\r\n" +
-                      $"{Now}: Total no. of records added: {addCnt}\r\n" +
-                      $"{Now}: Total no. of records updated: {updtCnt}\r\n";
+                        msg = $"\r\n{Now}: Success: Saved data successfully.\r\n" +
+                              $"{Now}: Total no. of records tracked:{i}\r\n" +
+                              $"{Now}: Total no. of records added: {addCnt}\r\n" +
+                              $"{Now}: Total no. of records updated: {updtCnt}\r\n";
 
-                LogInfo(msg);
+                        LogInfo(msg);
+                    }
+                });
             }
             catch (Exception ex)
             {

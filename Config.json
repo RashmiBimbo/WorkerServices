@@ -1,0 +1,140 @@
+{
+    "Services": [
+        {
+            "Name": "SubledgerVoucherGeneralJournalEntryEntities",
+            "ServiceConfiguration": 
+            {
+                "Run": true,
+                "Period": "30",
+                "Table": "SubledgerVoucherGeneralJournalEntryEntitiesTestR",
+                "Columns": [
+                    {
+                        "Name": "ModifiedDateTime1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "ModifiedBy1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "VoucherDataAreaId",
+                        "Add": true
+                    },
+                    {
+                        "Name": "TransferId",
+                        "Add": true
+                    },
+                    {
+                        "Name": "SubledgerJournalEntry",
+                        "Add": true
+                    },
+                    {
+                        "Name": "RecVersion1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Partition1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "GeneralJournalEntry",
+                        "Add": true
+                    },
+                    {
+                        "Name": "AccountingDate",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Etag",
+                        "Add": true
+                    },
+                    {
+                        "Name": "ParentReference",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Voucher",
+                        "Add": true
+                    },
+                    {
+                        "Name": "RecId1",
+                        "Add": true
+                    }
+                ]
+            }
+        },
+        {
+            "Name": "AllProducts",
+            "ServiceConfiguration": 
+            {
+                "Run": true,
+                "Period": "30",
+                "Table": "AllProductsTestR",
+                "Columns": [
+                    {
+                        "Name": "ModifiedDateTime1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "ModifiedBy1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "VoucherDataAreaId",
+                        "Add": true
+                    },
+                    {
+                        "Name": "TransferId",
+                        "Add": true
+                    },
+                    {
+                        "Name": "SubledgerJournalEntry",
+                        "Add": true
+                    },
+                    {
+                        "Name": "RecVersion1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Partition1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "GeneralJournalEntry",
+                        "Add": true
+                    },
+                    {
+                        "Name": "AccountingDate",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Etag",
+                        "Add": true
+                    },
+                    { "Name": "ParentReference", "Add": true},
+                    { "Name": "Voucher", "Add": true},
+                    { "Name": "RecId1", "Add": true }
+                ]
+            }
+        },
+        {
+            "Name": "UnitOfMeasureConversions",
+            "ServiceConfiguration": 
+            {
+                "Run": true,
+                "Period": "30",
+                "Table": "UnitOfMeasureConversionsTestR",
+                "Columns": [                    
+                    { "Name": "ParentReference", "Add": true},
+                    { "Name": "Voucher", "Add": true},
+                    { "Name": "RecId1", "Add": true },
+                    { "Name": "RecId1", "Add": true },
+                    { "Name": "RecId1", "Add": true },
+                    { "Name": "RecId1", "Add": true },
+                    { "Name": "RecId1", "Add": true },
+
+                ]
+            }
+        }
+    ]
+}

@@ -13,13 +13,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetRegisterEntryHeadersS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetRegisterEntryLinesService", "BudgetRegisterEntryLinesService\BudgetRegisterEntryLinesService.csproj", "{356E3240-7DD9-4A9A-AE5A-82040687BB75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubledgerVoucherGeneralJournalEntryEntitiesService", "SubledgerVoucherGeneralJournalEntryEntitiesService\SubledgerVoucherGeneralJournalEntryEntitiesService.csproj", "{CD5D3328-B89D-4B00-A9C1-23596576499A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlIntegrationServices", "SubledgerVoucherGeneralJournalEntryEntitiesService\SqlIntegrationServices.csproj", "{CD5D3328-B89D-4B00-A9C1-23596576499A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetModelService", "BudgetModelService\BudgetModelService.csproj", "{9CED014C-7ED8-435F-B4A4-09BC3A2DF295}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerItemsService", "CustomerItemsService\CustomerItemsService.csproj", "{BE4A04E9-F803-455F-9D27-B4957AE98825}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AllProductsService", "AllProducts\AllProductsService.csproj", "{249C89F5-77F7-4574-8812-DD6F3674C58E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HSNCodesService", "HSNCodes\HSNCodesService.csproj", "{7341476E-9696-4C27-A0D0-9557DE9AAAE6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LineDiscountCustomerGroupsService", "LineDiscountCustomerGroups\LineDiscountCustomerGroupsService.csproj", "{8AF44E64-3F63-440C-A181-3582E1B81B6C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PriceCustomerGroupsService", "PriceCustomerGroups\PriceCustomerGroupsService.csproj", "{72A97C6E-F31D-48B5-9C0D-F2B41C79530E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductTranslationsService", "ProductTranslationsService\ProductTranslationsService.csproj", "{AE11371A-176B-4806-8848-8D6B06BB4FF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +71,22 @@ Global
 		{249C89F5-77F7-4574-8812-DD6F3674C58E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{249C89F5-77F7-4574-8812-DD6F3674C58E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{249C89F5-77F7-4574-8812-DD6F3674C58E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7341476E-9696-4C27-A0D0-9557DE9AAAE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7341476E-9696-4C27-A0D0-9557DE9AAAE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7341476E-9696-4C27-A0D0-9557DE9AAAE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7341476E-9696-4C27-A0D0-9557DE9AAAE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AF44E64-3F63-440C-A181-3582E1B81B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AF44E64-3F63-440C-A181-3582E1B81B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AF44E64-3F63-440C-A181-3582E1B81B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AF44E64-3F63-440C-A181-3582E1B81B6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72A97C6E-F31D-48B5-9C0D-F2B41C79530E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A97C6E-F31D-48B5-9C0D-F2B41C79530E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72A97C6E-F31D-48B5-9C0D-F2B41C79530E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A97C6E-F31D-48B5-9C0D-F2B41C79530E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE11371A-176B-4806-8848-8D6B06BB4FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE11371A-176B-4806-8848-8D6B06BB4FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE11371A-176B-4806-8848-8D6B06BB4FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE11371A-176B-4806-8848-8D6B06BB4FF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
