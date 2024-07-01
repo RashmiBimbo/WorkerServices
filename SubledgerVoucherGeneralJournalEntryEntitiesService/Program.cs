@@ -23,7 +23,9 @@ class Program
 
         string result = File.ReadAllText(solnPath + "\\" + configName);
         JObject obj = JObject.Parse(result);
-        JArray Items = (JArray)obj["SqlIntegrationServices"];
+        JArray Items = (JArray)obj["Services"];
+
+        if (Items is null) return;
 
         // Iterate over the services to configure
         foreach (var itm in Items)
@@ -38,7 +40,7 @@ class Program
                     if (service.ServiceConfiguration.Run)
                     {
                         string namespaceName = service.Name + "Service"; // Or the correct namespace
-                        string workerTypeName = $"{namespaceName}.{service.Name}Worker";
+                        string workerTypeName = $"SqlIntegrationServices.Workers.{service.Name}Worker";
 
                         // Attempt to get the type
                         var workerType = Type.GetType(workerTypeName, throwOnError: false, ignoreCase: true);

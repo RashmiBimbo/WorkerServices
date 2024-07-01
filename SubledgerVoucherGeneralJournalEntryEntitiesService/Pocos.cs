@@ -1,9 +1,9 @@
 ﻿
 namespace SqlIntegrationServices
 {
-    public partial class Deserialize<T> where T : notnull
+    public partial class DeserializeJson<T> where T : notnull
     {
-        public static T FromJson(string json) => JsonConvert.DeserializeObject<T>(json, Converter.Settings);
+        public static T Deserialize(string json) => JsonConvert.DeserializeObject<T>(json, Converter.Settings);
 
     }
 
@@ -69,17 +69,17 @@ namespace SqlIntegrationServices
     public abstract class UnitOfMeasureConversionsBase
     {
         // A property for the OData etag, typically used for versioning in OData services.
-        public string ODataEtag { get; set; }
+        public string? ODataEtag { get; set; }
 
         // Properties to hold the unit symbols and conversion factors.
         public string FromUnitSymbol { get; set; }
         public string ToUnitSymbol { get; set; }
-        public int InnerOffset { get; set; }
-        public int OuterOffset { get; set; }
-        public string Rounding { get; set; }
-        public int Numerator { get; set; }
-        public int Factor { get; set; }
-        public int Denominator { get; set; }
+        public int? InnerOffset { get; set; }
+        public int? OuterOffset { get; set; }
+        public string? Rounding { get; set; }
+        public int? Numerator { get; set; }
+        public int? Factor { get; set; }
+        public int? Denominator { get; set; }
     }
 
     [Serializable]
@@ -303,11 +303,6 @@ namespace SqlIntegrationServices
         // JSON Property: "ModifiedDateTime1"
         [JsonProperty("ModifiedDateTime1")]
         public DateTime? ModifiedDateTime1 { get; set; } // Nullable DateTime
-    }
-
-    public partial class CustomerItemsBase
-    {
-        public static CustomerItemsBase FromJson(string json) => JsonConvert.DeserializeObject<CustomerItemsBase>(json, Converter.Settings);
     }
 
     public class CustomerItems : CustomerItemsBase { }

@@ -16,13 +16,14 @@ namespace SqlIntegrationServices.Workers
         private Timer timer;
         private Thread backgroundThread;
         private readonly CancellationTokenSource cancellationTokenSource;
+        private readonly ServiceConfiguration config;
 
         public AllProductsWorker(IServiceScopeFactory serviceScopeFactory, ILogger<AllProductsWorker> logger, ServiceConfiguration config)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
+            this.config = config;
             period = TryCastDbl(config.Period);
-            //Poco = cust;
             logFile = AppDomain.CurrentDomain.BaseDirectory + "AllProductsService_Log.txt";
             try
             {

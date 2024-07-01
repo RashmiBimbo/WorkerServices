@@ -16,11 +16,13 @@ namespace SqlIntegrationServices.Workers
         private Timer timer;
         private Thread backgroundThread;
         private readonly CancellationTokenSource cancellationTokenSource;
+        private readonly ServiceConfiguration config;
 
         public SubledgerVoucherGeneralJournalEntryEntitiesWorker(IServiceScopeFactory serviceScopeFactory, ILogger<SubledgerVoucherGeneralJournalEntryEntitiesWorker> logger, ServiceConfiguration config)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
+            this.config = config;
             period = TryCastDbl(config.Period);
             logFile = AppDomain.CurrentDomain.BaseDirectory + "SubledgerVoucherGeneralJournalEntryEntitiesService_Log.txt";
             cancellationTokenSource = new CancellationTokenSource();
@@ -325,7 +327,7 @@ namespace SqlIntegrationServices.Workers
     //            //timer = new Timer(TimerCallback.);
     //            do
     //            {
-    //                int count = Interlocked.Increment(ref _executionCount);
+    //                int count = Interlocked.Increment(ref ExecutionCount);
 
     //                string url = $"{resource}/data/SubledgerVoucherGeneralJournalEntryEntities";
 

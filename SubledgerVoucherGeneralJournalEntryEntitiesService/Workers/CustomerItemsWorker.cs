@@ -1,26 +1,26 @@
-﻿using CommonCode.Config;
+using CommonCode.Config;
 using Newtonsoft.Json.Linq;
 using static System.DateTime;
 
 namespace SqlIntegrationServices.Workers
 {
-    public class UnitOfMeasureConversionsWorker : BackgroundService
+    public class CustomerItemsWorker : BackgroundService
     {
         private int _executionCount;
         private ServiceDbContext cntxt;
         string msg, logFile;
         double period = 30;
         private readonly IServiceScopeFactory serviceScopeFactory;
-        private readonly ILogger<UnitOfMeasureConversionsWorker> logger;
+        private readonly ILogger<CustomerItemsWorker> logger;
         private readonly ServiceConfiguration config;
 
-        public UnitOfMeasureConversionsWorker(IServiceScopeFactory serviceScopeFactory, ILogger<UnitOfMeasureConversionsWorker> logger, ServiceConfiguration config)
+        public CustomerItemsWorker(IServiceScopeFactory serviceScopeFactory, ILogger<CustomerItemsWorker> logger, ServiceConfiguration config)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             this.config = config;
             period = TryCastDbl(config.Period);
-            logFile = AppDomain.CurrentDomain.BaseDirectory + "UnitOfMeasureConversionsService_Log.txt";
+            logFile = AppDomain.CurrentDomain.BaseDirectory + "CustomerItemsService_Log.txt";
             try
             {
                 if (!File.Exists(logFile)) File.Create(logFile);
@@ -51,7 +51,7 @@ namespace SqlIntegrationServices.Workers
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Unit of Measure Conversions Service running.");
+                LogInfo($"\r\n{Now}: Customer Items Service running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -59,9 +59,9 @@ namespace SqlIntegrationServices.Workers
                 {
                     int count = Interlocked.Increment(ref _executionCount);
 
-                    string url = $"{resource}/data/UnitOfMeasureConversions";
+                    string url = $"{resource}/data/CustomerItems";
 
-                    string msg = $"{Now}: Unit of Measure Conversions Service is working; Count: {count}";
+                    string msg = $"{Now}: Customer Items Service is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -78,8 +78,8 @@ namespace SqlIntegrationServices.Workers
                     var elapsedTime = endTime - startTime;
 
                     LogInfo($"\r\n{Now}: Data migration completed."
-                          + $"\r\n{Now}: No. of times api executed : {i}"
-                          + $"\r\n{Now}: Task execution time: {elapsedTime}"
+                          + $"\r\n{Now} : No. of times api executed : {i}"
+                          + $"\r\n{Now} : Task execution time:  {elapsedTime}"
                           + $"\r\n{Now}: Next iteration will start after {period} minutes at {DateTimeOffset.Now.AddMinutes(period)}"
                           + "\r\n***********************************************************\r\n");
                     await Task.Delay(TimeSpan.FromMinutes(period), stoppingToken);
@@ -92,7 +92,7 @@ namespace SqlIntegrationServices.Workers
             }
             finally
             {
-                LogInfo($"{Now}: Unit of Measure Conversions Service stopped.");
+                LogInfo($"{Now}: Customer Items Service stopped.");
             }
         }
 
@@ -133,46 +133,48 @@ namespace SqlIntegrationServices.Workers
                 using var scope = serviceScopeFactory.CreateScope();
                 cntxt = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
 
+                //if (!await CheckTableExists(cntxt)) return;
+
+                JObject obj = JObject.Parse(result);
+                JArray Items = (JArray)obj["value"];
+
+                long updtCnt = 0, addCnt = 0;
+                int i = Items.Count;
+
                 var strategy = cntxt.Database.CreateExecutionStrategy();
 
                 await strategy.ExecuteAsync(async () =>
                 {
                     using (var transaction = await cntxt.Database.BeginTransactionAsync())
                     {
-                        //if (!await CheckTableExists(cntxt)) return;
-
-                        JObject obj = JObject.Parse(result);
-                        JArray Items = (JArray)obj["value"];
-
-                        long updtCnt = 0, addCnt = 0;
-                        int i = Items.Count;
                         foreach (var itm in Items)
                         {
                             string itmJsn;
-                            UnitOfMeasureConversionsTestR existingEntity = null;
+                            CustomerItemsTestR existingEntity = null;
                             for (int cnt = 1; cnt <= 2; cnt++)
                             {
                                 try
                                 {
-                                    itmJsn = itm.ToJson();
-                                    UnitOfMeasureConversionsTestR poco = JsonConvert.DeserializeObject<UnitOfMeasureConversionsTestR>(itmJsn);
+                                    itmJsn = Serialize.ToJson(itm);
+                                    CustomerItemsTestR poco = JsonConvert.DeserializeObject<CustomerItemsTestR>(itmJsn);
                                     if (poco is null) continue;
 
                                     // Find existing entity in the database
-                                    if (cntxt.SubledgerVoucherGeneralJournalEntryEntitiesTestR.Count() > 0)
-                                        existingEntity = await cntxt.UnitOfMeasureConversionsTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.FromUnitSymbol == poco.FromUnitSymbol) && (e.ToUnitSymbol == poco.ToUnitSymbol));
 
-                                    if (!cntxt.UnitOfMeasureConversionsTestR.Local.Any(e => (e.FromUnitSymbol == poco.FromUnitSymbol) && (e.ToUnitSymbol == poco.ToUnitSymbol))
+                                    if (cntxt.CustomerItemsTestR.Any())
+                                        existingEntity = await cntxt.CustomerItemsTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate));
+
+                                    if (!cntxt.CustomerItemsTestR.Local.Any(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate)))
                                     {
                                         // Check if the entity exists in the database
                                         if (existingEntity == null) // Add the new entity
                                         {
-                                            cntxt.UnitOfMeasureConversionsTestR.Add(poco);
+                                            cntxt.CustomerItemsTestR.Add(poco);
                                             addCnt++;
                                         }
                                         else // Update the existing entity if modified
                                         {
-                                            if (poco.ModifiedDateTime1 != null && !(existingEntity.ModifiedDateTime1 != null) && poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1)
+                                            if ((poco.ModifiedDateTime1 != null) && !(existingEntity.ModifiedDateTime1 != null) && (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1))
                                             {
                                                 cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
                                                 updtCnt++;
@@ -183,7 +185,8 @@ namespace SqlIntegrationServices.Workers
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex?.StackTrace}");
+                                    string inrExMsg = ex.InnerException is null ? string.Empty : $"{ex.InnerException.Message} + \r\n";
+                                    LogInfo($"{Now}: Error: {ex?.Message} + \r\n + {inrExMsg} + {ex?.StackTrace}");
                                     if (cnt < 2)
                                         LogInfo($"{Now}: Saving entity failed. Retrying...");
                                 }
@@ -210,7 +213,6 @@ namespace SqlIntegrationServices.Workers
                                     await transaction.RollbackAsync();
                                     return;
                                 }
-                                return;
                             }
                         }
                         msg = $"\r\n{Now}: Success: Saved data successfully.\r\n" +
@@ -227,7 +229,6 @@ namespace SqlIntegrationServices.Workers
                 LogInfo($"{Now} : Error: {ex?.Message} + \r\n {ex?.StackTrace}");
             }
         }
-
         private async Task<bool> CheckTableExists(ServiceDbContext cntxt)
         {
             for (int i = 0; i < 3; i++)
@@ -236,7 +237,7 @@ namespace SqlIntegrationServices.Workers
                 try
                 {
                     // Try to access the poco table
-                    var testQuery = await cntxt.AllProductsTestR.FirstOrDefaultAsync();
+                    var testQuery = await cntxt.CustomerItemsTestR.FirstOrDefaultAsync();
                     break;
                 }
                 catch (Exception ex1)

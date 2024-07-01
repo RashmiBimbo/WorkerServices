@@ -13,5 +13,7 @@ namespace SqlIntegrationServices
 
         public DbSet<UnitOfMeasureConversionsTestR> UnitOfMeasureConversionsTestR { get; set; } = default!;
 
+        public DbSet<CustomerItemsTestR> CustomerItemsTestR { get; set; } = default!;
+
     }
 }
