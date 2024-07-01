@@ -24,7 +24,7 @@ namespace CommonCode
         {
             try
             {
-                string itmString = itm?.ToString(); // Convert itm to string
+                string itmString = itm?.ToString(); // Convert input to string
                 return DateTimeOffset.TryParse(itmString, out DateTimeOffset dto) ? dto : null;
             }
             catch (Exception ex)
@@ -34,17 +34,22 @@ namespace CommonCode
             }
         }
 
-        public static double? TryCastDbl(dynamic itm)
+        /// <summary>
+        /// Cast the input parameter to double. Returns 0.0 if fails
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static double TryCastDbl(dynamic input)
         {
             try
             {
-                string itmString = itm?.ToString(); // Convert itm to string
-                return double.TryParse(itmString, out double dbl) ? dbl : null;
+                string itmString = input?.ToString(); // Convert input to string
+                return double.TryParse(itmString, out double dbl) ? dbl : 0.0;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex?.ToString()}");
-                return null;
+                return 0.0;
             }
         }
 
@@ -52,7 +57,7 @@ namespace CommonCode
         {
             try
             {
-                string itmString = itm?.ToString(); // Convert itm to string
+                string itmString = itm?.ToString(); // Convert input to string
                 return long.TryParse(itmString, out long lng) ? lng : null;
             }
             catch (Exception ex)

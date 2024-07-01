@@ -1,0 +1,164 @@
+{
+    "Services": [
+        {
+            "Name": "SubledgerVoucherGeneralJournalEntryEntities",
+            "ServiceConfiguration": 
+            {
+                "Run": true,
+                "Period": "30",
+                "Table": "SubledgerVoucherGeneralJournalEntryEntitiesTestR",
+                "Columns": [
+                    {
+                        "Name": "ModifiedDateTime1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "ModifiedBy1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "VoucherDataAreaId",
+                        "Add": true
+                    },
+                    {
+                        "Name": "TransferId",
+                        "Add": true
+                    },
+                    {
+                        "Name": "SubledgerJournalEntry",
+                        "Add": true
+                    },
+                    {
+                        "Name": "RecVersion1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Partition1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "GeneralJournalEntry",
+                        "Add": true
+                    },
+                    {
+                        "Name": "AccountingDate",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Etag",
+                        "Add": true
+                    },
+                    {
+                        "Name": "ParentReference",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Voucher",
+                        "Add": true
+                    },
+                    {
+                        "Name": "RecId1",
+                        "Add": true
+                    }
+                ]
+            }
+        },
+        {
+            "Name": "AllProducts",
+            "ServiceConfiguration": 
+            {
+                "Run": true,
+                "Period": "30",
+                "Table": "AllProductsTestR",
+                "Columns": [
+                    {
+                        "Name": "ModifiedDateTime1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "ModifiedBy1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "VoucherDataAreaId",
+                        "Add": true
+                    },
+                    {
+                        "Name": "TransferId",
+                        "Add": true
+                    },
+                    {
+                        "Name": "SubledgerJournalEntry",
+                        "Add": true
+                    },
+                    {
+                        "Name": "RecVersion1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Partition1",
+                        "Add": true
+                    },
+                    {
+                        "Name": "GeneralJournalEntry",
+                        "Add": true
+                    },
+                    {
+                        "Name": "AccountingDate",
+                        "Add": true
+                    },
+                    {
+                        "Name": "Etag",
+                        "Add": true
+                    },
+                    { "Name": "ParentReference", "Add": true},
+                    { "Name": "Voucher", "Add": true},
+                    { "Name": "RecId1", "Add": true }
+                ]
+            }
+        },
+        {
+            "Name": "UnitOfMeasureConversions",
+            "ServiceConfiguration": 
+            {
+                "Run": true,
+                "Period": "30",
+                "Table": "UnitOfMeasureConversionsTestR",
+                "Columns": [   
+                    { "Name": "Etag",            "Add": true},
+                    { "Name": "ParentReference", "Add": true},           
+                    { "Name": "FromUnitSymbol",  "Add": true},          
+                    { "Name": "ToUnitSymbol",    "Add": true},        
+                    { "Name": "Denominator",     "Add": true},       
+                    { "Name": "Factor",          "Add": true},  
+                    { "Name": "InnerOffset",     "Add": true},       
+                    { "Name": "Numerator",       "Add": true},     
+                    { "Name": "OuterOffset",     "Add": true},       
+                    { "Name": "Rounding",        "Add": true}    
+                ]
+            }
+        },
+        {
+            "Name": "CustomerItems",
+            "ServiceConfiguration": 
+            {
+                "Run": true,
+                "Period": "30",
+                "Table": "CustomerItemsTestR",
+                "Columns": [   
+                    { "Name": "Etag"              , "Add": true},                 
+                    { "Name": "ParentReference"   , "Add": true},                  
+                    { "Name": "CustVendRelation"  , "Add": true},                            
+                    { "Name": "DataAreaId"        , "Add": true},                      
+                    { "Name": "FromDate"          , "Add": true},       
+                    { "Name": "ItemId"            , "Add": true},     
+                    { "Name": "ToDate"            , "Add": true},     
+                    { "Name": "Description"       , "Add": true},                
+                    { "Name": "IsActive"          , "Add": true},                 
+                    { "Name": "ModifiedBy1"       , "Add": true},                 
+                    { "Name": "ModifiedDateTime1" , "Add": true}                 
+                ]
+            }
+        }
+    ]
+}

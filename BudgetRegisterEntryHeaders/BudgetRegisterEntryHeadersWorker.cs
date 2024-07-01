@@ -66,7 +66,7 @@ namespace BudgetRegisterEntryHeadersService
                     LogInfo(msg);
 
                     int i = 0;
-                    while ( !IsEmpty(url))
+                    while (!IsEmpty(url))
                     {
                         url = await DoWork(resource, url);
                         i++;
@@ -130,97 +130,139 @@ namespace BudgetRegisterEntryHeadersService
                 using var scope = serviceScopeFactory.CreateScope();
                 cntxt = scope.ServiceProvider.GetRequiredService<BudgetRegisterEntryHeadersContext>();
 
+                //if (!await CheckTableExists(cntxt)) return;
+
                 JObject obj = JObject.Parse(result);
                 JArray Items = (JArray)obj["value"];
 
                 long updtCnt = 0, addCnt = 0;
                 int i = Items.Count;
-                foreach (var itm in Items)
+                var strategy = cntxt.Database.CreateExecutionStrategy();
+
+                await strategy.ExecuteAsync(async () =>
                 {
-                    string itmJsn;
-                    BudgetRegisterEntryHeadersTestR existingEntity = null;
-                    for (int cnt = 1; cnt <= 2; cnt++)
+                    using (var transaction = await cntxt.Database.BeginTransactionAsync())
                     {
-                        try
+                        foreach (var itm in Items)
                         {
-                            itmJsn = Serialize.ToJson(itm);
-                            BudgetRegisterEntryHeadersTestR poco = JsonConvert.DeserializeObject<BudgetRegisterEntryHeadersTestR>(itmJsn);
-                            if (poco is null) continue;
-
-                            // Find existing entity in the database
-                            existingEntity = await cntxt.BudgetRegisterEntryHeadersTestR.FindAsync([poco.EntryNumber, poco.LegalEntityId, poco.DataAreaId]);
-
-                            // Check if the entity exists in the database
-                            if (existingEntity == null) // Add the new entity
+                            string itmJsn;
+                            BudgetRegisterEntryHeadersTestR existingEntity = null, poco = null;
+                            for (int cnt = 1; cnt <= 2; cnt++)
                             {
-                                cntxt.BudgetRegisterEntryHeadersTestR.Add(poco);
-                                addCnt++;
-                            }
-                            else // Update the existing entity if modified
-                            {
-                                if ((poco.ModifiedDateTime1 != null) && !(existingEntity.ModifiedDateTime1 != null) && (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1))
+                                try
                                 {
-                                    cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
-                                    updtCnt++;
+                                    itmJsn = Serialize.ToJson(itm);
+                                    poco = JsonConvert.DeserializeObject<BudgetRegisterEntryHeadersTestR>(itmJsn);
+
+                                    if (poco is null) continue;
+
+                                    // Find existing entity in the database
+                                    if (cntxt.BudgetRegisterEntryHeadersTestR.Any())
+                                        existingEntity = await cntxt.BudgetRegisterEntryHeadersTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.DataAreaId == poco.DataAreaId) && (e.LegalEntityId == poco.LegalEntityId) && (e.EntryNumber == poco.EntryNumber));
+
+                                    // Check if the entity exists in the local 
+                                    if (!cntxt.BudgetRegisterEntryHeadersTestR.Local.Any(e => (e.DataAreaId == poco.DataAreaId) && (e.LegalEntityId == poco.LegalEntityId) && (e.EntryNumber == poco.EntryNumber)))
+                                    {
+                                        if (existingEntity == null) // Add the new entity
+                                        {
+                                            cntxt.BudgetRegisterEntryHeadersTestR.Add(poco);
+                                            addCnt++;
+                                        }
+                                        else // Update the existing entity if modified
+                                        {
+                                            if ((poco.ModifiedDateTime1 != null) && !(existingEntity.ModifiedDateTime1 != null) && (poco.ModifiedDateTime1 > existingEntity.ModifiedDateTime1))
+                                            {
+                                                cntxt.Entry(existingEntity).CurrentValues.SetValues(poco);
+                                                updtCnt++;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex?.StackTrace}");
+                                    if (cnt < 2)
+                                        LogInfo($"{Now}: Saving entity failed. Retrying...");
                                 }
                             }
-                            break;
                         }
-                        catch (Exception ex)
+                        for (int cnt = 1; cnt <= 2; cnt++)
                         {
-                            LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex?.StackTrace}");
-                            if (cnt < 2)
-                                LogInfo($"{Now}: Saving entity failed. Retrying...");
+                            try
+                            {
+                                await cntxt.SaveChangesAsync();
+                                await transaction.CommitAsync();
+                                break;
+                            }
+                            catch (Exception ex)
+                            {
+                                LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex.StackTrace}");
+                                if (cnt < 2)
+                                {
+                                    string msg = $"{Now}: Error: Saving changes failed! Retrying...";
+                                    LogInfo(msg);
+                                }
+                                else
+                                {
+                                    await transaction.RollbackAsync();
+                                    return;
+                                }
+                            }
                         }
-                    }
-                }
-                try
-                {
-                    // Try to access the poco table
-                    var testQuery = await cntxt.BudgetRegisterEntryHeadersTestR.FirstOrDefaultAsync();
-                }
-                catch (Exception)
-                {
-                    // If an exception occurs, the table doesn't exist, Apply migrations to create it
-                    try
-                    {
-                        await cntxt.Database.MigrateAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex.StackTrace}");
-                        return;
-                    }
-                }
-                for (int cnt = 1; cnt <= 2; cnt++)
-                {
-                    try
-                    {
-                        await cntxt.SaveChangesAsync();
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex.StackTrace}");
-                        if (cnt < 2)
-                        {
-                            string msg = $"{Now}: Error: Saving changes failed! Retrying...";
-                            LogInfo(msg);
-                        }
-                        return;
-                    }
-                }
-                msg = $"\r\n{Now}: Success: Saved data successfully.\r\n" +
-                      $"{Now}: Total no. of records tracked:{i}\r\n" +
-                      $"{Now}: Total no. of records added: {addCnt}\r\n" +
-                      $"{Now}: Total no. of records updated: {updtCnt}\r\n";
+                        msg = $"\r\n{Now}: Success: Saved data successfully.\r\n" +
+                              $"{Now}: Total no. of records tracked:{i}\r\n" +
+                              $"{Now}: Total no. of records added: {addCnt}\r\n" +
+                              $"{Now}: Total no. of records updated: {updtCnt}\r\n";
 
-                LogInfo(msg);
+                        LogInfo(msg);
+                    }
+                });
             }
             catch (Exception ex)
             {
                 LogInfo($"{Now} : Error: {ex?.Message} + \r\n {ex?.StackTrace}");
             }
         }
+
+        private async Task<bool> CheckTableExists(BudgetRegisterEntryHeadersContext cntxt)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+
+                try
+                {
+                    // Try to access the poco table
+                    var testQuery = await cntxt.BudgetRegisterEntryHeadersTestR.FirstOrDefaultAsync();
+                    break;
+                }
+                catch (Exception ex1)
+                {
+                    LogInfo($"{Now}: Error: {ex1?.Message} + \r\n {ex1.StackTrace}");
+                    if (i < 2)
+                    {
+                        LogInfo($"{Now}: Applying migration...");
+                        await ApplyMigration(cntxt);
+                    }
+                    else return false;
+                    // If an exception occurs, the table doesn't exist, Apply migrations to create it
+
+                }
+            }
+            return true;
+        }
+
+        private async Task ApplyMigration(BudgetRegisterEntryHeadersContext cntxt)
+        {
+            try
+            {
+                await cntxt.Database.MigrateAsync();
+            }
+            catch (Exception ex1)
+            {
+                LogInfo($"{Now}: Error: {ex1?.Message} + \r\n {ex1.StackTrace}");
+            }
+        }
+
     }
 }

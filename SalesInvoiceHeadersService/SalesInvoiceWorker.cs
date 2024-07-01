@@ -49,7 +49,7 @@ namespace SalesInvoiceHeaderService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"{Now}: Sales Invoice Headers Service running.");
+                LogInfo($"\r\n{Now}: Sales Invoice Headers Service running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -149,7 +149,9 @@ namespace SalesInvoiceHeaderService
                             if (poco is null) continue;
 
                             // Find existing entity in the database
-                            existingEntity = await cntxt.CustInvoiceJour.FindAsync(poco.RecId1);
+                            //existingEntity = await cntxt.CustInvoiceJour.FindAsync(poco.RecId1);
+                            if (cntxt.CustInvoiceJour.Local.Count > 0)
+                                existingEntity = await cntxt.CustInvoiceJour.AsNoTracking().FirstOrDefaultAsync(e => e.RecId1 == poco.RecId1);
 
                             // Check if the entity exists in the database
                             if (existingEntity == null) // Add the new entity
@@ -180,7 +182,7 @@ namespace SalesInvoiceHeaderService
                     // Try to access the poco table
                     var testQuery = await cntxt.CustInvoiceJour.FirstOrDefaultAsync();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     // If an exception occurs, the table doesn't exist, Apply migrations to create it
                     try

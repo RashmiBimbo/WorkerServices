@@ -8,6 +8,6 @@
 
         public DbSet<BudgetRegisterEntryHeadersTestR> BudgetRegisterEntryHeadersTestR { get; set; } = default!;
 
-        public DbSet<BudgetRegisterEntryHeaders> BudgetRegisterEntryHeaders { get; set; } = default!;
+        //public DbSet<BudgetRegisterEntryHeaders> BudgetRegisterEntryHeaders { get; set; } = default!;
     }
 }
