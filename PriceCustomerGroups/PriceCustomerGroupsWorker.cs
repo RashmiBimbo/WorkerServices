@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 using static System.DateTime;
 
-namespace AllProductsService
+namespace PriceCustomerGroupsService
 {
     public class PriceCustomerGroupsWorker : BackgroundService
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace AllProductsService
+namespace CustomerItemsService
 
 {
     // For EF Core 7+ use [PrimaryKey] to define composite keys at the class level.

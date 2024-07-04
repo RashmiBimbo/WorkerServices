@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 using static System.DateTime;
 
-namespace AllProductsService
+namespace CustomerItemsService
 {
     public class CustomerItemsWorker : BackgroundService
     {
@@ -160,8 +160,9 @@ namespace AllProductsService
                                     // Find existing entity in the database
 
                                     if (cntxt.CustomerItemsTestR.Any())
-                                        existingEntity = await cntxt.CustomerItemsTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate));
+                                        existingEntity = await cntxt.CustomerItemsTestR.AsNoTracking().FirstOrDefaultAsync();
 
+                                    //e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate)
                                     if (!cntxt.CustomerItemsTestR.Local.Any(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate)))
                                     {
                                         // Check if the entity exists in the database

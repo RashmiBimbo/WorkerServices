@@ -1,4 +1,4 @@
-using CustomerItemsService;
+using BudgetRegisterEntryLinesService;
 
 
 var builder = Host.CreateDefaultBuilder(args);

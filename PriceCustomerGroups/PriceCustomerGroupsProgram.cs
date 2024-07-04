@@ -1,4 +1,4 @@
-using CustomerItemsService;
+using PriceCustomerGroupsService;
 
 
 var builder = Host.CreateDefaultBuilder(args);

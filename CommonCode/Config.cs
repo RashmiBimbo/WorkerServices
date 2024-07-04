@@ -35,7 +35,7 @@
         [JsonProperty("Name", NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get; set; }
 
-        [JsonProperty("Add", NullValueHandling = NullValueHandling.Ignore)]
-        public bool Add { get; set; }
+        [JsonProperty("Include", NullValueHandling = NullValueHandling.Ignore)]
+        public bool Include { get; set; }
     }
 }
