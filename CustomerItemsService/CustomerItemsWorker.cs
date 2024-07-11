@@ -49,7 +49,7 @@ namespace CustomerItemsService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Customer Items Service running.");
+                LogInfo($"\r\n{Now}: Customer Items ServiceDetail running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -59,7 +59,7 @@ namespace CustomerItemsService
 
                     string url = $"{resource}/data/CustomerItems";
 
-                    string msg = $"{Now}: Customer Items Service is working; Count: {count}";
+                    string msg = $"{Now}: Customer Items ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -90,7 +90,7 @@ namespace CustomerItemsService
             }
             finally
             {
-                LogInfo($"{Now}: Customer Items Service stopped.");
+                LogInfo($"{Now}: Customer Items ServiceDetail stopped.");
             }
         }
 

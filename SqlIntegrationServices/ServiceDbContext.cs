@@ -7,16 +7,17 @@ namespace SqlIntegrationServices
         {
         }
 
-        public DbSet<SubledgerVoucherGeneralJournalEntryEntitiesTestR> SubledgerVoucherGeneralJournalEntryEntitiesTestR { get; set; } = default!;
+        public DbSet<SubledgerVoucherGeneralJournalEntryEntitiesTest> SubledgerVoucherGeneralJournalEntryEntitiesTest { get; set; } = default!;
 
-        public DbSet<AllProductsTestR> AllProductsTestR { get; set; } = default!;
+        public DbSet<AllProductsTest> AllProductsTest { get; set; } = default!;
 
-        public DbSet<UnitOfMeasureConversionsTestR> UnitOfMeasureConversionsTestR { get; set; } = default!;
+        public DbSet<UnitOfMeasureConversionsTest> UnitOfMeasureConversionsTest { get; set; } = default!;
 
-        public DbSet<CustomerItemsTestR> CustomerItemsTestR { get; set; } = default!;
+        public DbSet<CustomerItemsTest> CustomerItemsTest { get; set; } = default!;
 
         public DbSet<HSNCodes> HSNCodes { get; set; } = default!;
-        public DbSet<HSNCodesTestR> HSNCodesTestR { get; set; } = default!;
+
+        public DbSet<HSNCodesTest> HSNCodesTest { get; set; } = default!;
 
     }
 }

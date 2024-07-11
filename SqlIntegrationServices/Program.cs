@@ -1,4 +1,3 @@
-using Newtonsoft.Json.Linq;
 using CommonCode.Config;
 using SqlIntegrationServices;
 
@@ -15,6 +14,14 @@ class Program
 
     private static void AddServices(HostBuilderContext hostBuilderCntxt, IServiceCollection serviceCln)
     {
+        // Check if the type implements IHostedService
+        Type worker = typeof(SqlIntegrationServices.BaseWorker);
+        if (!typeof(IHostedService).IsAssignableFrom(worker))
+        {
+            Console.WriteLine($"The Worker '{worker.Name}' does not implement IHostedService.");
+            return;
+        }
+
         string solnPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
         string configName = "Config.json";
 
@@ -22,64 +29,60 @@ class Program
         HashSet<Type> registeredTypes = [];
 
         string result = File.ReadAllText(solnPath + "\\" + configName);
-        JObject obj = JObject.Parse(result);
-        JArray Items = (JArray)obj["Services"];
 
-        if (Items is null) return;
+        Services services = JsonConvert.DeserializeObject<Services>(result);
+        if (services is null) return;
 
         // Iterate over the services to configure
-        foreach (var itm in Items)
+        foreach (ServiceDetail serviceDtl in services.ServiceList)
         {
             string itmJsn;
-            for (int cnt = 1; cnt <= 2; cnt++)
+            //if (serviceDtl.Name.Contains("HSNCodes") && serviceDtl.ServiceConfiguration.Run)
+            if (serviceDtl.Run)
             {
-                try
+                ServiceConfiguration serviceConfig = serviceDtl.ServiceConfiguration;
+                for (int cnt = 1; cnt <= 2; cnt++)
                 {
-                    itmJsn = Serialize.ToJson(itm);
-                    var service = JsonConvert.DeserializeObject<Service>(itmJsn);
-                    if (service.Name.Contains("HSNCodes") && service.ServiceConfiguration.Run)
+                    try
                     {
-                        string namespaceName = service.Name + "Service"; // Or the correct namespace
-                        //string workerTypeName = $"SqlIntegrationServices.Workers.{service.Name}Worker";
-                        string workerTypeName = "SqlIntegrationServices.HSNCodesWorker";
+                        //string namespaceName = serviceDtl.Endpoint + "ServiceDetails"; // Or the correct namespace
+                        //string serviceName = "SqlIntegrationServices.AllProductsWorker";
                         // Attempt to get the type
-                        var workerType = Type.GetType(workerTypeName, throwOnError: false, ignoreCase: true);
 
-                        if (workerType != null)
+                        string serviceName = $"SqlIntegrationServices.{serviceConfig.Endpoint}";
+                        var service = Type.GetType(serviceName, throwOnError: false, ignoreCase: true);
+
+                        if (service != null)
                         {
-                            // Check if the type implements IHostedService
-                            if (typeof(IHostedService).IsAssignableFrom(workerType))
+                            if (registeredTypes.Add(service))
+                            // Register the worker as a singleton serviceDtl
                             {
-                                if (registeredTypes.Add(workerType))
-                                // Register the worker as a singleton service
+                                serviceCln.AddSingleton<IHostedService>(provider =>
                                 {
-                                    // Register the configuration instance as a singleton
-                                    serviceCln.AddSingleton(service);
-
-                                    // Register the worker type as a singleton service
-                                    serviceCln.AddSingleton(typeof(IHostedService), workerType);
-                                    //serviceCln.AddTransient(typeof(IHostedService), workerType);
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine($"The type {workerType.FullName} does not implement IHostedService.");
+                                    var serviceScopeFactory = provider.GetRequiredService<IServiceScopeFactory>();
+                                    var logger = provider.GetRequiredService<ILogger<BaseWorker>>();
+                                    return new BaseWorker(serviceScopeFactory, logger, serviceConfig);
+                                });
                             }
                         }
+                        break;
                     }
-                    break;
-                }
-                catch (Exception ex)
-                {
+                    catch (Exception ex)
+                    { }
                 }
             }
         }
+        // Register DbContext
+        var connectionString = hostBuilderCntxt.Configuration.GetConnectionString("MFELDynamics365");
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException("Connection string 'MFELDynamics365' not found or is empty.");
+        }
 
         serviceCln.AddDbContext<ServiceDbContext>(options =>
-            options.UseSqlServer(
-                hostBuilderCntxt.Configuration.GetConnectionString("MFELDynamics365")
-                ?? throw new InvalidOperationException("Connection string 'MFELDynamics365' not found."), options => options.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
-        serviceCln.AddLogging(); // Ensure logging is configured }
+            options.UseSqlServer(connectionString, sqlOptions =>
+                sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
 
+        serviceCln.AddLogging();
     }
 }

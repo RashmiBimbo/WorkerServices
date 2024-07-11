@@ -49,7 +49,7 @@ namespace SalesInvoiceHeaderService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Sales Invoice Headers Service running.");
+                LogInfo($"\r\n{Now}: Sales Invoice Headers ServiceDetail running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -59,7 +59,7 @@ namespace SalesInvoiceHeaderService
 
                     string url = $"{resource}/data/SalesInvoiceHeadersV2?$filter=dataAreaId eq 'BBI' and InvoiceDate ge {lstMnth} and InvoiceDate le {now:yyyy-MM-ddTHH:mm:ssZ} &cross-company=true";
 
-                    string msg = $"{Now}: Sales Invoice Headers Service is working; Count: {count}";
+                    string msg = $"{Now}: Sales Invoice Headers ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -90,7 +90,7 @@ namespace SalesInvoiceHeaderService
             }
             finally
             {
-                LogInfo($"{Now}: Sales Invoice Headers Service stopped.");
+                LogInfo($"{Now}: Sales Invoice Headers ServiceDetail stopped.");
             }
         }
 

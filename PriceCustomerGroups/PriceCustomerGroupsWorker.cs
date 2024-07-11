@@ -48,7 +48,7 @@ namespace PriceCustomerGroupsService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Price Customer Groups Service running.");
+                LogInfo($"\r\n{Now}: Price Customer Groups ServiceDetail running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -58,7 +58,7 @@ namespace PriceCustomerGroupsService
 
                     string url = $"{resource}/data/PriceCustomerGroups";
 
-                    string msg = $"{Now}: Price Customer Groups Service is working; Count: {count}";
+                    string msg = $"{Now}: Price Customer Groups ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -89,7 +89,7 @@ namespace PriceCustomerGroupsService
             }
             finally
             {
-                LogInfo($"{Now}: Price Customer Groups Service stopped.");
+                LogInfo($"{Now}: Price Customer Groups ServiceDetail stopped.");
             }
         }
 

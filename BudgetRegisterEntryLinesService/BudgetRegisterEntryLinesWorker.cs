@@ -50,7 +50,7 @@ namespace BudgetRegisterEntryLinesService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Budget Register Entry Lines Service running.");
+                LogInfo($"\r\n{Now}: Budget Register Entry Lines ServiceDetail running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -60,7 +60,7 @@ namespace BudgetRegisterEntryLinesService
 
                     string url = $"{resource}/data/BudgetRegisterEntryLines";
 
-                    string msg = $"{Now}: Budget Register Entry Lines Service is working; Count: {count}";
+                    string msg = $"{Now}: Budget Register Entry Lines ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -91,7 +91,7 @@ namespace BudgetRegisterEntryLinesService
             }
             finally
             {
-                LogInfo($"{Now}: Budget Register Entry Lines Service stopped.");
+                LogInfo($"{Now}: Budget Register Entry Lines ServiceDetail stopped.");
             }
         }
 

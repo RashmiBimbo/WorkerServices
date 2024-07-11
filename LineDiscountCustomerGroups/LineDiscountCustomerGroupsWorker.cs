@@ -49,7 +49,7 @@ namespace SqlIntegrationServices
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Line Discount Customer Groups Service is running.");
+                LogInfo($"\r\n{Now}: Line Discount Customer Groups ServiceDetail is running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -59,7 +59,7 @@ namespace SqlIntegrationServices
 
                     string url = $"{resource}/data/LineDiscountCustomerGroups";
 
-                    string msg = $"{Now}: Line Discount Customer Groups Service is working; Count: {count}";
+                    string msg = $"{Now}: Line Discount Customer Groups ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -90,7 +90,7 @@ namespace SqlIntegrationServices
             }
             finally
             {
-                LogInfo($"{Now}: Line Discount Customer Groups Service stopped.");
+                LogInfo($"{Now}: Line Discount Customer Groups ServiceDetail stopped.");
             }
         }
 
