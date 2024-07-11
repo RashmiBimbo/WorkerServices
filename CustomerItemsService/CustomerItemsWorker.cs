@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 using static System.DateTime;
 
-namespace AllProductsService
+namespace CustomerItemsService
 {
     public class CustomerItemsWorker : BackgroundService
     {
@@ -49,7 +49,7 @@ namespace AllProductsService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Customer Items Service running.");
+                LogInfo($"\r\n{Now}: Customer Items ServiceDetail running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -59,7 +59,7 @@ namespace AllProductsService
 
                     string url = $"{resource}/data/CustomerItems";
 
-                    string msg = $"{Now}: Customer Items Service is working; Count: {count}";
+                    string msg = $"{Now}: Customer Items ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -90,7 +90,7 @@ namespace AllProductsService
             }
             finally
             {
-                LogInfo($"{Now}: Customer Items Service stopped.");
+                LogInfo($"{Now}: Customer Items ServiceDetail stopped.");
             }
         }
 
@@ -160,8 +160,9 @@ namespace AllProductsService
                                     // Find existing entity in the database
 
                                     if (cntxt.CustomerItemsTestR.Any())
-                                        existingEntity = await cntxt.CustomerItemsTestR.AsNoTracking().FirstOrDefaultAsync(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate));
+                                        existingEntity = await cntxt.CustomerItemsTestR.AsNoTracking().FirstOrDefaultAsync();
 
+                                    //e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate)
                                     if (!cntxt.CustomerItemsTestR.Local.Any(e => (e.CustVendRelation == poco.CustVendRelation) && (e.DataAreaId == poco.DataAreaId) && (e.FromDate == poco.FromDate) && (e.ItemId == poco.ItemId) && (e.ToDate == poco.ToDate)))
                                     {
                                         // Check if the entity exists in the database

@@ -50,7 +50,7 @@ namespace SqlIntegrationServices
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: HSN Codes Service running.");
+                LogInfo($"\r\n{Now}: HSN Codes ServiceDetail running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -60,7 +60,7 @@ namespace SqlIntegrationServices
 
                     string url = $"{resource}/data/HSNCodes";
 
-                    string msg = $"{Now}: HSN Codes Service is working; Count: {count}";
+                    string msg = $"{Now}: HSN Codes ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -91,7 +91,7 @@ namespace SqlIntegrationServices
             }
             finally
             {
-                LogInfo($"{Now}: HSN Codes Service stopped.");
+                LogInfo($"{Now}: HSN Codes ServiceDetail stopped.");
             }
         }
 

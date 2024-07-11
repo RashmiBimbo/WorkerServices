@@ -2,40 +2,46 @@
 {
     public partial class Services
     {
-        [JsonProperty("Services", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Service> ServiceList { get; set; }
+        [JsonProperty("Services")]
+        public List<ServiceDetail> ServiceList { get; set; }
     }
 
-    public partial class Service
+    public partial class ServiceDetail
     {
-        [JsonProperty("Name", NullValueHandling = NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [JsonProperty("Run")]
+        public bool Run { get; set; } = true;
 
-        [JsonProperty("ServiceConfiguration", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("ServiceConfiguration")]
         public ServiceConfiguration ServiceConfiguration { get; set; }
     }
 
     public partial class ServiceConfiguration
     {
-        [JsonProperty("Run", NullValueHandling = NullValueHandling.Ignore)]
-        public bool Run { get; set; }
+        [JsonProperty("Name")]
+        public string Name { get; set; }
 
-        [JsonProperty("Period", NullValueHandling = NullValueHandling.Ignore)]
-        public long Period { get; set; }
+        [JsonProperty("Endpoint")]
+        public string Endpoint { get; set; }
 
-        [JsonProperty("Table", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("Period")]
+        public long Period { get; set; } = 30;
+
+        [JsonProperty("Table")]
         public string Table { get; set; }
 
-        [JsonProperty("Columns", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("Altered")]
+        public bool Altered { get; set; } = false;
+
+        [JsonProperty("Columns")]
         public List<Column> Columns { get; set; }
     }
 
     public partial class Column
     {
-        [JsonProperty("Name", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("Name")]
         public string Name { get; set; }
 
-        [JsonProperty("Add", NullValueHandling = NullValueHandling.Ignore)]
-        public bool Add { get; set; }
+        [JsonProperty("Include")]
+        public bool Include { get; set; }
     }
 }

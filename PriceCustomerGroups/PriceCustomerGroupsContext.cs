@@ -1,5 +1,5 @@
 ﻿
-namespace CustomerItemsService
+namespace PriceCustomerGroupsService
 {
     public class PriceCustomerGroupsContext : DbContext
     {

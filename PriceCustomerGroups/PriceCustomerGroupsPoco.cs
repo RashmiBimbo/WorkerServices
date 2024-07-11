@@ -1,5 +1,5 @@
 ﻿
-namespace AllProductsService
+namespace PriceCustomerGroupsService
 {
     [PrimaryKey(nameof(DataAreaId), nameof(GroupCode))]
     public abstract partial class PriceCustomerGroupsBase

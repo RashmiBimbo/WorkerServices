@@ -1,5 +1,5 @@
 ﻿
-namespace CustomerItemsService
+namespace BudgetRegisterEntryLinesService
 {
     public class BudgetRegisterEntryLinesContext : DbContext
     {

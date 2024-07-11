@@ -50,7 +50,7 @@ namespace ProductTranslationsService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Product Translations Service running.");
+                LogInfo($"\r\n{Now}: Product Translations ServiceDetail running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -60,7 +60,7 @@ namespace ProductTranslationsService
 
                     string url = $"{resource}/data/ProductTranslations";
 
-                    string msg = $"{Now}: Product Translations Service is working; Count: {count}";
+                    string msg = $"{Now}: Product Translations ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -91,7 +91,7 @@ namespace ProductTranslationsService
             }
             finally
             {
-                LogInfo($"{Now}: Product Translations Service stopped.");
+                LogInfo($"{Now}: Product Translations ServiceDetail stopped.");
             }
         }
 

@@ -49,7 +49,7 @@ namespace BudgetModelService
             string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             try
             {
-                LogInfo($"\r\n{Now}: Budget Model Service running.");
+                LogInfo($"\r\n{Now}: Budget Model ServiceDetail running.");
 
                 // When the timer should have no due-time, then do the work once now.
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
@@ -59,7 +59,7 @@ namespace BudgetModelService
 
                     string url = $"{resource}/data/BudgetModels";
 
-                    string msg = $"{Now}: Budget Model Service is working; Count: {count}";
+                    string msg = $"{Now}: Budget Model ServiceDetail is working; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = DateTimeOffset.Now;
@@ -90,7 +90,7 @@ namespace BudgetModelService
             }
             finally
             {
-                LogInfo($"{Now}: Budget Model Service stopped.");
+                LogInfo($"{Now}: Budget Model ServiceDetail stopped.");
             }
         }
 

@@ -87,12 +87,14 @@ public class SalesOrderWorker : BackgroundService
         {
             result = await Common.GetJson(resource, restUrl);
             if (!IsEmpty(result))
+            {
+                await JsonToDb(result);
                 break;
+            }
             else if (cnt < 2)
             {
                 LogInfo("Getting JSON failed! Retrying...");
             }
-            await JsonToDb(result);
         }
     }
 
@@ -169,8 +171,8 @@ public class SalesOrderWorker : BackgroundService
                     {
                         itmJsn = Serialize.ToJson(itm);
                         SalesOrderTestPoco poco = JsonConvert.DeserializeObject<SalesOrderTestPoco>(itmJsn);
-                        SalesOrderTestPoco? existingEntity = cntxt.Set<SalesOrderTestPoco>().Find(poco.OdataEtag);
-                        SalesOrderTestPoco? rcrd = await cntxt.SalesOrderTestPoco.FirstOrDefaultAsync(e => e.OdataEtag == poco.OdataEtag);
+                        SalesOrderTestPoco? existingEntity = cntxt.Set<SalesOrderTestPoco>().Find([poco.DataAreaId, poco.SalesOrderNumber]);
+                        SalesOrderTestPoco? rcrd = await cntxt.SalesOrderTestPoco.FirstOrDefaultAsync(e => e.DataAreaId == poco.DataAreaId && e.SalesOrderNumber == poco.SalesOrderNumber);
 
                         if (existingEntity != null)
                         // Update the existing entity

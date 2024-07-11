@@ -18,7 +18,7 @@ namespace SalesOrderService.Models
     public partial class SalesOrderTestPoco
     {
         [JsonProperty("@odata.etag")]
-        public string? OdataEtag { get; set; }
+        public string? Etag { get; set; }
 
         [JsonProperty("dataAreaId")]
         public string? DataAreaId { get; set; }

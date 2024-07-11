@@ -1,5 +1,5 @@
 ﻿
-namespace CustomerItemsService
+namespace BudgetRegisterEntryLinesService
 {
     // For EF Core 7+ use [PrimaryKey] to define composite keys at the class level.
     [PrimaryKey(nameof(DataAreaId), nameof(LineNumber), nameof(LegalEntityId), nameof(EntryNumber))]
