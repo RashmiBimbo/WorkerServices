@@ -1,4 +1,5 @@
 using CommonCode.Config;
+using Microsoft.Extensions.DependencyInjection;
 using SqlIntegrationServices;
 
 class Program
@@ -22,25 +23,25 @@ class Program
             return;
         }
 
+        // Set of registered types to avoid duplicates
+        HashSet<Type> registeredTypes = [];
         string solnPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
         string configName = "Config.json";
 
-        // Set of registered types to avoid duplicates
-        HashSet<Type> registeredTypes = [];
+        //string ConfigJson = File.ReadAllText(solnPath + "\\" + configName);
+        string ConfigJson = File.ReadAllText("C:\\Users\\rashmi.gupta\\source\\repos\\WorkerServices\\Config.json");
 
-        string result = File.ReadAllText(solnPath + "\\" + configName);
-
-        Services services = JsonConvert.DeserializeObject<Services>(result);
+        Services services = JsonConvert.DeserializeObject<Services>(ConfigJson);
         if (services is null) return;
 
         // Iterate over the services to configure
         foreach (ServiceDetail serviceDtl in services.ServiceList)
         {
             string itmJsn;
-            //if (serviceDtl.Name.Contains("HSNCodes") && serviceDtl.ServiceConfiguration.Run)
+            //if (serviceDtl.Name.Contains("HSNCodes") && serviceDtl.Run)
             if (serviceDtl.Run)
             {
-                ServiceConfiguration serviceConfig = serviceDtl.ServiceConfiguration;
+                //ServiceConfiguration serviceConfig = serviceDtl.ServiceConfiguration;
                 for (int cnt = 1; cnt <= 2; cnt++)
                 {
                     try
@@ -49,7 +50,7 @@ class Program
                         //string serviceName = "SqlIntegrationServices.AllProductsWorker";
                         // Attempt to get the type
 
-                        string serviceName = $"SqlIntegrationServices.{serviceConfig.Endpoint}";
+                        string serviceName = $"SqlIntegrationServices.{serviceDtl.Table}";
                         var service = Type.GetType(serviceName, throwOnError: false, ignoreCase: true);
 
                         if (service != null)
@@ -61,7 +62,7 @@ class Program
                                 {
                                     var serviceScopeFactory = provider.GetRequiredService<IServiceScopeFactory>();
                                     var logger = provider.GetRequiredService<ILogger<BaseWorker>>();
-                                    return new BaseWorker(serviceScopeFactory, logger, serviceConfig);
+                                    return new BaseWorker(serviceScopeFactory, logger, serviceDtl);
                                 });
                             }
                         }
@@ -73,7 +74,8 @@ class Program
             }
         }
         // Register DbContext
-        var connectionString = hostBuilderCntxt.Configuration.GetConnectionString("MFELDynamics365");
+        //var connectionString = hostBuilderCntxt.Configuration.GetConnectionString("MFELDynamics365");
+        string connectionString = "Data Source=10.10.1.138;Initial Catalog=MFELDynamics365;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
         if (string.IsNullOrEmpty(connectionString))
         {
             throw new InvalidOperationException("Connection string 'MFELDynamics365' not found or is empty.");

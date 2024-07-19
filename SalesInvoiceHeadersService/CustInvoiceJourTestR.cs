@@ -6,6 +6,11 @@ namespace SalesInvoiceHeaderService
 {
     public partial class CustInvoiceJourBase
     {
+        public static CustInvoiceJourBase FromJson(string json) => JsonConvert.DeserializeObject<CustInvoiceJourBase>(json, Converter.Settings);
+    }
+
+    public partial class CustInvoiceJourBase
+    {
         [Key]
         [JsonProperty("RecId1", NullValueHandling = NullValueHandling.Ignore)]
         //[JsonConverter(typeof(ParseStringConverter<long>))]
@@ -207,11 +212,6 @@ namespace SalesInvoiceHeaderService
 
         [JsonProperty("ParentReference", NullValueHandling = NullValueHandling.Ignore)]
         public string? ParentReference { get; set; }
-    }
-
-    public partial class CustInvoiceJourBase
-    {
-        public static CustInvoiceJourBase FromJson(string json) => JsonConvert.DeserializeObject<CustInvoiceJourBase>(json, Converter.Settings);
     }
 
     public class CustInvoiceJour: CustInvoiceJourBase { }

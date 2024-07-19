@@ -11,6 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Config.json = Config.json
 	EndProjectSection
+	ProjectSection(FolderGlobals) = preProject
+		C_5_4Users_4rashmi_1gupta_4source_4repos_4WorkerServices_4Config_1json__JsonSchema = https://api.airplane.dev/v0/schemas/task.json
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlIntegrationUI", "SqlIntegrationUI\SqlIntegrationUI.csproj", "{D15C2618-CBCE-4CEA-93E7-45AB0B72DC3F}"
 EndProject

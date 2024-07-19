@@ -1,0 +1,104 @@
+﻿@model CommonCode.Config.ServiceDetail
+
+@{
+    ViewData["Title"] = "Edit";
+}
+@* <style>
+    #txtQS {
+        resize: both; /* Allows stretching in both directions */
+        overflow: auto; /* Adds scrollbars if needed */
+    }</style> *@
+<div runat="server" class="form-horizontal">
+    <div runat="server" class="form-group">
+        <br />
+        <h1>Edit</h1>
+        <br />
+        <h4>@Model.Name Service</h4>
+        <hr />
+        <form asp-controller="Services" asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group form-switch">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" id="RBRun" asp-for="Run" /> @Html.DisplayNameFor(model => model.Run)
+                </label>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <br />
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <label asp-for="Endpoint" class="control-label"></label>
+                    <input asp-for="Endpoint" class="form-control" />
+                    <span asp-validation-for="Endpoint" class="text-danger"></span>
+                </div>
+                <br />
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <label asp-for="Period" class="control-label"></label>
+                    <input asp-for="Period" class="form-control" />
+                    <span asp-validation-for="Period" class="text-danger"></span>
+                </div>
+                <br />
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <label asp-for="Table" class="control-label"></label>
+                    <input asp-for="Table" class="form-control" />
+                    <span asp-validation-for="Table" class="text-danger"></span>
+                </div>
+            </div>
+            @* <br /> *@
+            <div class="row">                                                        
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <label asp-for="QueryString" class="control-label">Query String</label>
+                    <textarea id="txtQS" asp-for="QueryString" class="form-control" rows="1" data-val="false"></textarea>
+                </div>
+            </div>
+            <br />
+            <legend>Columns</legend>
+            @* @{
+            var sortedColumns = Model!.Columns.OrderBy(c => c.Name).ToList();
+            } *@
+            <br />
+            <table class="table table-hover table-bordered table-responsive table-group-divider">
+                <thead>
+                    <tr>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Columns[0].Name)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Columns[0].Include)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Columns.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <input type="hidden" asp-for="Columns[i].Name" />
+                                @Model.Columns[i].Name
+                            </td>
+                            <td>
+                                <input class="form-check-input" type="checkbox" asp-for="Columns[i].Include" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Cancel" class="btn btn-outline-secondary" asp-action="Index" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @* <a asp-action="Index">Back to List</a> *@
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

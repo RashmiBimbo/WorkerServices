@@ -1,50 +1,56 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="CommonCode">
-      <HintPath>..\CommonCode\bin\Release\net8.0\CommonCode.dll</HintPath>
-    </Reference>
+    <Compile Remove="Views\Home\**" />
+    <Content Remove="Views\Home\**" />
+    <EmbeddedResource Remove="Views\Home\**" />
+    <None Remove="Views\Home\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\lib\bootstrap\css\bootstrap - Copy.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap\css\bootstrap - Copy.css.map">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap\css\bootstrap - Copy.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap\css\bootstrap - Copy.min.css.map">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap\css\bootstrap - Copy.rtl.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap\css\bootstrap - Copy.rtl.css.map">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap\css\bootstrap - Copy.rtl.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap\css\bootstrap - Copy.rtl.min.css.map">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    <Compile Remove="Controllers\HomeController.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap - Copy.css" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap - Copy.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap - Copy.min.css" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap - Copy.min.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap - Copy.rtl.css" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap - Copy.rtl.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap - Copy.rtl.min.css" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap - Copy.rtl.min.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.css" />
+    <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.min.css" />
+    <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.min.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.rtl.css" />
+    <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.rtl.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.rtl.min.css" />
+    <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.rtl.min.css.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommonCode\CommonCode.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="CommonCode" />
+    <Using Include="CommonCode.Config" />
+    <Using Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties wwwroot_4lib_4bootstrap_4dist_4css_4bootstrap_1rtl_1css_1map__JsonSchema="https://json.schemastore.org/sublime-syntax.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

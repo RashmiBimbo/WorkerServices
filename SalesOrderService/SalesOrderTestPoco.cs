@@ -20,10 +20,11 @@ namespace SalesOrderService.Models
         [JsonProperty("@odata.etag")]
         public string? Etag { get; set; }
 
+        [Key]
         [JsonProperty("dataAreaId")]
         public string? DataAreaId { get; set; }
 
-        //[Key]
+        [Key]
         [JsonProperty("SalesOrderNumber")]
         public string? SalesOrderNumber { get; set; }
 
