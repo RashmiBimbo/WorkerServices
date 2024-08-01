@@ -4,13 +4,13 @@ namespace CommonCode.Config
     public partial class Services
     {
         [JsonProperty("Services")]
-        public List<ServiceDetail> ServiceList { get; set; }
+        public HashSet<ServiceDetail> ServiceSet { get; set; }
     }
 
     public partial class ServiceDetail
     {
-        [JsonProperty("Run")]
-        public bool Run { get; set; } = true;
+        [JsonProperty("Enable")]
+        public bool Enable { get; set; } = true;
 
         [JsonProperty("Name")]
         public string Name { get; set; }
@@ -22,7 +22,7 @@ namespace CommonCode.Config
         public string QueryString { get; set; }
 
         [JsonProperty("Period")]
-        public long Period { get; set; } = 30;
+        public int Period { get; set; } = 30;
 
         [JsonProperty("Table")]
         public string Table { get; set; }

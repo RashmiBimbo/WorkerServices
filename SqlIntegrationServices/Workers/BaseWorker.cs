@@ -34,8 +34,6 @@ namespace SqlIntegrationServices
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             ServiceConfig = ServiceConfiguration;
-            DateTimeOffset now = DateTimeOffset.Now;
-            string lstMnth = now.AddMonths(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             ServiceEndpoint = ServiceConfig.Endpoint + (!IsEmpty(ServiceConfig.QueryString) ? "?" + ServiceConfig.QueryString : "");
             ServiceTbl = ServiceConfig.Table;
             logFile = AppDomain.CurrentDomain.BaseDirectory + $"{ServiceTbl.Replace("Test", Emp)}Service_Log.txt";
@@ -149,7 +147,7 @@ namespace SqlIntegrationServices
                     LogInfo($"{Now}: Error: Getting JSON failed! Retrying...");
                 }
             }
-            await JsonToDb(result);
+            await RunStrategy(result);
             if (IsEmpty(result)) return Emp;
             string[] strArr = result.Split("@odata.nextLink");
             if (strArr.Length > 1 && !IsEmpty(strArr[1]))
@@ -160,7 +158,7 @@ namespace SqlIntegrationServices
             else return Emp;
         }
 
-        protected async virtual Task JsonToDb(string result)
+        protected async virtual Task RunStrategy(string result)
         {
             //File.WriteAllText("SalesInvoiceHeaders_JSON.txt", tblExists);
             if (IsEmpty(result))
@@ -191,10 +189,10 @@ namespace SqlIntegrationServices
             try
             {
                 JObject obj = JObject.Parse(result);
-                JArray Items = (JArray)obj["value"];
+                JArray Items = (JArray)obj?["value"];
 
-                int i = Items.Count;
-                List<long> cnts = await JsonToDb(context, Items, ServiceConfig.Table);
+                int? i = Items?.Count;
+                List<long> cnts = await CallUpdateCntxt(context, Items, ServiceConfig.Table);
                 long updtCnt = cnts[1], addCnt = cnts[0];
 
                 using var transaction = await context.Database.BeginTransactionAsync();
@@ -236,7 +234,7 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async Task<List<long>> JsonToDb(ServiceDbContext context, JArray Items, string tableName)
+        protected async Task<List<long>> CallUpdateCntxt(ServiceDbContext context, JArray Items, string tableName)
         {
             string currentNamespace = typeof(BaseWorker).Namespace;
             string typeName = $"{currentNamespace}.{tableName}";
@@ -245,7 +243,7 @@ namespace SqlIntegrationServices
                 Type entityType = Type.GetType(typeName, throwOnError: false, ignoreCase: true);
 
                 Type t = Type.GetType(typeName, throwOnError: false, ignoreCase: true) ?? throw new InvalidOperationException($"Type {typeName} not found");
-                MethodInfo method = this.GetType().GetMethod(nameof(UpdateTbl), BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo method = this.GetType().GetMethod(nameof(UpdateDbSet), BindingFlags.Instance | BindingFlags.NonPublic);
                 MethodInfo genericMethod = method.MakeGenericMethod(t);
                 Task<List<long>> resultTask = (Task<List<long>>)genericMethod.Invoke(this, [context, Items]);
                 return await resultTask;
@@ -256,14 +254,14 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async Task<List<long>> UpdateTbl<T>(ServiceDbContext context, JArray Items) where T : class, new()
+        protected async Task<List<long>> UpdateDbSet<T>(ServiceDbContext context, JArray Items) where T : class, new()
         {
             long addCnt = 0, updtCnt = 0;
             T ent;
             Expression<Func<T, bool>> exp;
             try
             {
-                if (!await CheckTableExistsOrAltered<T>(context))
+                if (!await CheckTable<T>(context))
                 {
                     //LogInfo($"\r\n{Now}: Error: Could not find or create or alter the table {ServiceConfig.Table}!");
                     throw new Exception($"Could not find or create or alter the table {ServiceConfig.Table}!");
@@ -340,7 +338,7 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async Task<bool> CheckTableExistsOrAltered<T>(ServiceDbContext context) where T : class
+        protected async Task<bool> CheckTable<T>(ServiceDbContext context) where T : class
         {
             bool success = false;
             for (int i = 1; i <= 2; i++)
@@ -387,43 +385,6 @@ namespace SqlIntegrationServices
                     }
                 }
             return success;
-        }
-
-        private async Task<bool> CreateTable<T>(ServiceDbContext context, IEntityType entityType, string tblName, String schemaName = "dbo")
-        {
-            try
-            {
-                string sql = @$"CREATE TABLE [{schemaName}].[{tblName}] (";
-
-                var properties = entityType.GetProperties();
-
-                foreach (var prop in properties)
-                {
-                    string colName = prop.GetColumnName();
-                    string colType = prop.GetColumnType() ?? GetColumnType(prop);
-                    bool isNull = prop.IsNullable;
-                    string colDef = $" [{colName}] {colType.ToUpper()}";
-                    colDef += (isNull ? " NULL," : " NOT NULL,");
-                    //colDef += properties.Last() == prop ? "" : ",";
-                    sql += colDef;
-                }
-                List<PropertyInfo> keyProps = GetPrimaryKeyProperties(typeof(T));
-                if (keyProps != null && keyProps.Count > 0)
-                {
-                    sql += " PRIMARY KEY CLUSTERED (";
-                    keyProps.ForEach(p => sql += $"[{p.Name}] ASC" + (keyProps.Last() == p ? ")" : ", "));
-                }
-                else
-                    sql = sql.Remove(sql.Length - 1);
-
-                sql += ");";
-
-                return await ExecuteQuery(context, sql);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
         }
 
         private async Task<bool> ExecuteQuery(ServiceDbContext context, string query)
@@ -779,15 +740,52 @@ namespace SqlIntegrationServices
             }
             return cols;
         }
-    }
 
-    //                RelationalDatabaseCreator databaseCreator =
-    //(RelationalDatabaseCreator)context.Database.GetService<IDatabaseCreator>();
-    //                databaseCreator.CreateTables();
-    //                var ServiceDetail = new DbMigrationsConfiguration<MyContext> { AutomaticMigrationsEnabled = true };
-    //                var migrator = new DbMigrator(ServiceDetail); dbm
-    //                migrator.Update();
-    //                Shar
-    //sucess = await context.Database.EnsureCreatedAsync();
+        //private async Task<bool> CreateTable<T>(ServiceDbContext context, IEntityType entityType, string tblName, String schemaName = "dbo")
+        //{
+        //    try
+        //    {
+        //        string sql = @$"CREATE TABLE [{schemaName}].[{tblName}] (";
+
+        //        var properties = entityType.GetProperties();
+
+        //        foreach (var prop in properties)
+        //        {
+        //            string colName = prop.GetColumnName();
+        //            string colType = prop.GetColumnType() ?? GetColumnType(prop);
+        //            bool isNull = prop.IsNullable;
+        //            string colDef = $" [{colName}] {colType.ToUpper()}";
+        //            colDef += (isNull ? " NULL," : " NOT NULL,");
+        //            //colDef += properties.Last() == prop ? "" : ",";
+        //            sql += colDef;
+        //        }
+        //        List<PropertyInfo> keyProps = GetPrimaryKeyProperties(typeof(T));
+        //        if (keyProps != null && keyProps.Count > 0)
+        //        {
+        //            sql += " PRIMARY KEY CLUSTERED (";
+        //            keyProps.ForEach(p => sql += $"[{p.Name}] ASC" + (keyProps.Last() == p ? ")" : ", "));
+        //        }
+        //        else
+        //            sql = sql.Remove(sql.Length - 1);
+
+        //        sql += ");";
+
+        //        return await ExecuteQuery(context, sql);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        //                RelationalDatabaseCreator databaseCreator =
+        //(RelationalDatabaseCreator)context.Database.GetService<IDatabaseCreator>();
+        //                databaseCreator.CreateTables();
+        //                var ServiceDetail = new DbMigrationsConfiguration<MyContext> { AutomaticMigrationsEnabled = true };
+        //                var migrator = new DbMigrator(ServiceDetail); dbm
+        //                migrator.Update();
+        //                Shar
+        //sucess = await context.Database.EnsureCreatedAsync();
+    }
 }
 

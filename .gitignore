@@ -371,3 +371,4 @@ FodyWeavers.xsd
 /SalesInvoiceHeadersService - Copy/SalesInvoiceHeadersService - Copy.csproj
 /SalesInvoiceHeadersService - Copy/SalesInvoiceWorker - Copy.cs
 /CommonCode.zip
+*.zip

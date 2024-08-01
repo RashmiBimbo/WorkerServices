@@ -317,14 +317,11 @@ namespace SqlIntegrationServices
 
     public abstract class HGMRPDiscountCalculationsBase
     {
-        [Key]
         [JsonProperty("DataAreaId")]
         public string DataAreaId { get; set; }
 
-        [Key]
         public DateTime? FromDate { get; set; }
 
-        [Key]
         public string ItemId { get; set; }
 
         public string? DiscountGroup { get; set; }
@@ -352,13 +349,10 @@ namespace SqlIntegrationServices
 
     public abstract class HGMRPDiscountMastersBase
     {
-        [Key]
         public string DataAreaId { get; set; }
 
-        [Key]
         public DateTime? FromDate { get; set; }
 
-        [Key]
         public string ItemId { get; set; }
 
         public string? DiscountGroup { get; set; }

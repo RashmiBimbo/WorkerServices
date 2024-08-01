@@ -63,7 +63,6 @@ namespace SqlIntegrationServices
 
                 modelBuilder.Entity(entityType.FullName).HasKey([.. primaryKeyProperties]);
             }
-            modelBuilder.Entity<CustInvoiceJourTest>().HasKey(["DataAreaId", "InvoiceDate", "InvoiceNumber", "LedgerVoucher"]);
         }
 
         private void AddDbSets()
