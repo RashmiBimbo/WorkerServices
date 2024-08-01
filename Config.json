@@ -2186,6 +2186,379 @@
           "Include": true
         }
       ]
+    },
+    {
+      "Enable": true,
+      "Name": "BillOfMaterialsLinesV2",
+      "Endpoint": "BillOfMaterialsLinesV2",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "BillOfMaterialsLinesV2Test",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "BOMId",
+          "Include": true
+        },
+        {
+          "Name": "LineCreationSequenceNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductConfigurationId",
+          "Include": true
+        },
+        {
+          "Name": "PositionNumber",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionCalculationMethod",
+          "Include": true
+        },
+        {
+          "Name": "IsConsumedAtOperationComplete",
+          "Include": true
+        },
+        {
+          "Name": "LineNumber",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionCalculationConstant",
+          "Include": true
+        },
+        {
+          "Name": "ProductSizeId",
+          "Include": true
+        },
+        {
+          "Name": "ItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionWarehouseId",
+          "Include": true
+        },
+        {
+          "Name": "ValidFromDate",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionSiteId",
+          "Include": true
+        },
+        {
+          "Name": "WillCostCalculationIncludeLine",
+          "Include": true
+        },
+        {
+          "Name": "SubBOMId",
+          "Include": true
+        },
+        {
+          "Name": "IsResourceConsumptionUsed",
+          "Include": true
+        },
+        {
+          "Name": "WillManufacturedItemInheritBatchAttributes",
+          "Include": true
+        },
+        {
+          "Name": "ProductUnitSymbol",
+          "Include": true
+        },
+        {
+          "Name": "LineType",
+          "Include": true
+        },
+        {
+          "Name": "QuantityRoundingUpMultiples",
+          "Include": true
+        },
+        {
+          "Name": "PhysicalProductDepth",
+          "Include": true
+        },
+        {
+          "Name": "PhysicalProductHeight",
+          "Include": true
+        },
+        {
+          "Name": "ValidToDate",
+          "Include": true
+        },
+        {
+          "Name": "PhysicalProductDensity",
+          "Include": true
+        },
+        {
+          "Name": "RoundingUpMethod",
+          "Include": true
+        },
+        {
+          "Name": "VariableScrapPercentage",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionType",
+          "Include": true
+        },
+        {
+          "Name": "WillManufacturedItemInheritShelfLifeDates",
+          "Include": true
+        },
+        {
+          "Name": "QuantityDenominator",
+          "Include": true
+        },
+        {
+          "Name": "FlushingPrinciple",
+          "Include": true
+        },
+        {
+          "Name": "VendorAccountNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductColorId",
+          "Include": true
+        },
+        {
+          "Name": "CatchWeightQuantity",
+          "Include": true
+        },
+        {
+          "Name": "PhysicalProductWidth",
+          "Include": true
+        },
+        {
+          "Name": "RouteOperationNumber",
+          "Include": true
+        },
+        {
+          "Name": "ConfigurationGroupId",
+          "Include": true
+        },
+        {
+          "Name": "ConstantScrapQuantity",
+          "Include": true
+        },
+        {
+          "Name": "Quantity",
+          "Include": true
+        },
+        {
+          "Name": "ProductStyleId",
+          "Include": true
+        },
+        {
+          "Name": "SubRouteId",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "FormulaVersion2s",
+      "Endpoint": "FormulaVersion2s",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "FormulaVersion2sTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "FormulaId",
+          "Include": true
+        },
+        {
+          "Name": "ProductionSiteId",
+          "Include": true
+        },
+        {
+          "Name": "IsActive",
+          "Include": true
+        },
+        {
+          "Name": "IsTotalCostAllocationUsed",
+          "Include": true
+        },
+        {
+          "Name": "ValidFromDate",
+          "Include": true
+        },
+        {
+          "Name": "ProductConfigurationId",
+          "Include": true
+        },
+        {
+          "Name": "ManufacturedItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "FormulaBatchSizeMultiples",
+          "Include": true
+        },
+        {
+          "Name": "CatchWeightSize",
+          "Include": true
+        },
+        {
+          "Name": "IsSelectedForDesigner",
+          "Include": true
+        },
+        {
+          "Name": "ProductSizeId",
+          "Include": true
+        },
+        {
+          "Name": "ProductColorId",
+          "Include": true
+        },
+        {
+          "Name": "BulkItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "ApproverPersonnelNumber",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ProductStyleId",
+          "Include": true
+        },
+        {
+          "Name": "IsCoProductQuantityVariationAllowed",
+          "Include": true
+        },
+        {
+          "Name": "IsApproved",
+          "Include": true
+        },
+        {
+          "Name": "FromCatchWeightQuantity",
+          "Include": true
+        },
+        {
+          "Name": "ChangedDate",
+          "Include": true
+        },
+        {
+          "Name": "WillCostCalculationIncludeVersion",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "YieldPercentage",
+          "Include": true
+        },
+        {
+          "Name": "VersionName",
+          "Include": true
+        },
+        {
+          "Name": "ValidToDate",
+          "Include": true
+        },
+        {
+          "Name": "FromQuantity",
+          "Include": true
+        },
+        {
+          "Name": "FormulaBatchSize",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "AgreementLineReleasedLines",
+      "Endpoint": "AgreementLineReleasedLines",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "AgreementLineReleasedLinesTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "AgreementLine",
+          "Include": true
+        },
+        {
+          "Name": "CustInvoiceTrans",
+          "Include": true
+        },
+        {
+          "Name": "ProjInvoiceItem",
+          "Include": true
+        },
+        {
+          "Name": "PurchLineDataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "PurchLineInventTransId",
+          "Include": true
+        },
+        {
+          "Name": "SalesLineDataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "SalesLineInventTransId",
+          "Include": true
+        },
+        {
+          "Name": "VendInvoiceTrans",
+          "Include": true
+        },
+        {
+          "Name": "IsModified",
+          "Include": true
+        },
+        {
+          "Name": "IsDeleted",
+          "Include": true
+        },
+        {
+          "Name": "ReferenceRelationType",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
     }
   ]
 }

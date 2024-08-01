@@ -105,12 +105,12 @@ namespace SqlIntegrationUI.Controllers
                 SysFile.WriteAllText(ConfigPathFull, servicesJson);
                 Services = null;
                 bool restartServices = false;
-                for (int i = 0; i < 2; i++)
-                {
-                    restartServices = await RestartServices();
-                    if (restartServices) break;
-                }
-                if (!restartServices) return Problem("Background Services could not be started");
+                //for (int i = 0; i < 2; i++)
+                //{
+                //    restartServices = await RestartServices();
+                //    if (restartServices) break;
+                //}
+                //if (!restartServices) return Problem("Background Services could not be started");
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -133,7 +133,7 @@ namespace SqlIntegrationUI.Controllers
                     foreach (var process in processes)
                     {
                         Console.WriteLine($"Killing process {process.ProcessName} (ID: {process.Id})...");
-                        process.Kill();
+                        process.Kill(true);
                         await process.WaitForExitAsync(); // Ensure the process has fully exited
                         Console.WriteLine("Process killed successfully.");
                     }
@@ -172,13 +172,13 @@ namespace SqlIntegrationUI.Controllers
         private static async Task<bool> RebuildSqlIntegrationServices(string projPath)
         {
             string logFilePath = "build_log.txt";
-            bool debugBuildSuccess = await BuilProject(projPath, "Debug", logFilePath);
+            bool debugBuildSuccess = await BuildProject(projPath, "Debug", logFilePath);
             if (!debugBuildSuccess)
             {
                 Console.WriteLine("Debug build failed. Check the log for details.");
             }
 
-            bool rlzBuildSuccess = await BuilProject(projPath, "Release", logFilePath);
+            bool rlzBuildSuccess = await BuildProject(projPath, "Release", logFilePath);
             if (!rlzBuildSuccess)
             {
                 Console.WriteLine("Release build failed. Check the log for details.");
@@ -187,7 +187,7 @@ namespace SqlIntegrationUI.Controllers
             return true;
         }
 
-        private static async Task<bool> BuilProject(string projPath, string config, string logFilePath)
+        private static async Task<bool> BuildProject(string projPath, string config, string logFilePath)
         {
             ProcessStartInfo proInfo = new()
             {
@@ -270,7 +270,7 @@ namespace SqlIntegrationUI.Controllers
                 //{
                 IEnumerable<JProperty> props = await GetServiceProps(service);
                 service.Columns = await GetColumns(props);
-                await GenerateModel(service);
+                await GenerateModel(service,props);
                 Services.ServiceSet.Add(service);
                 //}
                 return RedirectToAction(nameof(Index));
@@ -281,12 +281,12 @@ namespace SqlIntegrationUI.Controllers
             }
         }
 
-        private async Task GenerateModel(ServiceDetail service)
+        private async Task GenerateModel(ServiceDetail service, IEnumerable<JProperty> props)
         {
-            object connectionString = "Data Source=10.10.1.138;Initial Catalog=MFELDynamics365;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-            object TableName = service.Name;
-            string batchFilePath = "command.bat";
-            string logFilePath = "output.log";
+            //obtaining ConnectionString from user secret
+            string connectionString = "Name=ConnectionStrings:DefaultConnection";
+            string TableName = service.Name, batchFilePath = "command.bat", logFilePath = "output.log";
+            bool genSuccess = true;
 
             // Write commands to the batch file
             SysFile.WriteAllLines(batchFilePath,
@@ -294,130 +294,58 @@ namespace SqlIntegrationUI.Controllers
                 "@echo off",
                 $@"cd {crntSolnDirectory}\SqlIntegrationServices",
                 "echo Current Directory: %cd%",
-                $"dotnet ef dbcontext scaffold \"{connectionString}\" Microsoft.EntityFrameworkCore.SqlServer -o Models --context-namespace SqlIntegrationServices --namespace SqlIntegrationServices --data-annotations --no-build -t {TableName} --force",
+                $"dotnet ef dbcontext scaffold \"{connectionString}\" Microsoft.EntityFrameworkCore.SqlServer -o Models --context-namespace SqlIntegrationServices --no-onconfiguring --namespace SqlIntegrationServices --data-annotations -t {TableName} --force",
                 "echo Done" // Optional: indicate completion
             ]);
 
             // Set up the process start info to run the batch file
             ProcessStartInfo processInfo = new("cmd.exe", $"/c start cmd.exe /k \"{batchFilePath} > {logFilePath} 2>&1\"")
             {
-                UseShellExecute = true, // This allows the cmd to open in a new window
-                CreateNoWindow = false
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false, // This allows the cmd to open in a new window
+                CreateNoWindow = true
             };
 
-            Process process = Process.Start(processInfo);
-
-            // Wait for the process to exit (optional)
-
-            await process.WaitForExitAsync();
-            await Task.Delay(3000);
-            // Read and display the output from the log file
-            //string output = SysFile.ReadAllText(logFilePath);
-            //Console.WriteLine($"Output:\r\n{output}");
-
-            // Clean up
-            SysFile.Delete(batchFilePath);
-            //SysFile.Delete(logFilePath);
-
-            if (!process.HasExited)
+            using (Process process = Process.Start(processInfo))
             {
+                // Wait for the process to exit (optional)
+                await process.WaitForExitAsync();
+                await Task.Delay(3000);
+
+                if (process.ExitCode != 0)
+                {
+                    genSuccess = false;
+                    Problem("Error while genearting Models! \r\n Please see console for more details.");
+                }
                 try
                 {
                     process.Kill(true);
                     await process.WaitForExitAsync();
-                    await Task.Delay(5000);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error killing process: {ex.Message}");
                 }
+                // Read and display the output from the log file
+                string output = SysFile.ReadAllText(logFilePath);
+
+                Console.WriteLine($"Output:\r\n{output}");
+                // Clean up
+                if (!SysFile.Exists(batchFilePath))
+                    SysFile.Delete(batchFilePath);
+                if (!SysFile.Exists(logFilePath))
+                    SysFile.Delete(logFilePath);
             }
-
-            if (!process.HasExited)
+            if (genSuccess)
             {
-                process.Close();
+                UpdtModel(TableName,props);
             }
+        }
 
-            string batchScript = @"
-@echo off
-REM Batch script to modify C# files to add base and derived classes
-
-REM Path to the directory where models are generated
-set ""modelsDirectory=.C:\Users\rashmi.gupta\source\repos\WorkerServices\SqlIntegrationServices\Models""
-
-REM Change to the models directory
-cd /d ""%modelsDirectory%""
-
-REM Loop over all C# files in the directory
-for %%f in (*.cs) do (
-    REM Read the contents of the file
-    setlocal enabledelayedexpansion
-    set ""content=""
-    for /f ""delims="" %%a in (%%f) do (
-        set ""line=%%a""
-        set ""content=!content!!line!^
-""
-    )
-
-    REM Extract the class name from the content
-    for /f ""tokens=3"" %%b in ('findstr /r /c:""public partial class"" %%f') do (
-        set ""className=%%b""
-    )
-
-    REM Remove any carriage return characters from the class name
-    set ""className=!className:~0,-1!""
-
-    REM Define the new base class and derived classes
-    set ""baseClass=public abstract class !className!Base
-{
-!content!
-}
-""
-
-    set ""derivedClass=public class !className! : !className!Base { }
-public class !className!Test : !className!Base { }
-""
-
-    REM Combine base and derived classes
-    echo !baseClass!!derivedClass! > %%f
-
-    endlocal
-)
-
-echo Model files updated successfully.
-";
-
-            SysFile.WriteAllText(batchFilePath, batchScript);
-            var processStartInfo = new ProcessStartInfo
-            {
-                FileName = "cmd.exe",
-                Arguments = $"/c \"{batchFilePath}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using (var process2 = Process.Start(processStartInfo))
-            {
-                if (process == null) return;
-
-                // Read the output (stdout) and error (stderr) streams
-                string output2 = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-
-                process.WaitForExit();
-
-                // Display or handle the output and error
-                Console.WriteLine("Output:");
-                Console.WriteLine(output2);
-
-                if (!string.IsNullOrEmpty(error))
-                {
-                    Console.WriteLine("Errors:");
-                    Console.WriteLine(error);
-                }
-            }
+        private void UpdtModel(string tableName, IEnumerable<JProperty> props)
+        {
+           
         }
 
         private async Task<List<Column>> GetColumns(IEnumerable<JProperty> props = null, ServiceDetail service = null)
