@@ -7,6 +7,7 @@ namespace CommonCode
     public class Common
     {
         public const string Emp = "";
+        public static readonly string Entr = Environment.NewLine;
 
         public static bool IsEmpty(string input)
         {

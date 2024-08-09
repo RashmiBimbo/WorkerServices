@@ -1,6 +1,7 @@
 using CommonCode.Config;
 using Microsoft.Extensions.DependencyInjection;
 using SqlIntegrationServices;
+using System.Reflection;
 
 class Program
 {
@@ -26,14 +27,20 @@ class Program
         // Set of registered types to avoid duplicates
         HashSet<Type> registeredTypes = [];
         string solnPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-        string configName = "Config.json";
+        string debugStr = @"\SqlIntegrationServices\bin\Debug";
+        string rlzStr = @"\SqlIntegrationServices\bin\Release";
+        solnPath = solnPath.Replace(debugStr, string.Empty).Replace(rlzStr, string.Empty);
+        string configFullPath = Path.Combine(solnPath, "Config.json");
 
-        string ConfigJson = File.ReadAllText(solnPath + "\\" + configName);
+        string ConfigJson = File.ReadAllText(configFullPath);
         //string ConfigJson = File.ReadAllText("C:\\Users\\rashmi.gupta\\source\\repos\\WorkerServices\\Config.json");
 
         Services services = JsonConvert.DeserializeObject<Services>(ConfigJson);
         if (services is null) return;
 
+        IEnumerable<Type> entityTypes = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttributes<PrimaryKeyAttribute>().Any());
+        //entityTypes.Except(entityTypes.Select(p => p.Name.Contains("Base", StringComparison.CurrentCultureIgnoreCase)));
         // Iterate over the services to configure
         foreach (ServiceDetail serviceDtl in services.ServiceSet)
         {
@@ -53,18 +60,15 @@ class Program
                         string serviceName = $"SqlIntegrationServices.{serviceDtl.Table}";
                         var service = Type.GetType(serviceName, throwOnError: false, ignoreCase: true);
 
-                        if (service != null)
+                        if (service != null && entityTypes.Contains(service) && registeredTypes.Add(service))
                         {
-                            if (registeredTypes.Add(service))
                             // Register the worker as a singleton serviceDtl
+                            serviceCln.AddSingleton<IHostedService>(provider =>
                             {
-                                serviceCln.AddSingleton<IHostedService>(provider =>
-                                {
-                                    var serviceScopeFactory = provider.GetRequiredService<IServiceScopeFactory>();
-                                    var logger = provider.GetRequiredService<ILogger<BaseWorker>>();
-                                    return new BaseWorker(serviceScopeFactory, logger, serviceDtl);
-                                });
-                            }
+                                var serviceScopeFactory = provider.GetRequiredService<IServiceScopeFactory>();
+                                var logger = provider.GetRequiredService<ILogger<BaseWorker>>();
+                                return new BaseWorker(serviceScopeFactory, logger, serviceDtl);
+                            });
                         }
                         break;
                     }
@@ -76,7 +80,7 @@ class Program
         // Register DbContext
         //var connectionString = hostBuilderCntxt.Configuration.GetConnectionString("DefaultConnection");
         //string connectionString = "Data Source=10.10.1.138;Initial Catalog=MFELDynamics365;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-        string connectionString = "Name=ConnectionStrings:DefaultConnection"; 
+        string connectionString = "Name=ConnectionStrings:DefaultConnection";
         if (string.IsNullOrEmpty(connectionString))
         {
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found or is empty.");

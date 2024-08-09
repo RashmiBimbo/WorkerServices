@@ -11,13 +11,14 @@ public partial class Mfeldynamics365Context : DbContext
     {
     }
 
-    public virtual DbSet<AgreementLineReleasedLine> AgreementLineReleasedLines { get; set; }
+
+    public virtual DbSet<FormulaVersion2s> FormulaVersion2s { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AgreementLineReleasedLine>(entity =>
+        modelBuilder.Entity<FormulaVersion2s>(entity =>
         {
-            entity.HasKey(e => new { e.AgreementLine, e.CustInvoiceTrans, e.ProjInvoiceItem, e.PurchLineDataAreaId, e.PurchLineInventTransId, e.SalesLineDataAreaId, e.SalesLineInventTransId, e.VendInvoiceTrans }).HasName("PK__Agreemen__EA724F76280DFD0F");
+            entity.HasKey(e => new { e.DataAreaId, e.FormulaId, e.IsActive, e.ProductionSiteId }).HasName("PK__FormulaV__CA95C516D9DD3DA6");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -10,58 +10,58 @@ namespace SqlIntegrationServices
             //AddDbSets();
         }
 
-        public DbSet<AllProducts> AllProducts { get; set; } = default!;
-        public DbSet<AllProductsTest> AllProductsTest { get; set; } = default!;
-        public DbSet<BudgetModels> BudgetModels { get; set; } = default!;
-        public DbSet<BudgetModelsTest> BudgetModelsTest { get; set; } = default!;
-        public DbSet<BudgetRegisterEntryHeaders> BudgetRegisterEntryHeaders { get; set; } = default!;
-        public DbSet<BudgetRegisterEntryHeadersTest> BudgetRegisterEntryHeadersTest { get; set; } = default!;
-        public DbSet<BudgetRegisterEntryLines> BudgetRegisterEntryLines { get; set; } = default!;
-        public DbSet<BudgetRegisterEntryLinesTest> BudgetRegisterEntryLinesTest { get; set; } = default!;
-        public DbSet<CustomerItems> CustomerItems { get; set; } = default!;
-        public DbSet<CustomerItemsTest> CustomerItemsTest { get; set; } = default!;
-        public DbSet<CustInvoiceJour> CustInvoiceJour { get; set; } = default!;
-        public DbSet<CustInvoiceJourTest> CustInvoiceJourTest { get; set; } = default!;
+        //public DbSet<AllProducts> AllProducts { get; set; } = default!;
+        //public DbSet<AllProductsTest> AllProductsTest { get; set; } = default!;
+        //public DbSet<BudgetModels> BudgetModels { get; set; } = default!;
+        //public DbSet<BudgetModelsTest> BudgetModelsTest { get; set; } = default!;
+        //public DbSet<BudgetRegisterEntryHeaders> BudgetRegisterEntryHeaders { get; set; } = default!;
+        //public DbSet<BudgetRegisterEntryHeadersTest> BudgetRegisterEntryHeadersTest { get; set; } = default!;
+        //public DbSet<BudgetRegisterEntryLines> BudgetRegisterEntryLines { get; set; } = default!;
+        //public DbSet<BudgetRegisterEntryLinesTest> BudgetRegisterEntryLinesTest { get; set; } = default!;
+        //public DbSet<CustomerItems> CustomerItems { get; set; } = default!;
+        //public DbSet<CustomerItemsTest> CustomerItemsTest { get; set; } = default!;
+        //public DbSet<CustInvoiceJour> CustInvoiceJour { get; set; } = default!;
+        //public DbSet<CustInvoiceJourTest> CustInvoiceJourTest { get; set; } = default!;
 
-        //public DbSet<HGMRPCalculations> HGMRPCalculations { get; set; } = default!;
-        //public DbSet<HGMRPCalculationsTest> HGMRPCalculationsTest { get; set; } = default!;
-        //public DbSet<HGMRPDiscountCalculations> HGMRPDiscountCalculations { get; set; } = default!;
-        //public DbSet<HGMRPDiscountCalculationsTest> HGMRPDiscountCalculationsTest { get; set; } = default!;
-        //public DbSet<HGMRPDiscountMasters> HGMRPDiscountMasters { get; set; } = default!;
-        //public DbSet<HGMRPDiscountMastersTest> HGMRPDiscountMastersTest { get; set; } = default!;
-        //public DbSet<HGMRPMasters> HGMRPMasters { get; set; } = default!;
-        //public DbSet<HGMRPMastersTest> HGMRPMastersTest { get; set; } = default!;
-        public DbSet<HSNCodes> HSNCodes { get; set; } = default!;
-        public DbSet<HSNCodesTest> HSNCodesTest { get; set; } = default!;
-        public DbSet<LineDiscountCustomerGroups> LineDiscountCustomerGroups { get; set; } = default!;
-        public DbSet<LineDiscountCustomerGroupsTest> LineDiscountCustomerGroupsTest { get; set; } = default!;
-        public DbSet<PriceCustomerGroups> PriceCustomerGroups { get; set; } = default!;
-        public DbSet<PriceCustomerGroupsTest> PriceCustomerGroupsTest { get; set; } = default!;
-        public DbSet<ProductTranslations> ProductTranslations { get; set; } = default!;
-        public DbSet<ProductTranslationsTest> ProductTranslationsTest { get; set; } = default!;
-        public DbSet<SubledgerVoucherGeneralJournalEntryEntities> SubledgerVoucherGeneralJournalEntryEntities { get; set; } = default!;
-        public DbSet<SubledgerVoucherGeneralJournalEntryEntitiesTest> SubledgerVoucherGeneralJournalEntryEntitiesTest { get; set; } = default!;
-        public DbSet<TaxDocuments> TaxDocuments { get; set; } = default!;
-        public DbSet<TaxDocumentsTest> TaxDocumentsTest { get; set; } = default!;
-        public DbSet<UnitOfMeasureConversions> UnitOfMeasureConversions { get; set; } = default!;
-        public DbSet<UnitOfMeasureConversionsTest> UnitOfMeasureConversionsTest { get; set; } = default!;
-        public DbSet<UnitsOfMeasure> UnitsOfMeasure { get; set; } = default!;
-        public DbSet<UnitsOfMeasureTest> UnitsOfMeasureTest { get; set; } = default!;
-
+        ////public DbSet<HGMRPCalculations> HGMRPCalculations { get; set; } = default!;
+        ////public DbSet<HGMRPCalculationsTest> HGMRPCalculationsTest { get; set; } = default!;
+        ////public DbSet<HGMRPDiscountCalculations> HGMRPDiscountCalculations { get; set; } = default!;
+        ////public DbSet<HGMRPDiscountCalculationsTest> HGMRPDiscountCalculationsTest { get; set; } = default!;
+        ////public DbSet<HGMRPDiscountMasters> HGMRPDiscountMasters { get; set; } = default!;
+        ////public DbSet<HGMRPDiscountMastersTest> HGMRPDiscountMastersTest { get; set; } = default!;
+        ////public DbSet<HGMRPMasters> HGMRPMasters { get; set; } = default!;
+        ////public DbSet<HGMRPMastersTest> HGMRPMastersTest { get; set; } = default!;
+        //public DbSet<HSNCodes> HSNCodes { get; set; } = default!;
+        //public DbSet<HSNCodesTest> HSNCodesTest { get; set; } = default!;
+        //public DbSet<LineDiscountCustomerGroups> LineDiscountCustomerGroups { get; set; } = default!;
+        //public DbSet<LineDiscountCustomerGroupsTest> LineDiscountCustomerGroupsTest { get; set; } = default!;
+        //public DbSet<PriceCustomerGroups> PriceCustomerGroups { get; set; } = default!;
+        //public DbSet<PriceCustomerGroupsTest> PriceCustomerGroupsTest { get; set; } = default!;
+        //public DbSet<ProductTranslations> ProductTranslations { get; set; } = default!;
+        //public DbSet<ProductTranslationsTest> ProductTranslationsTest { get; set; } = default!;
+        //public DbSet<SubledgerVoucherGeneralJournalEntryEntities> SubledgerVoucherGeneralJournalEntryEntities { get; set; } = default!;
+        //public DbSet<SubledgerVoucherGeneralJournalEntryEntitiesTest> SubledgerVoucherGeneralJournalEntryEntitiesTest { get; set; } = default!;
+        //public DbSet<TaxDocuments> TaxDocuments { get; set; } = default!;
+        //public DbSet<TaxDocumentsTest> TaxDocumentsTest { get; set; } = default!;
+        //public DbSet<UnitOfMeasureConversions> UnitOfMeasureConversions { get; set; } = default!;
+        //public DbSet<UnitOfMeasureConversionsTest> UnitOfMeasureConversionsTest { get; set; } = default!;
+        //public DbSet<UnitsOfMeasure> UnitsOfMeasure { get; set; } = default!;
+        //public DbSet<UnitsOfMeasureTest> UnitsOfMeasureTest { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             IEnumerable<Type> entityTypes = Assembly.GetExecutingAssembly().GetTypes()
-                    .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttributes<PrimaryKeyAttribute>().Any());
+                .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttributes<PrimaryKeyAttribute>().Any());
 
             foreach (Type entityType in entityTypes)
             {
                 if (entityType.FullName.Contains("Base", StringComparison.InvariantCultureIgnoreCase)) continue;
+
                 var primaryKeyAttribute = entityType.GetCustomAttribute<PrimaryKeyAttribute>();
                 IReadOnlyList<string> primaryKeyProperties = primaryKeyAttribute.PropertyNames;
 
-                modelBuilder.Entity(entityType.FullName).HasKey([.. primaryKeyProperties]);
+                modelBuilder.Entity(entityType).HasKey(primaryKeyProperties.ToArray());
             }
         }
 

@@ -437,10 +437,13 @@ namespace SqlIntegrationServices
             try
             {
                 T ent = new T();
+                var propDicnry = typeof(T).GetProperties().ToDictionary(prop => NormalizeStr(prop.Name), prop => prop);
+
                 foreach (var col in ServiceConfig.Columns)
                 {
-                    string propName = col.Name;
-                    var propInfo = typeof(T).GetProperty(propName);
+                    string propName = NormalizeStr(col.Name);
+                    if(propDicnry.TryGetValue(propName, out PropertyInfo propInfo))
+                    //var propInfo = typeof(T).GetProperty(propName);
                     if (propInfo != null && col.Include)
                     {
                         var val = propInfo.GetValue(poco);
@@ -455,6 +458,12 @@ namespace SqlIntegrationServices
                 return default;
             }
         }
+
+        private string NormalizeStr(string str)
+        {
+            return str.Replace(" ", Emp).ToUpperInvariant();
+        }
+
 
         // Method to get the primary key comparison expression
         protected Expression<Func<T, bool>> GetPrimaryKeyComparisonExpression<T>(T poco, List<PropertyInfo> primaryKeyProperties)

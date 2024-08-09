@@ -11,6 +11,7 @@ namespace SqlIntegrationServices;
 public abstract partial class BillOfMaterialsLinesV2Base
 {
     [StringLength(2000)]
+    [JsonProperty("@odata.etag")]
     public string? Etag { get; set; }
 
     [StringLength(2000)]
@@ -143,5 +144,6 @@ public abstract partial class BillOfMaterialsLinesV2Base
     public string? WillManufacturedItemInheritShelfLifeDates { get; set; }
 }
 
-public partial class  BillOfMaterialsLinesV2Test : BillOfMaterialsLinesV2Base {}
-public partial class  BillOfMaterialsLinesV2 : BillOfMaterialsLinesV2Base {}
+public partial class BillOfMaterialsLinesV2Test : BillOfMaterialsLinesV2Base {}
+
+public partial class BillOfMaterialsLinesV2 : BillOfMaterialsLinesV2Base {}

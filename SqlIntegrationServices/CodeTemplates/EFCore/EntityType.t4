@@ -64,7 +64,7 @@ namespace <#= NamespaceHint #>;
         }
     }
 #>
-public abstract partial class <#= EntityType.Name #>Base
+public abstract partial class <#= EntityType.GetDbSetName() #>Base
 {
 <#
     var firstProperty = true;
@@ -95,6 +95,10 @@ public abstract partial class <#= EntityType.Name #>Base
 <#
             }
         }
+        if(property.Name.Trim().ToUpper().Equals("ETAG"))
+#>
+    [JsonProperty("@odata.etag")]
+<#
 
         usings.AddRange(code.GetRequiredUsings(property.ClrType));
 
@@ -157,9 +161,9 @@ public abstract partial class <#= EntityType.Name #>Base
 #>
 }
 
-public partial class  <#= EntityType.Name #>Test : <#= EntityType.Name #>Base {}
+public partial class <#= EntityType.GetDbSetName() #>Test : <#= EntityType.GetDbSetName() #>Base {}
 
-public partial class  <#= EntityType.Name #> : <#= EntityType.Name #>Base {}
+public partial class <#= EntityType.GetDbSetName() #> : <#= EntityType.GetDbSetName() #>Base {}
 <#
     var previousOutput = GenerationEnvironment;
     GenerationEnvironment = new StringBuilder();

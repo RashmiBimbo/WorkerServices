@@ -2,6 +2,73 @@
   "Services": [
     {
       "Enable": true,
+      "Name": "AgreementLineReleasedLines",
+      "Endpoint": "AgreementLineReleasedLines",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "AgreementLineReleasedLinesTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "AgreementLine",
+          "Include": true
+        },
+        {
+          "Name": "CustInvoiceTrans",
+          "Include": true
+        },
+        {
+          "Name": "ProjInvoiceItem",
+          "Include": true
+        },
+        {
+          "Name": "PurchLineDataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "PurchLineInventTransId",
+          "Include": true
+        },
+        {
+          "Name": "SalesLineDataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "SalesLineInventTransId",
+          "Include": true
+        },
+        {
+          "Name": "VendInvoiceTrans",
+          "Include": true
+        },
+        {
+          "Name": "IsModified",
+          "Include": true
+        },
+        {
+          "Name": "IsDeleted",
+          "Include": true
+        },
+        {
+          "Name": "ReferenceRelationType",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
       "Name": "All Products",
       "Endpoint": "AllProducts",
       "QueryString": "",
@@ -39,6 +106,185 @@
         },
         {
           "Name": "ProductSearchName",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "BillOfMaterialsLinesV2",
+      "Endpoint": "BillOfMaterialsLinesV2",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "BillOfMaterialsLinesV2Test",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "BOMId",
+          "Include": true
+        },
+        {
+          "Name": "LineCreationSequenceNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductConfigurationId",
+          "Include": true
+        },
+        {
+          "Name": "PositionNumber",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionCalculationMethod",
+          "Include": true
+        },
+        {
+          "Name": "IsConsumedAtOperationComplete",
+          "Include": true
+        },
+        {
+          "Name": "LineNumber",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionCalculationConstant",
+          "Include": true
+        },
+        {
+          "Name": "ProductSizeId",
+          "Include": true
+        },
+        {
+          "Name": "ItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionWarehouseId",
+          "Include": true
+        },
+        {
+          "Name": "ValidFromDate",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionSiteId",
+          "Include": true
+        },
+        {
+          "Name": "WillCostCalculationIncludeLine",
+          "Include": true
+        },
+        {
+          "Name": "SubBOMId",
+          "Include": true
+        },
+        {
+          "Name": "IsResourceConsumptionUsed",
+          "Include": true
+        },
+        {
+          "Name": "WillManufacturedItemInheritBatchAttributes",
+          "Include": true
+        },
+        {
+          "Name": "ProductUnitSymbol",
+          "Include": true
+        },
+        {
+          "Name": "LineType",
+          "Include": true
+        },
+        {
+          "Name": "QuantityRoundingUpMultiples",
+          "Include": true
+        },
+        {
+          "Name": "PhysicalProductDepth",
+          "Include": true
+        },
+        {
+          "Name": "PhysicalProductHeight",
+          "Include": true
+        },
+        {
+          "Name": "ValidToDate",
+          "Include": true
+        },
+        {
+          "Name": "PhysicalProductDensity",
+          "Include": true
+        },
+        {
+          "Name": "RoundingUpMethod",
+          "Include": true
+        },
+        {
+          "Name": "VariableScrapPercentage",
+          "Include": true
+        },
+        {
+          "Name": "ConsumptionType",
+          "Include": true
+        },
+        {
+          "Name": "WillManufacturedItemInheritShelfLifeDates",
+          "Include": true
+        },
+        {
+          "Name": "QuantityDenominator",
+          "Include": true
+        },
+        {
+          "Name": "FlushingPrinciple",
+          "Include": true
+        },
+        {
+          "Name": "VendorAccountNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductColorId",
+          "Include": true
+        },
+        {
+          "Name": "CatchWeightQuantity",
+          "Include": true
+        },
+        {
+          "Name": "PhysicalProductWidth",
+          "Include": true
+        },
+        {
+          "Name": "RouteOperationNumber",
+          "Include": true
+        },
+        {
+          "Name": "ConfigurationGroupId",
+          "Include": true
+        },
+        {
+          "Name": "ConstantScrapQuantity",
+          "Include": true
+        },
+        {
+          "Name": "Quantity",
+          "Include": true
+        },
+        {
+          "Name": "ProductStyleId",
+          "Include": true
+        },
+        {
+          "Name": "SubRouteId",
           "Include": true
         }
       ]
@@ -311,6 +557,143 @@
         },
         {
           "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "DimensionAttributes",
+      "Endpoint": "DimensionAttributes",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "DimensionAttributesTest",
+      "Altered": false,
+      "Columns": null
+    },
+    {
+      "Enable": true,
+      "Name": "FormulaVersion2s",
+      "Endpoint": "FormulaVersion2s",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "FormulaVersion2sTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "FormulaId",
+          "Include": true
+        },
+        {
+          "Name": "ProductionSiteId",
+          "Include": true
+        },
+        {
+          "Name": "IsActive",
+          "Include": true
+        },
+        {
+          "Name": "IsTotalCostAllocationUsed",
+          "Include": true
+        },
+        {
+          "Name": "ValidFromDate",
+          "Include": true
+        },
+        {
+          "Name": "ProductConfigurationId",
+          "Include": true
+        },
+        {
+          "Name": "ManufacturedItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "FormulaBatchSizeMultiples",
+          "Include": true
+        },
+        {
+          "Name": "CatchWeightSize",
+          "Include": true
+        },
+        {
+          "Name": "IsSelectedForDesigner",
+          "Include": true
+        },
+        {
+          "Name": "ProductSizeId",
+          "Include": true
+        },
+        {
+          "Name": "ProductColorId",
+          "Include": true
+        },
+        {
+          "Name": "BulkItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "ApproverPersonnelNumber",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ProductStyleId",
+          "Include": true
+        },
+        {
+          "Name": "IsCoProductQuantityVariationAllowed",
+          "Include": true
+        },
+        {
+          "Name": "IsApproved",
+          "Include": true
+        },
+        {
+          "Name": "FromCatchWeightQuantity",
+          "Include": true
+        },
+        {
+          "Name": "ChangedDate",
+          "Include": true
+        },
+        {
+          "Name": "WillCostCalculationIncludeVersion",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "YieldPercentage",
+          "Include": true
+        },
+        {
+          "Name": "VersionName",
+          "Include": true
+        },
+        {
+          "Name": "ValidToDate",
+          "Include": true
+        },
+        {
+          "Name": "FromQuantity",
+          "Include": true
+        },
+        {
+          "Name": "FormulaBatchSize",
           "Include": true
         }
       ]
@@ -748,646 +1131,6 @@
     },
     {
       "Enable": true,
-      "Name": "LineDiscountCustomerGroups",
-      "Endpoint": "LineDiscountCustomerGroups",
-      "QueryString": "",
-      "Period": 30,
-      "Table": "LineDiscountCustomerGroupsTest",
-      "Altered": true,
-      "Columns": [
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "ParentReference",
-          "Include": true
-        },
-        {
-          "Name": "dataAreaId",
-          "Include": true
-        },
-        {
-          "Name": "GroupCode",
-          "Include": true
-        },
-        {
-          "Name": "GroupName",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedBy1",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedDateTime1",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "PriceCustomerGroups",
-      "Endpoint": "PriceCustomerGroups",
-      "QueryString": "",
-      "Period": 30,
-      "Table": "PriceCustomerGroupsTest",
-      "Altered": true,
-      "Columns": [
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "ParentReference",
-          "Include": true
-        },
-        {
-          "Name": "dataAreaId",
-          "Include": true
-        },
-        {
-          "Name": "GroupCode",
-          "Include": true
-        },
-        {
-          "Name": "GroupName",
-          "Include": true
-        },
-        {
-          "Name": "PricingPriority",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedBy1",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedDateTime1",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "ProductTranslations",
-      "Endpoint": "ProductTranslations",
-      "QueryString": "",
-      "Period": 30,
-      "Table": "ProductTranslationsTest",
-      "Altered": true,
-      "Columns": [
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "ParentReference",
-          "Include": true
-        },
-        {
-          "Name": "LanguageId",
-          "Include": true
-        },
-        {
-          "Name": "ProductNumber",
-          "Include": true
-        },
-        {
-          "Name": "Description",
-          "Include": true
-        },
-        {
-          "Name": "ProductName",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedBy1",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedDateTime1",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "SalesInvoiceHeadersV2",
-      "Endpoint": "SalesInvoiceHeadersV2",
-      "QueryString": "$filter=dataAreaId eq 'BBI' and InvoiceDate ge 2024-05-06T12:50:32Z and InvoiceDate le 2024-06-06T12:50:32Z &cross-company=true",
-      "Period": 30,
-      "Table": "CustInvoiceJourTest",
-      "Altered": false,
-      "Columns": [
-        {
-          "Name": "AmountMST",
-          "Include": true
-        },
-        {
-          "Name": "ContactPersonId",
-          "Include": true
-        },
-        {
-          "Name": "CustomersOrderReference",
-          "Include": true
-        },
-        {
-          "Name": "CurrencyCode",
-          "Include": true
-        },
-        {
-          "Name": "DataAreaId",
-          "Include": true
-        },
-        {
-          "Name": "DeliveryAddressName",
-          "Include": true
-        },
-        {
-          "Name": "DeliveryModeCode",
-          "Include": true
-        },
-        {
-          "Name": "DeliveryTermsCode",
-          "Include": true
-        },
-        {
-          "Name": "DriverCode",
-          "Include": true
-        },
-        {
-          "Name": "DriverName",
-          "Include": true
-        },
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceAddressCity",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceAddressCountryRegionId",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceAddressCountryRegionISOCode",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceAddressState",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceAddressStreet",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceAddressStreetNumber",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceAddressZipCode",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceDate",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceCustomerAccountNumber",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceHeaderTaxAmount",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceId_CT",
-          "Include": true
-        },
-        {
-          "Name": "InvoiceNumber",
-          "Include": true
-        },
-        {
-          "Name": "IsProcess_CT",
-          "Include": true
-        },
-        {
-          "Name": "IsProcessed",
-          "Include": true
-        },
-        {
-          "Name": "IsReturn",
-          "Include": true
-        },
-        {
-          "Name": "IRNNumber",
-          "Include": true
-        },
-        {
-          "Name": "LoaderCode",
-          "Include": true
-        },
-        {
-          "Name": "LedgerVoucher",
-          "Include": true
-        },
-        {
-          "Name": "LoaderName",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedDateTime1",
-          "Include": true
-        },
-        {
-          "Name": "OrderAccount",
-          "Include": true
-        },
-        {
-          "Name": "OrderId",
-          "Include": true
-        },
-        {
-          "Name": "PackerCode",
-          "Include": true
-        },
-        {
-          "Name": "PackerName",
-          "Include": true
-        },
-        {
-          "Name": "ParentReference",
-          "Include": true
-        },
-        {
-          "Name": "PORefID",
-          "Include": true
-        },
-        {
-          "Name": "RecId1",
-          "Include": true
-        },
-        {
-          "Name": "ReturnReasonCodeId",
-          "Include": true
-        },
-        {
-          "Name": "RouteCode",
-          "Include": true
-        },
-        {
-          "Name": "SalesId",
-          "Include": true
-        },
-        {
-          "Name": "SalesId_CT",
-          "Include": true
-        },
-        {
-          "Name": "SalesOrderNumber",
-          "Include": true
-        },
-        {
-          "Name": "SalesOrderOriginCode",
-          "Include": true
-        },
-        {
-          "Name": "SalesOrderResponsiblePersonnelNumber",
-          "Include": true
-        },
-        {
-          "Name": "SalesStatus",
-          "Include": true
-        },
-        {
-          "Name": "SalesType",
-          "Include": true
-        },
-        {
-          "Name": "SupervisorCode",
-          "Include": true
-        },
-        {
-          "Name": "SupervisorCodeBak",
-          "Include": true
-        },
-        {
-          "Name": "TotalChargeAmount",
-          "Include": true
-        },
-        {
-          "Name": "TotalDiscountAmount",
-          "Include": true
-        },
-        {
-          "Name": "TotalDiscountCustomerGroupCode",
-          "Include": true
-        },
-        {
-          "Name": "TotalInvoiceAmount",
-          "Include": true
-        },
-        {
-          "Name": "TotalTaxAmount",
-          "Include": true
-        },
-        {
-          "Name": "VehicleCode",
-          "Include": true
-        },
-        {
-          "Name": "VehicleTag",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "SubledgerVoucherGeneralJournalEntryEntities",
-      "Endpoint": "SubledgerVoucherGeneralJournalEntryEntities",
-      "QueryString": "",
-      "Period": 30,
-      "Table": "SubledgerVoucherGeneralJournalEntryEntitiesTest",
-      "Altered": true,
-      "Columns": [
-        {
-          "Name": "AccountingDate",
-          "Include": true
-        },
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "GeneralJournalEntry",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedBy1",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedDateTime1",
-          "Include": true
-        },
-        {
-          "Name": "ParentReference",
-          "Include": true
-        },
-        {
-          "Name": "Partition1",
-          "Include": true
-        },
-        {
-          "Name": "RecId1",
-          "Include": true
-        },
-        {
-          "Name": "RecVersion1",
-          "Include": true
-        },
-        {
-          "Name": "SubledgerJournalEntry",
-          "Include": true
-        },
-        {
-          "Name": "TransferId",
-          "Include": true
-        },
-        {
-          "Name": "Voucher",
-          "Include": true
-        },
-        {
-          "Name": "VoucherDataAreaId",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "Tax Documents",
-      "Endpoint": "TaxDocuments",
-      "QueryString": "",
-      "Period": 30,
-      "Table": "TaxDocumentsTest",
-      "Altered": true,
-      "Columns": [
-        {
-          "Name": "Amount",
-          "Include": true
-        },
-        {
-          "Name": "AmountInTransactionCurrency",
-          "Include": true
-        },
-        {
-          "Name": "CustVendTransTableId",
-          "Include": true
-        },
-        {
-          "Name": "dataAreaId",
-          "Include": true
-        },
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "ParentReference",
-          "Include": true
-        },
-        {
-          "Name": "TaxAmount",
-          "Include": true
-        },
-        {
-          "Name": "TaxAmountInCurrency",
-          "Include": true
-        },
-        {
-          "Name": "TaxCreditMemoDate",
-          "Include": true
-        },
-        {
-          "Name": "TaxCreditMemoNumber",
-          "Include": true
-        },
-        {
-          "Name": "TaxCreditMemoTransactionAmount",
-          "Include": true
-        },
-        {
-          "Name": "TaxCreditMemoTransactionAmountInTransactionCurrency",
-          "Include": true
-        },
-        {
-          "Name": "TaxCreditMemoTransactionTaxAmount",
-          "Include": true
-        },
-        {
-          "Name": "TaxCreditMemoTransactionTaxAmountInCurrency",
-          "Include": true
-        },
-        {
-          "Name": "TaxCreditMemoTransactionTaxValue",
-          "Include": true
-        },
-        {
-          "Name": "TaxCreditMemoTransactionTypeOfTax",
-          "Include": true
-        },
-        {
-          "Name": "TaxDocumentDate",
-          "Include": true
-        },
-        {
-          "Name": "TaxDocumentNumber",
-          "Include": true
-        },
-        {
-          "Name": "TaxDocumentTransactionAmount",
-          "Include": true
-        },
-        {
-          "Name": "TaxDocumentTransactionAmountInTransactionCurrency",
-          "Include": true
-        },
-        {
-          "Name": "TaxDocumentTransactionTaxAmount",
-          "Include": true
-        },
-        {
-          "Name": "TaxDocumentTransactionTaxAmountInCurrency",
-          "Include": true
-        },
-        {
-          "Name": "TaxDocumentTransactionTaxValue",
-          "Include": true
-        },
-        {
-          "Name": "TaxDocumentTransactionTypeOfTax",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "Unit of Measure Conversions",
-      "Endpoint": "UnitOfMeasureConversions",
-      "QueryString": "",
-      "Period": 30,
-      "Table": "UnitOfMeasureConversionsTest",
-      "Altered": true,
-      "Columns": [
-        {
-          "Name": "Denominator",
-          "Include": true
-        },
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "Factor",
-          "Include": true
-        },
-        {
-          "Name": "FromUnitSymbol",
-          "Include": true
-        },
-        {
-          "Name": "InnerOffset",
-          "Include": true
-        },
-        {
-          "Name": "Numerator",
-          "Include": true
-        },
-        {
-          "Name": "OuterOffset",
-          "Include": true
-        },
-        {
-          "Name": "ParentReference",
-          "Include": true
-        },
-        {
-          "Name": "Rounding",
-          "Include": true
-        },
-        {
-          "Name": "ToUnitSymbol",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "Units of Measure",
-      "Endpoint": "UnitsOfMeasure",
-      "QueryString": "",
-      "Period": 30,
-      "Table": "UnitsOfMeasureTest",
-      "Altered": true,
-      "Columns": [
-        {
-          "Name": "DecimalPrecision",
-          "Include": true
-        },
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "FixedUnitSymbolAssignment",
-          "Include": true
-        },
-        {
-          "Name": "IsBaseUnit",
-          "Include": true
-        },
-        {
-          "Name": "IsFixedUnitSymbolAssigned",
-          "Include": true
-        },
-        {
-          "Name": "IsSystemUnit",
-          "Include": true
-        },
-        {
-          "Name": "NationalCode",
-          "Include": true
-        },
-        {
-          "Name": "ParentReference",
-          "Include": true
-        },
-        {
-          "Name": "SystemOfUnits",
-          "Include": true
-        },
-        {
-          "Name": "UnitClass",
-          "Include": true
-        },
-        {
-          "Name": "UnitDescription",
-          "Include": true
-        },
-        {
-          "Name": "UnitSymbol",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
       "Name": "InventDims",
       "Endpoint": "InventDims",
       "QueryString": null,
@@ -1501,6 +1244,1231 @@
         },
         {
           "Name": "wMSPalletId",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "InventoryMovementJournalEntries",
+      "Endpoint": "InventoryMovementJournalEntries",
+      "QueryString": null,
+      "Period": 25,
+      "Table": "InventoryMovementJournalEntriesTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "JournalNumber",
+          "Include": true
+        },
+        {
+          "Name": "ItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductConfigurationId",
+          "Include": true
+        },
+        {
+          "Name": "ProductColorId",
+          "Include": true
+        },
+        {
+          "Name": "ProductSizeId",
+          "Include": true
+        },
+        {
+          "Name": "ProductStyleId",
+          "Include": true
+        },
+        {
+          "Name": "InventorySiteId",
+          "Include": true
+        },
+        {
+          "Name": "InventoryWarehouseId",
+          "Include": true
+        },
+        {
+          "Name": "ItemBatchNumber",
+          "Include": true
+        },
+        {
+          "Name": "ItemSerialNumber",
+          "Include": true
+        },
+        {
+          "Name": "WarehouseLocationId",
+          "Include": true
+        },
+        {
+          "Name": "LicensePlateNumber",
+          "Include": true
+        },
+        {
+          "Name": "InventoryStatusId",
+          "Include": true
+        },
+        {
+          "Name": "LineNumber",
+          "Include": true
+        },
+        {
+          "Name": "FixedCostCharges",
+          "Include": true
+        },
+        {
+          "Name": "InventoryQuantity",
+          "Include": true
+        },
+        {
+          "Name": "UnitCostQuantity",
+          "Include": true
+        },
+        {
+          "Name": "CostAmount",
+          "Include": true
+        },
+        {
+          "Name": "TransactionDate",
+          "Include": true
+        },
+        {
+          "Name": "OffsetMainAccountIdDisplayValue",
+          "Include": true
+        },
+        {
+          "Name": "DefaultLedgerDimensionDisplayValue",
+          "Include": true
+        },
+        {
+          "Name": "UnitCost",
+          "Include": true
+        },
+        {
+          "Name": "CatchWeightQuantity",
+          "Include": true
+        },
+        {
+          "Name": "JournalNameId",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "InventoryMovementJournalHeaders",
+      "Endpoint": "InventoryMovementJournalHeaders",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "InventoryMovementJournalHeadersTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "JournalNumber",
+          "Include": true
+        },
+        {
+          "Name": "IsPosted",
+          "Include": true
+        },
+        {
+          "Name": "Description",
+          "Include": true
+        },
+        {
+          "Name": "DefaultWarehouseId",
+          "Include": true
+        },
+        {
+          "Name": "ReservationMode",
+          "Include": true
+        },
+        {
+          "Name": "PostingDetailLevel",
+          "Include": true
+        },
+        {
+          "Name": "DefaultInventorySiteId",
+          "Include": true
+        },
+        {
+          "Name": "JournalNameId",
+          "Include": true
+        },
+        {
+          "Name": "VoucherNumberSelectionRule",
+          "Include": true
+        },
+        {
+          "Name": "PostedDateTime",
+          "Include": true
+        },
+        {
+          "Name": "VoucherNumberAllocationRule",
+          "Include": true
+        },
+        {
+          "Name": "VoucherNumberSequenceCode",
+          "Include": true
+        },
+        {
+          "Name": "AreLinesDeletedAfterPosting",
+          "Include": true
+        },
+        {
+          "Name": "PostedUserId",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "InventTableModules",
+      "Endpoint": "InventTableModules",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "InventTableModulesTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "ItemId",
+          "Include": true
+        },
+        {
+          "Name": "ModuleType",
+          "Include": true
+        },
+        {
+          "Name": "SuppItemGroupId",
+          "Include": true
+        },
+        {
+          "Name": "MaximumRetailPrice_IN",
+          "Include": true
+        },
+        {
+          "Name": "EndDisc",
+          "Include": true
+        },
+        {
+          "Name": "PriceDate",
+          "Include": true
+        },
+        {
+          "Name": "Markup",
+          "Include": true
+        },
+        {
+          "Name": "UnderDeliveryPct",
+          "Include": true
+        },
+        {
+          "Name": "LineDisc",
+          "Include": true
+        },
+        {
+          "Name": "OverDeliveryPct",
+          "Include": true
+        },
+        {
+          "Name": "MultiLineDisc",
+          "Include": true
+        },
+        {
+          "Name": "TaxItemGroupId",
+          "Include": true
+        },
+        {
+          "Name": "Price",
+          "Include": true
+        },
+        {
+          "Name": "TaxWithholdItemGroupHeading_TH",
+          "Include": true
+        },
+        {
+          "Name": "AllocateMarkup",
+          "Include": true
+        },
+        {
+          "Name": "InterCompanyBlocked",
+          "Include": true
+        },
+        {
+          "Name": "PriceUnit",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "PriceSecCur_RU",
+          "Include": true
+        },
+        {
+          "Name": "TaxGSTReliefCategory_MY",
+          "Include": true
+        },
+        {
+          "Name": "PDSPricingPrecision",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "MarkupGroupId",
+          "Include": true
+        },
+        {
+          "Name": "MarkupSecCur_RU",
+          "Include": true
+        },
+        {
+          "Name": "EmptyString",
+          "Include": true
+        },
+        {
+          "Name": "UnitId",
+          "Include": true
+        },
+        {
+          "Name": "PriceQty",
+          "Include": true
+        },
+        {
+          "Name": "TaxWithholdCalculate_TH",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "LineDiscountCustomerGroups",
+      "Endpoint": "LineDiscountCustomerGroups",
+      "QueryString": "",
+      "Period": 30,
+      "Table": "LineDiscountCustomerGroupsTest",
+      "Altered": true,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "ParentReference",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "GroupCode",
+          "Include": true
+        },
+        {
+          "Name": "GroupName",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "PaymentTerms",
+      "Endpoint": "PaymentTerms",
+      "QueryString": null,
+      "Period": 25,
+      "Table": "PaymentTermsTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "Name",
+          "Include": true
+        },
+        {
+          "Name": "Description",
+          "Include": true
+        },
+        {
+          "Name": "NumberOfMonths",
+          "Include": true
+        },
+        {
+          "Name": "CutoffDayOfMonth",
+          "Include": true
+        },
+        {
+          "Name": "CreditCardCreditCheckType",
+          "Include": true
+        },
+        {
+          "Name": "PaymentScheduleName",
+          "Include": true
+        },
+        {
+          "Name": "IsDefaultPaymentTerm",
+          "Include": true
+        },
+        {
+          "Name": "CreditCardPaymentType",
+          "Include": true
+        },
+        {
+          "Name": "IsCashPayment",
+          "Include": true
+        },
+        {
+          "Name": "NumberOfDays",
+          "Include": true
+        },
+        {
+          "Name": "CustomerDueDateUpdatePolicy",
+          "Include": true
+        },
+        {
+          "Name": "PaymentDayName",
+          "Include": true
+        },
+        {
+          "Name": "VendorDueDateUpdatePolicy",
+          "Include": true
+        },
+        {
+          "Name": "PostOffsettingAR",
+          "Include": true
+        },
+        {
+          "Name": "PaymentMethodType",
+          "Include": true
+        },
+        {
+          "Name": "CashPaymentMainAccountIdDisplayValue",
+          "Include": true
+        },
+        {
+          "Name": "IsCertifiedCompanyCheck",
+          "Include": true
+        },
+        {
+          "Name": "AdditionalMonthsForCutoffDate",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "PriceCustomerGroups",
+      "Endpoint": "PriceCustomerGroups",
+      "QueryString": "",
+      "Period": 30,
+      "Table": "PriceCustomerGroupsTest",
+      "Altered": true,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "ParentReference",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "GroupCode",
+          "Include": true
+        },
+        {
+          "Name": "GroupName",
+          "Include": true
+        },
+        {
+          "Name": "PricingPriority",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "ProductReceiptLines",
+      "Endpoint": "ProductReceiptLines",
+      "QueryString": null,
+      "Period": 25,
+      "Table": "ProductReceiptLinesTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "RecordId",
+          "Include": true
+        },
+        {
+          "Name": "ProductStyleId",
+          "Include": true
+        },
+        {
+          "Name": "RemainingPurchaseQuantity",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressCountyId",
+          "Include": true
+        },
+        {
+          "Name": "ReceivingSiteId",
+          "Include": true
+        },
+        {
+          "Name": "ReceivedPurchaseQuantity",
+          "Include": true
+        },
+        {
+          "Name": "ExpectedDeliveryDate",
+          "Include": true
+        },
+        {
+          "Name": "LineNumber",
+          "Include": true
+        },
+        {
+          "Name": "LineDescription",
+          "Include": true
+        },
+        {
+          "Name": "ItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseOrderNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductSizeId",
+          "Include": true
+        },
+        {
+          "Name": "RemainingInventoryQuantity",
+          "Include": true
+        },
+        {
+          "Name": "ReceivingWarehouseLocationId",
+          "Include": true
+        },
+        {
+          "Name": "ReceivedInventoryQuantity",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseOrderLineNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductReceiptHeaderRecordId",
+          "Include": true
+        },
+        {
+          "Name": "ItemSerialNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductConfigurationId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressCountryRegionId",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseUnitSymbol",
+          "Include": true
+        },
+        {
+          "Name": "OrderedPurchaseQuantity",
+          "Include": true
+        },
+        {
+          "Name": "ProductNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductVersionId",
+          "Include": true
+        },
+        {
+          "Name": "ProductReceiptNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProcurementProductCategoryHierarchyName",
+          "Include": true
+        },
+        {
+          "Name": "ExternalItemNumber",
+          "Include": true
+        },
+        {
+          "Name": "ReceivedInventoryStatusId",
+          "Include": true
+        },
+        {
+          "Name": "ItemBatchNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductColorId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressStateId",
+          "Include": true
+        },
+        {
+          "Name": "PurchaserPersonnelNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProcurementProductCategoryName",
+          "Include": true
+        },
+        {
+          "Name": "ReceivingWarehouseId",
+          "Include": true
+        },
+        {
+          "Name": "ProductReceiptDate",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "InventTransId",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "ProductTranslations",
+      "Endpoint": "ProductTranslations",
+      "QueryString": "",
+      "Period": 30,
+      "Table": "ProductTranslationsTest",
+      "Altered": true,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "ParentReference",
+          "Include": true
+        },
+        {
+          "Name": "LanguageId",
+          "Include": true
+        },
+        {
+          "Name": "ProductNumber",
+          "Include": true
+        },
+        {
+          "Name": "Description",
+          "Include": true
+        },
+        {
+          "Name": "ProductName",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "PurchaseAgreements",
+      "Endpoint": "PurchaseAgreements",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "PurchaseAgreementsTest",
+      "Altered": false,
+      "Columns": null
+    },
+    {
+      "Enable": true,
+      "Name": "PurchaseOrderHeadersV2",
+      "Endpoint": "PurchaseOrderHeadersV2",
+      "QueryString": null,
+      "Period": 30,
+      "Table": "PurchaseOrderHeadersV2Test",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseOrderNumber",
+          "Include": true
+        },
+        {
+          "Name": "FiscalDocumentOperationTypeId",
+          "Include": true
+        },
+        {
+          "Name": "ExpectedStoreAvailableSalesDate",
+          "Include": true
+        },
+        {
+          "Name": "VendorInvoiceDeclarationId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryModeId",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressStreet",
+          "Include": true
+        },
+        {
+          "Name": "OrderVendorAccountNumber",
+          "Include": true
+        },
+        {
+          "Name": "Email",
+          "Include": true
+        },
+        {
+          "Name": "TransportationModeId",
+          "Include": true
+        },
+        {
+          "Name": "IsChangeManagementActive",
+          "Include": true
+        },
+        {
+          "Name": "AccountingDistributionTemplateName",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressDescription",
+          "Include": true
+        },
+        {
+          "Name": "VendorTransactionSettlementType",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryCityInKana",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryStreetInKana",
+          "Include": true
+        },
+        {
+          "Name": "ReasonComment",
+          "Include": true
+        },
+        {
+          "Name": "NumberSequenceGroupId",
+          "Include": true
+        },
+        {
+          "Name": "TransportationTemplateId",
+          "Include": true
+        },
+        {
+          "Name": "AccountingDate",
+          "Include": true
+        },
+        {
+          "Name": "CashDiscountPercentage",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseOrderName",
+          "Include": true
+        },
+        {
+          "Name": "RequestedDeliveryDate",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressCountryRegionId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressLatitude",
+          "Include": true
+        },
+        {
+          "Name": "MultilineDiscountVendorGroupCode",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressCity",
+          "Include": true
+        },
+        {
+          "Name": "ConfirmedDeliveryDate",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseRebateVendorGroupId",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressCounty",
+          "Include": true
+        },
+        {
+          "Name": "ChargeVendorGroupId",
+          "Include": true
+        },
+        {
+          "Name": "RequesterPersonnelNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProjectId",
+          "Include": true
+        },
+        {
+          "Name": "ShippingCarrierId",
+          "Include": true
+        },
+        {
+          "Name": "TotalDiscountPercentage",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressDistrictName",
+          "Include": true
+        },
+        {
+          "Name": "PriceVendorGroupCode",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseOrderHeaderCreationMethod",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressCountyId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressZipCode",
+          "Include": true
+        },
+        {
+          "Name": "IsConsolidatedInvoiceTarget",
+          "Include": true
+        },
+        {
+          "Name": "ConfirmingPurchaseOrderCode",
+          "Include": true
+        },
+        {
+          "Name": "LanguageId",
+          "Include": true
+        },
+        {
+          "Name": "ReasonCode",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressDunsNumber",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryTermsId",
+          "Include": true
+        },
+        {
+          "Name": "BankDocumentType",
+          "Include": true
+        },
+        {
+          "Name": "ExpectedStoreReceiptDate",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressName",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressCountryRegionId",
+          "Include": true
+        },
+        {
+          "Name": "ReplenishmentServiceCategoryId",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseOrderPoolId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressStreetNumber",
+          "Include": true
+        },
+        {
+          "Name": "RequestedShipDate",
+          "Include": true
+        },
+        {
+          "Name": "ExpectedCrossDockingDate",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressStreetNumber",
+          "Include": true
+        },
+        {
+          "Name": "IsDeliveryAddressPrivate",
+          "Include": true
+        },
+        {
+          "Name": "TaxExemptNumber",
+          "Include": true
+        },
+        {
+          "Name": "FormattedInvoiceAddress",
+          "Include": true
+        },
+        {
+          "Name": "BuyerGroupId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressCountryRegionISOCode",
+          "Include": true
+        },
+        {
+          "Name": "CashDiscountCode",
+          "Include": true
+        },
+        {
+          "Name": "PaymentScheduleName",
+          "Include": true
+        },
+        {
+          "Name": "IntrastatTransactionCode",
+          "Include": true
+        },
+        {
+          "Name": "URL",
+          "Include": true
+        },
+        {
+          "Name": "CurrencyCode",
+          "Include": true
+        },
+        {
+          "Name": "ConfirmingPurchaseOrderCodeLanguageId",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceType",
+          "Include": true
+        },
+        {
+          "Name": "ArePricesIncludingSalesTax",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressLocationId",
+          "Include": true
+        },
+        {
+          "Name": "GSTSelfBilledInvoiceApprovalNumber",
+          "Include": true
+        },
+        {
+          "Name": "IsDeliveredDirectly",
+          "Include": true
+        },
+        {
+          "Name": "ConfirmedShipDate",
+          "Include": true
+        },
+        {
+          "Name": "ShipCalendarId",
+          "Include": true
+        },
+        {
+          "Name": "IntrastatStatisticsProcedureCode",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceVendorAccountNumber",
+          "Include": true
+        },
+        {
+          "Name": "OverrideSalesTax",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressStreet",
+          "Include": true
+        },
+        {
+          "Name": "VendorOrderReference",
+          "Include": true
+        },
+        {
+          "Name": "ReplenishmentWarehouseId",
+          "Include": true
+        },
+        {
+          "Name": "FixedDueDate",
+          "Include": true
+        },
+        {
+          "Name": "TransportationDocumentLineId",
+          "Include": true
+        },
+        {
+          "Name": "SalesTaxGroupCode",
+          "Include": true
+        },
+        {
+          "Name": "IsDeliveryAddressOrderSpecific",
+          "Include": true
+        },
+        {
+          "Name": "VendorPostingProfileId",
+          "Include": true
+        },
+        {
+          "Name": "VendorPaymentMethodSpecificationName",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressCity",
+          "Include": true
+        },
+        {
+          "Name": "ShippingCarrierServiceGroupId",
+          "Include": true
+        },
+        {
+          "Name": "ContactPersonId",
+          "Include": true
+        },
+        {
+          "Name": "DefaultReceivingWarehouseId",
+          "Include": true
+        },
+        {
+          "Name": "EUSalesListCode",
+          "Include": true
+        },
+        {
+          "Name": "ImportDeclarationNumber",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseOrderStatus",
+          "Include": true
+        },
+        {
+          "Name": "PaymentTermsName",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressLongitude",
+          "Include": true
+        },
+        {
+          "Name": "DocumentApprovalStatus",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressZipCode",
+          "Include": true
+        },
+        {
+          "Name": "ShippingCarrierServiceId",
+          "Include": true
+        },
+        {
+          "Name": "DefaultLedgerDimensionDisplayValue",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressTimeZone",
+          "Include": true
+        },
+        {
+          "Name": "AttentionInformation",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressStateId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryBuildingCompliment",
+          "Include": true
+        },
+        {
+          "Name": "IntrastatTransportModeCode",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressPostBox",
+          "Include": true
+        },
+        {
+          "Name": "IsOneTimeVendor",
+          "Include": true
+        },
+        {
+          "Name": "IntrastatPortId",
+          "Include": true
+        },
+        {
+          "Name": "OrdererPersonnelNumber",
+          "Include": true
+        },
+        {
+          "Name": "VendorPaymentMethodName",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressState",
+          "Include": true
+        },
+        {
+          "Name": "DefaultReceivingSiteId",
+          "Include": true
+        },
+        {
+          "Name": "LineDiscountVendorGroupCode",
+          "Include": true
+        },
+        {
+          "Name": "TransportationRoutePlanId",
+          "Include": true
+        },
+        {
+          "Name": "ZakatContractNumber",
+          "Include": true
+        },
+        {
+          "Name": "FormattedDeliveryAddress",
+          "Include": true
+        },
+        {
+          "Name": "TotalDiscountVendorGroupCode",
+          "Include": true
+        },
+        {
+          "Name": "TradeEndCustomerAccount",
+          "Include": true
+        },
+        {
+          "Name": "MatchingAgreement",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "CreatedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "CreatedBy1",
           "Include": true
         }
       ]
@@ -2098,11 +3066,526 @@
     },
     {
       "Enable": true,
-      "Name": "PaymentTerms",
-      "Endpoint": "PaymentTerms",
+      "Name": "SalesInvoiceHeadersV2",
+      "Endpoint": "SalesInvoiceHeadersV2",
+      "QueryString": "$filter=dataAreaId eq 'BBI' and InvoiceDate ge 2024-05-06T12:50:32Z and InvoiceDate le 2024-06-06T12:50:32Z &cross-company=true",
+      "Period": 30,
+      "Table": "CustInvoiceJourTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "AmountMST",
+          "Include": true
+        },
+        {
+          "Name": "ContactPersonId",
+          "Include": true
+        },
+        {
+          "Name": "CustomersOrderReference",
+          "Include": true
+        },
+        {
+          "Name": "CurrencyCode",
+          "Include": true
+        },
+        {
+          "Name": "DataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryAddressName",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryModeCode",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryTermsCode",
+          "Include": true
+        },
+        {
+          "Name": "DriverCode",
+          "Include": true
+        },
+        {
+          "Name": "DriverName",
+          "Include": true
+        },
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressCity",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressCountryRegionId",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressCountryRegionISOCode",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressState",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressStreet",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressStreetNumber",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAddressZipCode",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceDate",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceCustomerAccountNumber",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceHeaderTaxAmount",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceId_CT",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceNumber",
+          "Include": true
+        },
+        {
+          "Name": "IsProcess_CT",
+          "Include": true
+        },
+        {
+          "Name": "IsProcessed",
+          "Include": true
+        },
+        {
+          "Name": "IsReturn",
+          "Include": true
+        },
+        {
+          "Name": "IRNNumber",
+          "Include": true
+        },
+        {
+          "Name": "LoaderCode",
+          "Include": true
+        },
+        {
+          "Name": "LedgerVoucher",
+          "Include": true
+        },
+        {
+          "Name": "LoaderName",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "OrderAccount",
+          "Include": true
+        },
+        {
+          "Name": "OrderId",
+          "Include": true
+        },
+        {
+          "Name": "PackerCode",
+          "Include": true
+        },
+        {
+          "Name": "PackerName",
+          "Include": true
+        },
+        {
+          "Name": "ParentReference",
+          "Include": true
+        },
+        {
+          "Name": "PORefID",
+          "Include": true
+        },
+        {
+          "Name": "RecId1",
+          "Include": true
+        },
+        {
+          "Name": "ReturnReasonCodeId",
+          "Include": true
+        },
+        {
+          "Name": "RouteCode",
+          "Include": true
+        },
+        {
+          "Name": "SalesId",
+          "Include": true
+        },
+        {
+          "Name": "SalesId_CT",
+          "Include": true
+        },
+        {
+          "Name": "SalesOrderNumber",
+          "Include": true
+        },
+        {
+          "Name": "SalesOrderOriginCode",
+          "Include": true
+        },
+        {
+          "Name": "SalesOrderResponsiblePersonnelNumber",
+          "Include": true
+        },
+        {
+          "Name": "SalesStatus",
+          "Include": true
+        },
+        {
+          "Name": "SalesType",
+          "Include": true
+        },
+        {
+          "Name": "SupervisorCode",
+          "Include": true
+        },
+        {
+          "Name": "SupervisorCodeBak",
+          "Include": true
+        },
+        {
+          "Name": "TotalChargeAmount",
+          "Include": true
+        },
+        {
+          "Name": "TotalDiscountAmount",
+          "Include": true
+        },
+        {
+          "Name": "TotalDiscountCustomerGroupCode",
+          "Include": true
+        },
+        {
+          "Name": "TotalInvoiceAmount",
+          "Include": true
+        },
+        {
+          "Name": "TotalTaxAmount",
+          "Include": true
+        },
+        {
+          "Name": "VehicleCode",
+          "Include": true
+        },
+        {
+          "Name": "VehicleTag",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "SubledgerVoucherGeneralJournalEntryEntities",
+      "Endpoint": "SubledgerVoucherGeneralJournalEntryEntities",
+      "QueryString": "",
+      "Period": 30,
+      "Table": "SubledgerVoucherGeneralJournalEntryEntitiesTest",
+      "Altered": true,
+      "Columns": [
+        {
+          "Name": "AccountingDate",
+          "Include": true
+        },
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "GeneralJournalEntry",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "ParentReference",
+          "Include": true
+        },
+        {
+          "Name": "Partition1",
+          "Include": true
+        },
+        {
+          "Name": "RecId1",
+          "Include": true
+        },
+        {
+          "Name": "RecVersion1",
+          "Include": true
+        },
+        {
+          "Name": "SubledgerJournalEntry",
+          "Include": true
+        },
+        {
+          "Name": "TransferId",
+          "Include": true
+        },
+        {
+          "Name": "Voucher",
+          "Include": true
+        },
+        {
+          "Name": "VoucherDataAreaId",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "Tax Documents",
+      "Endpoint": "TaxDocuments",
+      "QueryString": "",
+      "Period": 30,
+      "Table": "TaxDocumentsTest",
+      "Altered": true,
+      "Columns": [
+        {
+          "Name": "Amount",
+          "Include": true
+        },
+        {
+          "Name": "AmountInTransactionCurrency",
+          "Include": true
+        },
+        {
+          "Name": "CustVendTransTableId",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "ParentReference",
+          "Include": true
+        },
+        {
+          "Name": "TaxAmount",
+          "Include": true
+        },
+        {
+          "Name": "TaxAmountInCurrency",
+          "Include": true
+        },
+        {
+          "Name": "TaxCreditMemoDate",
+          "Include": true
+        },
+        {
+          "Name": "TaxCreditMemoNumber",
+          "Include": true
+        },
+        {
+          "Name": "TaxCreditMemoTransactionAmount",
+          "Include": true
+        },
+        {
+          "Name": "TaxCreditMemoTransactionAmountInTransactionCurrency",
+          "Include": true
+        },
+        {
+          "Name": "TaxCreditMemoTransactionTaxAmount",
+          "Include": true
+        },
+        {
+          "Name": "TaxCreditMemoTransactionTaxAmountInCurrency",
+          "Include": true
+        },
+        {
+          "Name": "TaxCreditMemoTransactionTaxValue",
+          "Include": true
+        },
+        {
+          "Name": "TaxCreditMemoTransactionTypeOfTax",
+          "Include": true
+        },
+        {
+          "Name": "TaxDocumentDate",
+          "Include": true
+        },
+        {
+          "Name": "TaxDocumentNumber",
+          "Include": true
+        },
+        {
+          "Name": "TaxDocumentTransactionAmount",
+          "Include": true
+        },
+        {
+          "Name": "TaxDocumentTransactionAmountInTransactionCurrency",
+          "Include": true
+        },
+        {
+          "Name": "TaxDocumentTransactionTaxAmount",
+          "Include": true
+        },
+        {
+          "Name": "TaxDocumentTransactionTaxAmountInCurrency",
+          "Include": true
+        },
+        {
+          "Name": "TaxDocumentTransactionTaxValue",
+          "Include": true
+        },
+        {
+          "Name": "TaxDocumentTransactionTypeOfTax",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "Unit of Measure Conversions",
+      "Endpoint": "UnitOfMeasureConversions",
+      "QueryString": "",
+      "Period": 30,
+      "Table": "UnitOfMeasureConversionsTest",
+      "Altered": true,
+      "Columns": [
+        {
+          "Name": "Denominator",
+          "Include": true
+        },
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "Factor",
+          "Include": true
+        },
+        {
+          "Name": "FromUnitSymbol",
+          "Include": true
+        },
+        {
+          "Name": "InnerOffset",
+          "Include": true
+        },
+        {
+          "Name": "Numerator",
+          "Include": true
+        },
+        {
+          "Name": "OuterOffset",
+          "Include": true
+        },
+        {
+          "Name": "ParentReference",
+          "Include": true
+        },
+        {
+          "Name": "Rounding",
+          "Include": true
+        },
+        {
+          "Name": "ToUnitSymbol",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "Units of Measure",
+      "Endpoint": "UnitsOfMeasure",
+      "QueryString": "",
+      "Period": 30,
+      "Table": "UnitsOfMeasureTest",
+      "Altered": true,
+      "Columns": [
+        {
+          "Name": "DecimalPrecision",
+          "Include": true
+        },
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "FixedUnitSymbolAssignment",
+          "Include": true
+        },
+        {
+          "Name": "IsBaseUnit",
+          "Include": true
+        },
+        {
+          "Name": "IsFixedUnitSymbolAssigned",
+          "Include": true
+        },
+        {
+          "Name": "IsSystemUnit",
+          "Include": true
+        },
+        {
+          "Name": "NationalCode",
+          "Include": true
+        },
+        {
+          "Name": "ParentReference",
+          "Include": true
+        },
+        {
+          "Name": "SystemOfUnits",
+          "Include": true
+        },
+        {
+          "Name": "UnitClass",
+          "Include": true
+        },
+        {
+          "Name": "UnitDescription",
+          "Include": true
+        },
+        {
+          "Name": "UnitSymbol",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "VendInvoiceJournalDatasEntity",
+      "Endpoint": "VendInvoiceJournalDatasEntity",
       "QueryString": null,
-      "Period": 25,
-      "Table": "PaymentTermsTest",
+      "Period": 30,
+      "Table": "VendInvoiceJournalDatasEntityTest",
       "Altered": false,
       "Columns": [
         {
@@ -2114,7 +3597,127 @@
           "Include": true
         },
         {
-          "Name": "Name",
+          "Name": "AccountNum",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceId",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceDate",
+          "Include": true
+        },
+        {
+          "Name": "PurchId",
+          "Include": true
+        },
+        {
+          "Name": "LedgerVoucher",
+          "Include": true
+        },
+        {
+          "Name": "ProjectReference",
+          "Include": true
+        },
+        {
+          "Name": "TaxSetoffVoucher_IN",
+          "Include": true
+        },
+        {
+          "Name": "InterCompanySalesId",
+          "Include": true
+        },
+        {
+          "Name": "DocumentOrigin",
+          "Include": true
+        },
+        {
+          "Name": "VendReference",
+          "Include": true
+        },
+        {
+          "Name": "PaymDayId",
+          "Include": true
+        },
+        {
+          "Name": "numberSequenceGroup",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAccount",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceAmountMST",
+          "Include": true
+        },
+        {
+          "Name": "ReturnItemNum",
+          "Include": true
+        },
+        {
+          "Name": "PostingProfile",
+          "Include": true
+        },
+        {
+          "Name": "PlafondDate_IT",
+          "Include": true
+        },
+        {
+          "Name": "Listcode",
+          "Include": true
+        },
+        {
+          "Name": "LoaderName",
+          "Include": true
+        },
+        {
+          "Name": "DocumentNum",
+          "Include": true
+        },
+        {
+          "Name": "TaxRoundOff",
+          "Include": true
+        },
+        {
+          "Name": "VendGroup",
+          "Include": true
+        },
+        {
+          "Name": "PaymId",
+          "Include": true
+        },
+        {
+          "Name": "TaxInvoicePurchId",
+          "Include": true
+        },
+        {
+          "Name": "ItemBuyerGroupId",
+          "Include": true
+        },
+        {
+          "Name": "VATNum",
+          "Include": true
+        },
+        {
+          "Name": "TaxPrintOnInvoice",
+          "Include": true
+        },
+        {
+          "Name": "RecVersion1",
+          "Include": true
+        },
+        {
+          "Name": "InterCompanyLedgerVoucher",
+          "Include": true
+        },
+        {
+          "Name": "ExchRate",
+          "Include": true
+        },
+        {
+          "Name": "LogisticsElectronicAddress",
           "Include": true
         },
         {
@@ -2122,78 +3725,326 @@
           "Include": true
         },
         {
-          "Name": "NumberOfMonths",
+          "Name": "SourceDocumentHeader",
           "Include": true
         },
         {
-          "Name": "CutoffDayOfMonth",
+          "Name": "VendPaymentGroup",
           "Include": true
         },
         {
-          "Name": "CreditCardCreditCheckType",
+          "Name": "InvoiceAmount",
           "Include": true
         },
         {
-          "Name": "PaymentScheduleName",
+          "Name": "Prepayment",
           "Include": true
         },
         {
-          "Name": "IsDefaultPaymentTerm",
+          "Name": "OrderAccount",
           "Include": true
         },
         {
-          "Name": "CreditCardPaymentType",
+          "Name": "DlvTerm",
           "Include": true
         },
         {
-          "Name": "IsCashPayment",
+          "Name": "ReverseCharge_UK",
           "Include": true
         },
         {
-          "Name": "NumberOfDays",
+          "Name": "Proforma",
           "Include": true
         },
         {
-          "Name": "CustomerDueDateUpdatePolicy",
+          "Name": "InterCompanyPosted",
           "Include": true
         },
         {
-          "Name": "PaymentDayName",
+          "Name": "SumLineDisc",
           "Include": true
         },
         {
-          "Name": "VendorDueDateUpdatePolicy",
+          "Name": "LanguageId",
           "Include": true
         },
         {
-          "Name": "PostOffsettingAR",
+          "Name": "DataAreaId1",
           "Include": true
         },
         {
-          "Name": "PaymentMethodType",
+          "Name": "ReportingCurrencyExchangeRate",
           "Include": true
         },
         {
-          "Name": "CashPaymentMainAccountIdDisplayValue",
+          "Name": "VendInvoiceDeclaration_IS",
           "Include": true
         },
         {
-          "Name": "IsCertifiedCompanyCheck",
+          "Name": "BankLCImportLine",
           "Include": true
         },
         {
-          "Name": "AdditionalMonthsForCutoffDate",
+          "Name": "VendorDocument",
+          "Include": true
+        },
+        {
+          "Name": "TaxSpecifyByLine",
+          "Include": true
+        },
+        {
+          "Name": "PackerName",
+          "Include": true
+        },
+        {
+          "Name": "DriverName",
+          "Include": true
+        },
+        {
+          "Name": "ExchRateSecondary",
+          "Include": true
+        },
+        {
+          "Name": "InclTax",
+          "Include": true
+        },
+        {
+          "Name": "CurrencyCode",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceType",
+          "Include": true
+        },
+        {
+          "Name": "SumMarkup",
+          "Include": true
+        },
+        {
+          "Name": "VendorDocDate",
+          "Include": true
+        },
+        {
+          "Name": "SumMarkupMST",
+          "Include": true
+        },
+        {
+          "Name": "Triangulation",
+          "Include": true
+        },
+        {
+          "Name": "CashDisc",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "TaxGroup",
+          "Include": true
+        },
+        {
+          "Name": "Qty",
+          "Include": true
+        },
+        {
+          "Name": "DueDate",
+          "Include": true
+        },
+        {
+          "Name": "CashDiscDate",
+          "Include": true
+        },
+        {
+          "Name": "CashDiscPercent",
+          "Include": true
+        },
+        {
+          "Name": "VendorRequestedWorkerEmail",
+          "Include": true
+        },
+        {
+          "Name": "RemittanceAddress",
+          "Include": true
+        },
+        {
+          "Name": "Weight",
+          "Include": true
+        },
+        {
+          "Name": "DlvMode",
+          "Include": true
+        },
+        {
+          "Name": "VendInvoiceGroup",
+          "Include": true
+        },
+        {
+          "Name": "FixedDueDate",
+          "Include": true
+        },
+        {
+          "Name": "PackedExtensions",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceRoundOff",
+          "Include": true
+        },
+        {
+          "Name": "Volume",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryName",
+          "Include": true
+        },
+        {
+          "Name": "Partition1",
+          "Include": true
+        },
+        {
+          "Name": "EndDiscMST",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryPostalAddress",
+          "Include": true
+        },
+        {
+          "Name": "ReverseChargeAmount",
+          "Include": true
+        },
+        {
+          "Name": "IntrastatDispatch",
+          "Include": true
+        },
+        {
+          "Name": "EnterpriseNumber",
+          "Include": true
+        },
+        {
+          "Name": "CountryRegionId",
+          "Include": true
+        },
+        {
+          "Name": "CreatedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "InterCompanyCompanyId",
+          "Include": true
+        },
+        {
+          "Name": "VATAmount_IN",
+          "Include": true
+        },
+        {
+          "Name": "VehicleCode",
+          "Include": true
+        },
+        {
+          "Name": "ReasonTableRef_BR",
+          "Include": true
+        },
+        {
+          "Name": "OperationType_MX",
+          "Include": true
+        },
+        {
+          "Name": "PaymentSched",
+          "Include": true
+        },
+        {
+          "Name": "InternalInvoiceId",
+          "Include": true
+        },
+        {
+          "Name": "IntentLetterId_IT",
+          "Include": true
+        },
+        {
+          "Name": "CostLedgerVoucher",
+          "Include": true
+        },
+        {
+          "Name": "TaxWithholdAmount_IN",
+          "Include": true
+        },
+        {
+          "Name": "SourceDocumentLine",
+          "Include": true
+        },
+        {
+          "Name": "ParmId",
+          "Include": true
+        },
+        {
+          "Name": "VehicleTag",
+          "Include": true
+        },
+        {
+          "Name": "EUSalesList",
+          "Include": true
+        },
+        {
+          "Name": "VendInvoiceDate",
+          "Include": true
+        },
+        {
+          "Name": "DocumentDate",
+          "Include": true
+        },
+        {
+          "Name": "PurchaseType",
+          "Include": true
+        },
+        {
+          "Name": "Payment",
+          "Include": true
+        },
+        {
+          "Name": "PurchAgreementHeader_PSN",
+          "Include": true
+        },
+        {
+          "Name": "CashDiscCode",
+          "Include": true
+        },
+        {
+          "Name": "SalesBalance",
+          "Include": true
+        },
+        {
+          "Name": "EndDisc",
+          "Include": true
+        },
+        {
+          "Name": "RecId1",
+          "Include": true
+        },
+        {
+          "Name": "PurchReceiptDate_W",
+          "Include": true
+        },
+        {
+          "Name": "TransportationDocument",
+          "Include": true
+        },
+        {
+          "Name": "SumTax",
           "Include": true
         }
       ]
     },
     {
       "Enable": true,
-      "Name": "BillOfMaterialsLinesV2",
-      "Endpoint": "BillOfMaterialsLinesV2",
+      "Name": "VendorInvoiceTransDatasEntity",
+      "Endpoint": "VendorInvoiceTransDatasEntity",
       "QueryString": null,
       "Period": 30,
-      "Table": "BillOfMaterialsLinesV2Test",
+      "Table": "VendorInvoiceTransDatasEntityTest",
       "Altered": false,
       "Columns": [
         {
@@ -2205,75 +4056,247 @@
           "Include": true
         },
         {
-          "Name": "BOMId",
+          "Name": "AccountNum",
           "Include": true
         },
         {
-          "Name": "LineCreationSequenceNumber",
+          "Name": "RecId1",
           "Include": true
         },
         {
-          "Name": "ProductConfigurationId",
+          "Name": "SettleTax1099StateAmount",
           "Include": true
         },
         {
-          "Name": "PositionNumber",
+          "Name": "Qty",
           "Include": true
         },
         {
-          "Name": "ConsumptionCalculationMethod",
+          "Name": "PriceUnit",
           "Include": true
         },
         {
-          "Name": "IsConsumedAtOperationComplete",
+          "Name": "PSARetainageAmount",
           "Include": true
         },
         {
-          "Name": "LineNumber",
+          "Name": "Tax1099Amount",
           "Include": true
         },
         {
-          "Name": "ConsumptionCalculationConstant",
+          "Name": "QtyPhysical",
           "Include": true
         },
         {
-          "Name": "ProductSizeId",
+          "Name": "NonRecoverablePercent_IN",
           "Include": true
         },
         {
-          "Name": "ItemNumber",
+          "Name": "StatProcId",
           "Include": true
         },
         {
-          "Name": "ConsumptionWarehouseId",
+          "Name": "CustomsTariffCodeTable_IN",
           "Include": true
         },
         {
-          "Name": "ValidFromDate",
+          "Name": "RegistrationPostalAddress_IN",
           "Include": true
         },
         {
-          "Name": "ConsumptionSiteId",
+          "Name": "ExciseTariffCodes_IN",
           "Include": true
         },
         {
-          "Name": "WillCostCalculationIncludeLine",
+          "Name": "AssessableValue_IN",
           "Include": true
         },
         {
-          "Name": "SubBOMId",
+          "Name": "RBOPackageLineNum",
           "Include": true
         },
         {
-          "Name": "IsResourceConsumptionUsed",
+          "Name": "SettleTax1099Amount",
           "Include": true
         },
         {
-          "Name": "WillManufacturedItemInheritBatchAttributes",
+          "Name": "VATGoodsType_IN",
           "Include": true
         },
         {
-          "Name": "ProductUnitSymbol",
+          "Name": "ExciseType_IN",
+          "Include": true
+        },
+        {
+          "Name": "SalesTaxFormTypes_IN",
+          "Include": true
+        },
+        {
+          "Name": "ExciseRecordType_IN",
+          "Include": true
+        },
+        {
+          "Name": "VATAmount_IN",
+          "Include": true
+        },
+        {
+          "Name": "IsPwp",
+          "Include": true
+        },
+        {
+          "Name": "OrigStateId",
+          "Include": true
+        },
+        {
+          "Name": "DSA_IN",
+          "Include": true
+        },
+        {
+          "Name": "numberSequenceGroup",
+          "Include": true
+        },
+        {
+          "Name": "InventRefId",
+          "Include": true
+        },
+        {
+          "Name": "Weight",
+          "Include": true
+        },
+        {
+          "Name": "ReadyForPayment",
+          "Include": true
+        },
+        {
+          "Name": "ServiceCodeTable_IN",
+          "Include": true
+        },
+        {
+          "Name": "PurchMarkup",
+          "Include": true
+        },
+        {
+          "Name": "GTAServiceCategory_IN",
+          "Include": true
+        },
+        {
+          "Name": "LineAmount",
+          "Include": true
+        },
+        {
+          "Name": "TDSGroup_IN",
+          "Include": true
+        },
+        {
+          "Name": "DiscPercent",
+          "Include": true
+        },
+        {
+          "Name": "StockedProduct",
+          "Include": true
+        },
+        {
+          "Name": "LineNum",
+          "Include": true
+        },
+        {
+          "Name": "RetailPackageId",
+          "Include": true
+        },
+        {
+          "Name": "DestState",
+          "Include": true
+        },
+        {
+          "Name": "VendorLocation_IN",
+          "Include": true
+        },
+        {
+          "Name": "ProcurementCategory",
+          "Include": true
+        },
+        {
+          "Name": "InvoiceDate",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "TaxItemGroup",
+          "Include": true
+        },
+        {
+          "Name": "PdsCWQty",
+          "Include": true
+        },
+        {
+          "Name": "MaximumRetailPrice_IN",
+          "Include": true
+        },
+        {
+          "Name": "TaxWithholdLineNum_IN",
+          "Include": true
+        },
+        {
+          "Name": "ReverseCharge_W",
+          "Include": true
+        },
+        {
+          "Name": "PdsCWQtyPhysical",
+          "Include": true
+        },
+        {
+          "Name": "Transport",
+          "Include": true
+        },
+        {
+          "Name": "Tax1099RecId",
+          "Include": true
+        },
+        {
+          "Name": "CompanyLocation_IN",
+          "Include": true
+        },
+        {
+          "Name": "AgreementLine_PSN",
+          "Include": true
+        },
+        {
+          "Name": "OrigPurchId",
+          "Include": true
+        },
+        {
+          "Name": "PurchCommitmentLine_PSN",
+          "Include": true
+        },
+        {
+          "Name": "Tax1099Date",
+          "Include": true
+        },
+        {
+          "Name": "CreatedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "DeliveryPostalAddress",
+          "Include": true
+        },
+        {
+          "Name": "ExternalItemId",
+          "Include": true
+        },
+        {
+          "Name": "InventDate",
+          "Include": true
+        },
+        {
+          "Name": "Tax1099StateAmount",
+          "Include": true
+        },
+        {
+          "Name": "Description",
           "Include": true
         },
         {
@@ -2281,281 +4304,211 @@
           "Include": true
         },
         {
-          "Name": "QuantityRoundingUpMultiples",
+          "Name": "PurchId",
           "Include": true
         },
         {
-          "Name": "PhysicalProductDepth",
+          "Name": "LinePercent",
           "Include": true
         },
         {
-          "Name": "PhysicalProductHeight",
+          "Name": "PurchaseLineLineNumber",
           "Include": true
         },
         {
-          "Name": "ValidToDate",
+          "Name": "DiscAmount",
           "Include": true
         },
         {
-          "Name": "PhysicalProductDensity",
+          "Name": "TransactionCode",
           "Include": true
         },
         {
-          "Name": "RoundingUpMethod",
+          "Name": "DestCountryRegionId",
           "Include": true
         },
         {
-          "Name": "VariableScrapPercentage",
+          "Name": "Name",
           "Include": true
         },
         {
-          "Name": "ConsumptionType",
+          "Name": "TaxGroup",
           "Include": true
         },
         {
-          "Name": "WillManufacturedItemInheritShelfLifeDates",
+          "Name": "Tax1099Fields",
           "Include": true
         },
         {
-          "Name": "QuantityDenominator",
+          "Name": "LineAmountMST",
           "Include": true
         },
         {
-          "Name": "FlushingPrinciple",
+          "Name": "DataAreaId1",
           "Include": true
         },
         {
-          "Name": "VendorAccountNumber",
+          "Name": "ReasonTableRef",
           "Include": true
         },
         {
-          "Name": "ProductColorId",
+          "Name": "InvoiceId",
           "Include": true
         },
         {
-          "Name": "CatchWeightQuantity",
+          "Name": "PurchUnit",
           "Include": true
         },
         {
-          "Name": "PhysicalProductWidth",
+          "Name": "MultiLnDisc",
           "Include": true
         },
         {
-          "Name": "RouteOperationNumber",
+          "Name": "InventRefType",
           "Include": true
         },
         {
-          "Name": "ConfigurationGroupId",
+          "Name": "DeliveryName",
           "Include": true
         },
         {
-          "Name": "ConstantScrapQuantity",
+          "Name": "PSAReleaseAmount",
           "Include": true
         },
         {
-          "Name": "Quantity",
+          "Name": "TaxWriteCode",
           "Include": true
         },
         {
-          "Name": "ProductStyleId",
+          "Name": "PartDelivery",
           "Include": true
         },
         {
-          "Name": "SubRouteId",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "FormulaVersion2s",
-      "Endpoint": "FormulaVersion2s",
-      "QueryString": null,
-      "Period": 30,
-      "Table": "FormulaVersion2sTest",
-      "Altered": false,
-      "Columns": [
-        {
-          "Name": "Etag",
+          "Name": "ItemId",
           "Include": true
         },
         {
-          "Name": "dataAreaId",
+          "Name": "IntrastatDispatchId",
           "Include": true
         },
         {
-          "Name": "FormulaId",
+          "Name": "DestCounty",
           "Include": true
         },
         {
-          "Name": "ProductionSiteId",
+          "Name": "ItemCodeId",
           "Include": true
         },
         {
-          "Name": "IsActive",
+          "Name": "AdvanceApplicationId",
           "Include": true
         },
         {
-          "Name": "IsTotalCostAllocationUsed",
+          "Name": "IntrastatCommodity",
           "Include": true
         },
         {
-          "Name": "ValidFromDate",
+          "Name": "MultiLnPercent",
           "Include": true
         },
         {
-          "Name": "ProductConfigurationId",
+          "Name": "InventRefTransId",
           "Include": true
         },
         {
-          "Name": "ManufacturedItemNumber",
+          "Name": "TCSGroup_IN",
           "Include": true
         },
         {
-          "Name": "FormulaBatchSizeMultiples",
+          "Name": "PurchPrice",
           "Include": true
         },
         {
-          "Name": "CatchWeightSize",
+          "Name": "MarkupCode_RU",
           "Include": true
         },
         {
-          "Name": "IsSelectedForDesigner",
+          "Name": "TaxAmount",
           "Include": true
         },
         {
-          "Name": "ProductSizeId",
+          "Name": "PackedExtensions",
           "Include": true
         },
         {
-          "Name": "ProductColorId",
+          "Name": "VATDeferred_IN",
           "Include": true
         },
         {
-          "Name": "BulkItemNumber",
+          "Name": "OrigCountryRegionId",
           "Include": true
         },
         {
-          "Name": "ApproverPersonnelNumber",
+          "Name": "InternalInvoiceId",
           "Include": true
         },
         {
-          "Name": "ModifiedBy1",
+          "Name": "InventTransId",
           "Include": true
         },
         {
-          "Name": "ProductStyleId",
+          "Name": "LineAmountTax",
           "Include": true
         },
         {
-          "Name": "IsCoProductQuantityVariationAllowed",
+          "Name": "Port",
           "Include": true
         },
         {
-          "Name": "IsApproved",
+          "Name": "TaxWithholdVoucher_IN",
           "Include": true
         },
         {
-          "Name": "FromCatchWeightQuantity",
+          "Name": "InterCompanyInventTransId",
           "Include": true
         },
         {
-          "Name": "ChangedDate",
+          "Name": "LineDisc",
           "Include": true
         },
         {
-          "Name": "WillCostCalculationIncludeVersion",
+          "Name": "TaxAutogenerated",
           "Include": true
         },
         {
-          "Name": "ModifiedDateTime1",
+          "Name": "CurrencyCode",
           "Include": true
         },
         {
-          "Name": "YieldPercentage",
+          "Name": "InventQty",
           "Include": true
         },
         {
-          "Name": "VersionName",
+          "Name": "VATExpense_IN",
           "Include": true
         },
         {
-          "Name": "ValidToDate",
+          "Name": "CreditNoteDate_IN",
           "Include": true
         },
         {
-          "Name": "FromQuantity",
+          "Name": "InventDimId",
           "Include": true
         },
         {
-          "Name": "FormulaBatchSize",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "AgreementLineReleasedLines",
-      "Endpoint": "AgreementLineReleasedLines",
-      "QueryString": null,
-      "Period": 30,
-      "Table": "AgreementLineReleasedLinesTest",
-      "Altered": false,
-      "Columns": [
-        {
-          "Name": "Etag",
+          "Name": "LineAmountMST_W",
           "Include": true
         },
         {
-          "Name": "AgreementLine",
+          "Name": "SourceDocumentLine",
           "Include": true
         },
         {
-          "Name": "CustInvoiceTrans",
+          "Name": "Tax1099State",
           "Include": true
         },
         {
-          "Name": "ProjInvoiceItem",
-          "Include": true
-        },
-        {
-          "Name": "PurchLineDataAreaId",
-          "Include": true
-        },
-        {
-          "Name": "PurchLineInventTransId",
-          "Include": true
-        },
-        {
-          "Name": "SalesLineDataAreaId",
-          "Include": true
-        },
-        {
-          "Name": "SalesLineInventTransId",
-          "Include": true
-        },
-        {
-          "Name": "VendInvoiceTrans",
-          "Include": true
-        },
-        {
-          "Name": "IsModified",
-          "Include": true
-        },
-        {
-          "Name": "IsDeleted",
-          "Include": true
-        },
-        {
-          "Name": "ReferenceRelationType",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedBy1",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedDateTime1",
+          "Name": "Tax1099Num",
           "Include": true
         }
       ]
