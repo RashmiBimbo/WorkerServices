@@ -4,21 +4,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-public partial class Mfeldynamics365Context : DbContext
+public partial class MFELDynamics365Context : DbContext
 {
-    public Mfeldynamics365Context(DbContextOptions<Mfeldynamics365Context> options)
+    public MFELDynamics365Context(DbContextOptions<MFELDynamics365Context> options)
         : base(options)
     {
     }
 
 
-    public virtual DbSet<FormulaVersion2s> FormulaVersion2s { get; set; }
+    public virtual DbSet<LogisticsLocations> LogisticsLocations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<FormulaVersion2s>(entity =>
+        modelBuilder.Entity<LogisticsLocations>(entity =>
         {
-            entity.HasKey(e => new { e.DataAreaId, e.FormulaId, e.IsActive, e.ProductionSiteId }).HasName("PK__FormulaV__CA95C516D9DD3DA6");
+            entity.HasKey(e => e.LocationId).HasName("PK__Logistic__E7FEA497C4DAD47C");
         });
 
         OnModelCreatingPartial(modelBuilder);

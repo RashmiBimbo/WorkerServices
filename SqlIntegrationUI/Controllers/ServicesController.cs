@@ -11,7 +11,7 @@ namespace SqlIntegrationUI.Controllers
 {
     public class ServicesController : Controller
     {
-        private readonly string ConfigPathFull;
+        private readonly string ConfigFullPath;
         private readonly IMemoryCache memoryCache;
         private readonly string Resource = "https://mfprod.operations.dynamics.com";
         private readonly string crntSolnDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
@@ -89,13 +89,19 @@ namespace SqlIntegrationUI.Controllers
             }
         }
 
-        private Services ReadConfig()
+        public ServicesController(IMemoryCache memoryCache)
         {
             try
             {
-                string ConfigJson = SysFile.ReadAllText(ConfigPathFull);
-                Services services = JsonConvert.DeserializeObject<Services>(ConfigJson);
-                return services;
+                this.memoryCache = memoryCache;
+                string solnPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+                string debugStr = @"\SqlIntegrationUI\bin\Debug";
+                string rlzStr = @"\SqlIntegrationUI\bin\Release";
+                StringComparison comp = StringComparison.CurrentCultureIgnoreCase;
+                solnPath = solnPath.Replace(debugStr, string.Empty, comp).Replace(rlzStr, string.Empty, comp);
+                ConfigFullPath = Path.Combine(solnPath, "Config.json");
+
+                if (Services is null) throw new Exception("Services not found");
             }
             catch (Exception ex)
             {
@@ -103,15 +109,13 @@ namespace SqlIntegrationUI.Controllers
             }
         }
 
-        public ServicesController(IMemoryCache memoryCache)
+        private Services ReadConfig()
         {
             try
             {
-                this.memoryCache = memoryCache;
-                string solnPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-                string configName = "Config.json";
-                ConfigPathFull = solnPath + "\\" + configName;
-                if (Services is null) throw new Exception("Services not found");
+                string ConfigJson = SysFile.ReadAllText(ConfigFullPath);
+                Services services = JsonConvert.DeserializeObject<Services>(ConfigJson);
+                return services;
             }
             catch (Exception ex)
             {
@@ -123,6 +127,7 @@ namespace SqlIntegrationUI.Controllers
         public IActionResult Reset()
         {
             var services = ReadConfig();
+            AddedServices = null;
             Services = services;
             return RedirectToAction(nameof(Index));
         }
@@ -137,7 +142,7 @@ namespace SqlIntegrationUI.Controllers
             try
             {
                 string servicesJson = JsonConvert.SerializeObject(services, Formatting.Indented);
-                SysFile.WriteAllText(ConfigPathFull, servicesJson);
+                SysFile.WriteAllText(ConfigFullPath, servicesJson);
                 Services = null;
                 bool restartServices = false;
 
@@ -294,7 +299,7 @@ namespace SqlIntegrationUI.Controllers
         // GET: ServicesController/Create
         public ActionResult Create()
         {
-            return View();
+            return View("Create");
         }
 
 
@@ -303,12 +308,24 @@ namespace SqlIntegrationUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ServiceDetail service)
         {
+            if (service is null)
+                Problem("Error creating Service! \r\n Service is null.");
+
+            StringComparison comp = StringComparison.InvariantCultureIgnoreCase;
             try
             {
+                service.Name = service.Name?.Trim();
+                service.Endpoint = service.Endpoint?.Trim();
+                service.Table = service.Table?.Trim();
+                service.QueryString = service.QueryString?.Trim();
+
+                string qStr = service.QueryString;
+                string fltr = "cross-company=true";
+                service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, comp) ? Emp : "&" + fltr;
                 JObject jObj = await GetServiceJObject(service);
                 AddedServices ??= [];
                 AddedServices.TryAdd(service.Table, jObj);
-                if (!Services.ServiceSet.Any(s => s.Name.Equals(service.Name, StringComparison.CurrentCultureIgnoreCase)))
+                if (!Services.ServiceSet.Any(s => s.Name.Equals(service.Name, comp)))
                 {
                     service.Columns = await GetColumns(jObj);
                     Services.ServiceSet.Add(service);
@@ -365,7 +382,7 @@ namespace SqlIntegrationUI.Controllers
                     "@echo off",
                         $@"cd {crntSolnDirectory}\SqlIntegrationServices",
                         "echo Current Directory: %cd%",
-                        $"dotnet ef dbcontext scaffold \"{connectionString}\" Microsoft.EntityFrameworkCore.SqlServer -o Models --no-pluralize   --context-namespace SqlIntegrationServices --no-onconfiguring --namespace SqlIntegrationServices --data-annotations {tbls} --no-build --force",
+                        $"dotnet ef dbcontext scaffold \"{connectionString}\" Microsoft.EntityFrameworkCore.SqlServer -o Models --no-pluralize --use-database-names --context-namespace SqlIntegrationServices --no-onconfiguring --namespace SqlIntegrationServices --data-annotations {tbls} --no-build --force",
                         "echo Done" // Optional: indicate completion
                 ]);
 
@@ -408,7 +425,6 @@ namespace SqlIntegrationUI.Controllers
                     SysFile.Delete(batchFilePath);
                 if (!SysFile.Exists(logFilePath))
                     SysFile.Delete(logFilePath);
-
                 string projPath = $@"{crntSolnDirectory}\SqlIntegrationServices\SqlIntegrationServices.csproj";
 
                 if (genSuccess && !await RebuildSqlIntegrationServices(projPath))
@@ -461,13 +477,14 @@ namespace SqlIntegrationUI.Controllers
             foreach (string item in missingProps)
             {
                 if (item.Equals("@odata.etag", StringComparison.InvariantCultureIgnoreCase)) continue;
+
                 JToken token = jObj[item];
                 string propType = GetCSharpTypeFromJToken(token);
                 propStr += $"\tpublic {propType} {item} {{ get; set; }}{Entr}";
             }
             if (!IsEmpty(propStr))
             {
-                string classDef = $"{Entr}{Entr}public abstract partial class {tableName}Base{Entr}{{{Entr}{propStr}}}";
+                string classDef = $"{Entr}public abstract partial class {tableName}Base{Entr}{{{Entr}{propStr}}}";
 
                 SysFile.AppendAllText(filePath, classDef);
                 return true;
@@ -479,14 +496,23 @@ namespace SqlIntegrationUI.Controllers
         {
             return token.Type switch
             {
-                JTokenType.Integer => "int",
-                JTokenType.Float => "double",
-                JTokenType.String => "string",
-                JTokenType.Boolean => "bool",
-                JTokenType.Date => "DateTime",
-                JTokenType.Object => "object",
-                JTokenType.Array => "List<object>", // Modify as needed
-                _ => "string", // Default type
+                JTokenType.Integer => "int",       
+                JTokenType.Float => "double",      
+                JTokenType.String => "string",     
+                JTokenType.Boolean => "bool",      
+                JTokenType.Date => "DateTime",     
+                JTokenType.TimeSpan => "TimeSpan", 
+                JTokenType.Guid => "Guid",         
+                JTokenType.Uri => "Uri",           
+                JTokenType.Object => "object",     
+                JTokenType.Array => "List<object>",
+                JTokenType.Null => "object",       
+                JTokenType.Undefined => "object",  
+                JTokenType.Bytes => "byte[]",      
+                JTokenType.Property => "object",   
+                JTokenType.Comment => "string",    
+                JTokenType.Raw => "string",        
+                _ => "object",
             };
         }
 
@@ -498,7 +524,7 @@ namespace SqlIntegrationUI.Controllers
                 if (jObj is null)
                     if (service is not null)
                         jObj = await GetServiceJObject(service);
-                    else if (service is null)
+                    else
                         ArgumentNullException.ThrowIfNull(service);
 
                 columns = jObj.Properties().Select(p => new Column() { Name = p.Name, Include = true }).ToList();
@@ -513,8 +539,9 @@ namespace SqlIntegrationUI.Controllers
 
         private async Task<JObject> GetServiceJObject(ServiceDetail service)
         {
-            JObject obj2 = null;
-            string url = $"{Resource}/data/{service.Endpoint}?top=1";
+            JObject jObjRslt = null;
+            string and = IsEmpty(service.QueryString) ? Emp : "&";
+            string url = $"{Resource}/data/{service.Endpoint}?{service.QueryString}{and}$top=1";
             string result = Emp;
             for (int cnt = 1; cnt <= 2; cnt++)
             {
@@ -530,7 +557,7 @@ namespace SqlIntegrationUI.Controllers
             {
                 try
                 {
-                    obj2 = Items[0] as JObject;
+                    jObjRslt = Items[0] as JObject;
                     break;
                 }
                 catch (Exception ex)
@@ -539,7 +566,7 @@ namespace SqlIntegrationUI.Controllers
                         throw;
                 }
             }
-            return obj2;
+            return jObjRslt;
         }
 
         [HttpGet]
@@ -573,6 +600,17 @@ namespace SqlIntegrationUI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(string name, ServiceDetail service)
         {
+            StringComparison comp = StringComparison.InvariantCultureIgnoreCase;
+
+            service.Name = service.Name?.Trim();
+            service.Endpoint = service.Endpoint?.Trim();
+            service.Table = service.Table?.Trim();
+            service.QueryString = service.QueryString?.Trim().Replace("?", Emp);
+
+            string qStr = service.QueryString;
+            string fltr = "cross-company=true";
+            service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, comp) ? Emp : "&" + fltr;
+
             if (!name.Equals(service?.Name))
                 return NotFound();
             if (service is null)

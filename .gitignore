@@ -374,3 +374,5 @@ FodyWeavers.xsd
 *.zip
 *.xlsx
 *.xls
+/SqlIntegrationUI/build_log.txt
+/SqlIntegrationUI/command.bat

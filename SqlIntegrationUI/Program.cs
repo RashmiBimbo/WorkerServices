@@ -22,7 +22,7 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-
+        //app.UseResponseCaching();
         app.UseAuthorization();
         app.MapControllerRoute(
             name: "default",

@@ -21,7 +21,11 @@
 		  <Static>True</Static>
 		</Using>
 		<Using Include="Microsoft.EntityFrameworkCore" />
+		<Using Include="Microsoft.EntityFrameworkCore.Design" />
 		<Using Include="Newtonsoft.Json" />
+		<Using Include="System.ComponentModel.DataAnnotations" />
+		<Using Include="System.ComponentModel.DataAnnotations.Schema" />
+		<Using Include="System.Text" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />

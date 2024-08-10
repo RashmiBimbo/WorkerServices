@@ -4,9 +4,14 @@ using System.Reflection;
 
 namespace SqlIntegrationServices
 {
+    public partial class DeserializeJson<T> where T : notnull
+    {
+        public static T Deserialize(string json) => JsonConvert.DeserializeObject<T>(json, settings: Converter.Settings);
+    }
     public class ServiceDbContext : DbContext
     {
-        public ServiceDbContext(DbContextOptions<ServiceDbContext> options) : base(options) { 
+        public ServiceDbContext(DbContextOptions<ServiceDbContext> options) : base(options)
+        {
             //AddDbSets();
         }
 
@@ -61,7 +66,25 @@ namespace SqlIntegrationServices
                 var primaryKeyAttribute = entityType.GetCustomAttribute<PrimaryKeyAttribute>();
                 IReadOnlyList<string> primaryKeyProperties = primaryKeyAttribute.PropertyNames;
 
-                modelBuilder.Entity(entityType).HasKey(primaryKeyProperties.ToArray());
+                modelBuilder.Entity(entityType).HasKey([.. primaryKeyProperties]);
+            }
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var tableName = entityType.GetTableName();
+
+                foreach (var property in entityType.GetProperties())
+                {
+                    var columnName = property.GetColumnName();
+
+                    // Check if the property name doesn't match the column name
+                    if (property.Name != columnName)
+                    {
+                        // Map the property to the column name with underscores
+                        modelBuilder.Entity(entityType.ClrType)
+                                    .Property(property.Name)
+                                    .HasColumnName(columnName);
+                    }
+                }
             }
         }
 

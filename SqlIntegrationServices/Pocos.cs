@@ -5,10 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SqlIntegrationServices
 {
-    public partial class DeserializeJson<T> where T : notnull
-    {
-        public static T Deserialize(string json) => JsonConvert.DeserializeObject<T>(json, settings: Converter.Settings);
-    }
 
     #region AllProducts
 

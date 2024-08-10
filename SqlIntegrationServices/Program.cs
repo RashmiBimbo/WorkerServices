@@ -29,7 +29,8 @@ class Program
         string solnPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
         string debugStr = @"\SqlIntegrationServices\bin\Debug";
         string rlzStr = @"\SqlIntegrationServices\bin\Release";
-        solnPath = solnPath.Replace(debugStr, string.Empty).Replace(rlzStr, string.Empty);
+        StringComparison comp = StringComparison.CurrentCultureIgnoreCase;
+        solnPath = solnPath.Replace(debugStr, string.Empty, comp).Replace(rlzStr, string.Empty, comp);
         string configFullPath = Path.Combine(solnPath, "Config.json");
 
         string ConfigJson = File.ReadAllText(configFullPath);

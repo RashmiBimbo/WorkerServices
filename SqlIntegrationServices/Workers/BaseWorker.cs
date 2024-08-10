@@ -133,7 +133,6 @@ namespace SqlIntegrationServices
             }
         }
 
-
         protected async virtual Task<string> DoWork(string resource, string url)
         {
             string result = Emp;

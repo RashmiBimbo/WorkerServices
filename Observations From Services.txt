@@ -1,0 +1,8 @@
+Observations From Services:
+
+Some services might not get started as soon as the app runs. Lack of CPU resources can be a reason for this. 
+
+We are seeing an exception : 
+Error: A connection was successfully established with the server, but then an error occurred during the pre-login handshake. (provider: TCP Provider, error: 0 - An existing connection was forcibly closed by the remote host.) 
+
+which is not a code error but related to network. Need to check if VPN or lack of resouces of any other reason could be the reason.

@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 namespace SqlIntegrationServices;
 
 [PrimaryKey("Bomid", "DataAreaId", "LineCreationSequenceNumber")]
-[Table("BillOfMaterialsLinesV2")]
 public abstract partial class BillOfMaterialsLinesV2Base
 {
     [StringLength(2000)]
