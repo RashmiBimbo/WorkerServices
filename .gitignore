@@ -370,3 +370,9 @@ FodyWeavers.xsd
 /SalesInvoiceHeadersService - Copy/SalesInvoiceHeadersProgram - Copy.cs
 /SalesInvoiceHeadersService - Copy/SalesInvoiceHeadersService - Copy.csproj
 /SalesInvoiceHeadersService - Copy/SalesInvoiceWorker - Copy.cs
+/CommonCode.zip
+*.zip
+*.xlsx
+*.xls
+/SqlIntegrationUI/build_log.txt
+/SqlIntegrationUI/command.bat
