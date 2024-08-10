@@ -12,13 +12,13 @@ public partial class MFELDynamics365Context : DbContext
     }
 
 
-    public virtual DbSet<LogisticsLocations> LogisticsLocations { get; set; }
+    public virtual DbSet<PartyLocationPostalAddressesV2> PartyLocationPostalAddressesV2 { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<LogisticsLocations>(entity =>
+        modelBuilder.Entity<PartyLocationPostalAddressesV2>(entity =>
         {
-            entity.HasKey(e => e.LocationId).HasName("PK__Logistic__E7FEA497C4DAD47C");
+            entity.HasKey(e => new { e.LocationId, e.PartyNumber, e.ValidFrom }).HasName("PK__PartyLoc__CB275808551A1BF2");
         });
 
         OnModelCreatingPartial(modelBuilder);

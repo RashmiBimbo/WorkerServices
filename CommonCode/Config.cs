@@ -17,7 +17,7 @@ namespace CommonCode.Config
 
         [JsonProperty("Endpoint")]
         public string Endpoint { get; set; }
-        
+
         [JsonProperty("QueryString")]
         public string QueryString { get; set; }
 
@@ -50,9 +50,9 @@ namespace CommonCode.Config
 
         [JsonProperty("Table")]
         public string Table { get; set; }
-        
+
         [JsonProperty("QueryString")]
-        public string QueryString { get; set; }
+        public string QueryString { get; set; } = "cross-company=true";
 
         [JsonProperty("Altered")]
         public bool Altered { get; set; } = false;

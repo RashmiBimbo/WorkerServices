@@ -58,7 +58,88 @@
       "Period": 30,
       "Table": "BudgetRegisterEntryLinesTest",
       "Altered": false,
-      "Columns": null
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "LegalEntityId",
+          "Include": true
+        },
+        {
+          "Name": "EntryNumber",
+          "Include": true
+        },
+        {
+          "Name": "LineNumber",
+          "Include": true
+        },
+        {
+          "Name": "WorkflowStatus",
+          "Include": true
+        },
+        {
+          "Name": "BudgetCheckResult",
+          "Include": true
+        },
+        {
+          "Name": "AccountingCurrencyAmount",
+          "Include": true
+        },
+        {
+          "Name": "DimensionAccountStructure",
+          "Include": true
+        },
+        {
+          "Name": "CurrencyCode",
+          "Include": true
+        },
+        {
+          "Name": "Price",
+          "Include": true
+        },
+        {
+          "Name": "TransactionCurrencyAmount",
+          "Include": true
+        },
+        {
+          "Name": "DimensionDisplayValue",
+          "Include": true
+        },
+        {
+          "Name": "Comment",
+          "Include": true
+        },
+        {
+          "Name": "EntryDate",
+          "Include": true
+        },
+        {
+          "Name": "Quantity",
+          "Include": true
+        },
+        {
+          "Name": "IncludeInCashFlowForecast",
+          "Include": true
+        },
+        {
+          "Name": "AmountType",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        }
+      ]
     },
     {
       "Enable": false,
@@ -71,7 +152,7 @@
       "Columns": null
     },
     {
-      "Enable": true,
+      "Enable": false,
       "Name": "DimensionAttributes",
       "Endpoint": "DimensionAttributes",
       "QueryString": "cross-company=true",
@@ -5456,6 +5537,181 @@
         },
         {
           "Name": "DeliveryType",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "PartyLocationPostalAddressesV2",
+      "Endpoint": "PartyLocationPostalAddressesV2",
+      "QueryString": "cross-company=true",
+      "Period": 23,
+      "Table": "PartyLocationPostalAddressesV2Test",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "PartyNumber",
+          "Include": true
+        },
+        {
+          "Name": "LocationId",
+          "Include": true
+        },
+        {
+          "Name": "ValidFrom",
+          "Include": true
+        },
+        {
+          "Name": "IsPrimary",
+          "Include": true
+        },
+        {
+          "Name": "CityInKana",
+          "Include": true
+        },
+        {
+          "Name": "IsRoleDelivery",
+          "Include": true
+        },
+        {
+          "Name": "IsPrivate",
+          "Include": true
+        },
+        {
+          "Name": "Address",
+          "Include": true
+        },
+        {
+          "Name": "TimeZone",
+          "Include": true
+        },
+        {
+          "Name": "Street",
+          "Include": true
+        },
+        {
+          "Name": "Latitude",
+          "Include": true
+        },
+        {
+          "Name": "Description",
+          "Include": true
+        },
+        {
+          "Name": "IsRoleInvoice",
+          "Include": true
+        },
+        {
+          "Name": "Roles",
+          "Include": true
+        },
+        {
+          "Name": "StreetInKana",
+          "Include": true
+        },
+        {
+          "Name": "IsRoleHome",
+          "Include": true
+        },
+        {
+          "Name": "Apartment_RU",
+          "Include": true
+        },
+        {
+          "Name": "IsPrimaryTaxRegistration",
+          "Include": true
+        },
+        {
+          "Name": "FormattedDeliveryAddress",
+          "Include": true
+        },
+        {
+          "Name": "AssignmentDate",
+          "Include": true
+        },
+        {
+          "Name": "DunsNumber",
+          "Include": true
+        },
+        {
+          "Name": "AttentionToAddressLine",
+          "Include": true
+        },
+        {
+          "Name": "ValidTo",
+          "Include": true
+        },
+        {
+          "Name": "County",
+          "Include": true
+        },
+        {
+          "Name": "IsLocationOwner",
+          "Include": true
+        },
+        {
+          "Name": "Building_RU",
+          "Include": true
+        },
+        {
+          "Name": "DistrictName",
+          "Include": true
+        },
+        {
+          "Name": "IsPrivatePostalAddress",
+          "Include": true
+        },
+        {
+          "Name": "Longitude",
+          "Include": true
+        },
+        {
+          "Name": "City",
+          "Include": true
+        },
+        {
+          "Name": "StreetNumber",
+          "Include": true
+        },
+        {
+          "Name": "IsRoleBusiness",
+          "Include": true
+        },
+        {
+          "Name": "CountryRegionId",
+          "Include": true
+        },
+        {
+          "Name": "State",
+          "Include": true
+        },
+        {
+          "Name": "PostBox",
+          "Include": true
+        },
+        {
+          "Name": "BuildingCompliment",
+          "Include": true
+        },
+        {
+          "Name": "ZipCode",
+          "Include": true
+        },
+        {
+          "Name": "CountryRegionISOCode",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
           "Include": true
         }
       ]

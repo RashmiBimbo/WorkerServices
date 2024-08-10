@@ -26,7 +26,7 @@ public abstract partial class OvenPngProdTablesBase
     public string OvenType { get; set; } = null!;
 
     [Key]
-    public DateTimeOffset TransDate { get; set; }
+    public DateTime TransDate { get; set; }
 
     [Column(TypeName = "decimal(28, 6)")]
     public decimal? ActualChangeoverMinute { get; set; }

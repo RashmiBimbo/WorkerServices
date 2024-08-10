@@ -496,22 +496,22 @@ namespace SqlIntegrationUI.Controllers
         {
             return token.Type switch
             {
-                JTokenType.Integer => "int",       
-                JTokenType.Float => "double",      
-                JTokenType.String => "string",     
-                JTokenType.Boolean => "bool",      
-                JTokenType.Date => "DateTime",     
-                JTokenType.TimeSpan => "TimeSpan", 
-                JTokenType.Guid => "Guid",         
-                JTokenType.Uri => "Uri",           
-                JTokenType.Object => "object",     
+                JTokenType.Integer => "int",
+                JTokenType.Float => "double",
+                JTokenType.String => "string",
+                JTokenType.Boolean => "bool",
+                JTokenType.Date => "DateTime",
+                JTokenType.TimeSpan => "TimeSpan",
+                JTokenType.Guid => "Guid",
+                JTokenType.Uri => "Uri",
+                JTokenType.Object => "object",
                 JTokenType.Array => "List<object>",
-                JTokenType.Null => "object",       
-                JTokenType.Undefined => "object",  
-                JTokenType.Bytes => "byte[]",      
-                JTokenType.Property => "object",   
-                JTokenType.Comment => "string",    
-                JTokenType.Raw => "string",        
+                JTokenType.Null => "object",
+                JTokenType.Undefined => "object",
+                JTokenType.Bytes => "byte[]",
+                JTokenType.Property => "object",
+                JTokenType.Comment => "string",
+                JTokenType.Raw => "string",
                 _ => "object",
             };
         }
@@ -576,14 +576,24 @@ namespace SqlIntegrationUI.Controllers
             {
                 return NotFound();
             }
+
             ServiceDetail service = Services.ServiceSet.First(s => s.Name == name);
+
             if (service == null)
-            {
                 return NotFound();
+
+            List<Column> lst;
+            if (service.Columns is null)
+            {
+                Services.ServiceSet.Remove(service);
+                lst = await GetColumns(null, service) ?? [];
+                service.Columns ??= lst;
+                Services.ServiceSet.Add(service);
             }
-            List<Column> lst = service.Columns;
-            lst ??= await GetColumns(null, service);
-            lst = lst?.OrderBy(c => c?.Name)?.ToList();
+            else
+                lst = service.Columns;
+
+            lst = lst.OrderBy(c => c?.Name)?.ToList();
 
             ViewData["ColumnList"] = new SelectList(lst, "Name", "Name");
 
@@ -592,7 +602,6 @@ namespace SqlIntegrationUI.Controllers
 
             ViewData["FiltrdColumnList"] = new SelectList(lst, "Name", "Name");
 
-            //service.Columns = [.. service?.Columns?.OrderBy(c => c.Name)];
             return View(service);
         }
 
@@ -600,6 +609,10 @@ namespace SqlIntegrationUI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(string name, ServiceDetail service)
         {
+            if (service is null)
+                return NotFound();
+            if (!name.Equals(service.Name))
+                return NotFound();
             StringComparison comp = StringComparison.InvariantCultureIgnoreCase;
 
             service.Name = service.Name?.Trim();
@@ -611,14 +624,10 @@ namespace SqlIntegrationUI.Controllers
             string fltr = "cross-company=true";
             service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, comp) ? Emp : "&" + fltr;
 
-            if (!name.Equals(service?.Name))
-                return NotFound();
-            if (service is null)
-                return NotFound();
 
             //if (ModelState.IsValid)
             //{
-            HashSet<ServiceDetail> set = (Services?.ServiceSet) ?? throw new ArgumentNullException("Error: Services are null!");
+            HashSet<ServiceDetail> set = (Services.ServiceSet) ?? throw new ArgumentNullException("Error: Services are null!");
             ServiceDetail? existingService = set.FirstOrDefault(s => s.Endpoint == service.Endpoint);
             if (existingService != null)
             {
@@ -627,9 +636,8 @@ namespace SqlIntegrationUI.Controllers
                     set.Remove(existingService);
                     bool success = set.Add(service);
                     if (!success)
-                    {
                         throw new Exception("Error: Passed Service could not be added to ServiceList!");
-                    }
+
                     set = [.. set.OrderBy(s => s.Name)];
                     Services = new Services() { ServiceSet = set };
                 }
