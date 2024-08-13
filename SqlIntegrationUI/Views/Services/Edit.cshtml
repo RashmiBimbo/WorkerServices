@@ -30,12 +30,6 @@
                 </div>
                 <br />
                 <div class="col-lg-3 col-md-4 col-sm-6">
-                    <label asp-for="Endpoint" class="control-label"></label>
-                    <input asp-for="Endpoint" class="form-control" />
-                    <span asp-validation-for="Endpoint" class="text-danger"></span>
-                </div>
-                <br />
-                <div class="col-lg-3 col-md-4 col-sm-6">
                     <label asp-for="Period" class="control-label"></label>
                     <input asp-for="Period" class="form-control" />
                     <span asp-validation-for="Period" class="text-danger"></span>
@@ -46,6 +40,12 @@
                     <input asp-for="Table" class="form-control" />
                     <span asp-validation-for="Table" class="text-danger"></span>
                 </div>
+                <br />
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <label asp-for="Endpoint" class="control-label"></label>
+                    <input asp-for="Endpoint" class="form-control" />
+                    <span asp-validation-for="Endpoint" class="text-danger"></span>
+                </div>
             </div>
             @* <br /> *@
             <div class="row">
@@ -55,8 +55,9 @@
                 </div>
             </div>
             <br />
+            <br />
             <legend>Columns</legend>
-            <div class="row">
+         @*    <div class="row">
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <select asp-items="@ViewData["ColumnList"] as SelectList" id="DdlColNames" runat="server" class="form-select" name="colsearch">
                         <option class="dropdown-item" value="">All</option>
@@ -66,7 +67,7 @@
                     <input type="hidden" name="name" value="@Model.Name" />
                     <input type="button" value="View" class="btn btn-primary" asp-action="Edit" id="ViewBtn" />
                 </div>
-            </div>
+            </div> *@
             <br />
             <table class="table table-hover table-bordered table-responsive table-group-divider">
                 @{
@@ -80,18 +81,21 @@
                     <tbody>
                         @if (!(colList is null))
                         {
-                            foreach (var item in colList)
+                            int cnt = colList.Count();
+                            List<Column> lst = Model.Columns;
+                            for (int i = 0; i < cnt; i++)
                             {
-
+                                var item = colList.ElementAt(i);
+                                Column column = lst.First(col => col.Name == item.Text);
+                                int indx = lst.IndexOf(column);
                                 <tr>
                                     <td>
-                                         @* <input type="hidden" asp-for="Columns![i]!.Name" />       *@
-                                        <input type="hidden" value="@item.Text" />
+                                        <input type="hidden" asp-for="@Model!.Columns[indx].Name" value="@Model.Columns[indx].Name" />
                                         @item.Text
                                     </td>
                                     <td>
-                                        <input class="form-check-input" type="checkbox"
-                                               checked="@Model.Columns.Any(c => c.Name == item.Text && c.Include)" />
+                                        <input class="form-check-input" type="checkbox" asp-for="@Model!.Columns![indx]!.Include" 
+                                        checked="@Model!.Columns![indx]!.Include" />
                                     </td>
                                 </tr>
                             }

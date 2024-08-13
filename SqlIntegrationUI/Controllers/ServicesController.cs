@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Diagnostics;
 using SysFile = System.IO.File;
 using Microsoft.CodeAnalysis;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SqlIntegrationUI.Controllers
 {
@@ -14,7 +15,9 @@ namespace SqlIntegrationUI.Controllers
         private readonly string ConfigFullPath;
         private readonly IMemoryCache memoryCache;
         private readonly string Resource = "https://mfprod.operations.dynamics.com";
-        private readonly string crntSolnDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+        private readonly string CrntSolnDirectory;
+        string SqlIntegrationServicesProject;
+        string SqlIntegrationServicesPath;
 
         public Services? Services
         {
@@ -94,13 +97,10 @@ namespace SqlIntegrationUI.Controllers
             try
             {
                 this.memoryCache = memoryCache;
-                string solnPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-                string debugStr = @"\SqlIntegrationUI\bin\Debug";
-                string rlzStr = @"\SqlIntegrationUI\bin\Release";
-                StringComparison comp = StringComparison.CurrentCultureIgnoreCase;
-                solnPath = solnPath.Replace(debugStr, string.Empty, comp).Replace(rlzStr, string.Empty, comp);
-                ConfigFullPath = Path.Combine(solnPath, "Config.json");
-
+                CrntSolnDirectory = GetSolnFolder();
+                ConfigFullPath = GetConfigFullPath();
+                SqlIntegrationServicesProject = Path.Combine(CrntSolnDirectory, "SqlIntegrationServices\\SqlIntegrationServices.csproj");
+                SqlIntegrationServicesPath = Path.Combine(CrntSolnDirectory, "SqlIntegrationServices");
                 if (Services is null) throw new Exception("Services not found");
             }
             catch (Exception ex)
@@ -132,7 +132,28 @@ namespace SqlIntegrationUI.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Submit()
+        public async Task<IActionResult> SubmitNRestart()
+        {
+            try
+            {
+                await Submit();
+                bool restartServices = false;
+
+                for (int i = 0; i < 2; i++)
+                {
+                    restartServices = await RestartServices();
+                    if (restartServices) break;
+                }
+                if (!restartServices) return Problem("Background Services could not be started");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IActionResult> Submit(bool Redirect = true)
         {
             var services = Services;
             if (services == null)
@@ -165,7 +186,7 @@ namespace SqlIntegrationUI.Controllers
             string processName = "SqlIntegrationServices";
             string rlzStr = @"SqlIntegrationUI\\bin\\Release\\net8.0\\";
             string debugStr = @"SqlIntegrationUI\\bin\\Debug\\net8.0\\";
-            string ProcessExecutable = @$"{crntSolnDirectory.Replace(rlzStr, string.Empty).Replace(debugStr, string.Empty)}\SqlIntegrationServices\bin\release\net8.0\SqlIntegrationServices.exe";
+            string ProcessExecutable = @$"{CrntSolnDirectory.Replace(rlzStr, string.Empty).Replace(debugStr, string.Empty)}\SqlIntegrationServices\bin\release\net8.0\SqlIntegrationServices.exe";
             try
             {
                 Process[] processes = Process.GetProcessesByName(processName);
@@ -180,12 +201,10 @@ namespace SqlIntegrationUI.Controllers
                 else
                     Console.WriteLine($"No running process named {processName} found.");
 
-
                 bool buildSuccess = await GenerateModel();
                 if (!buildSuccess)
                 {
-                    string projPath = $@"{crntSolnDirectory}\SqlIntegrationServices\SqlIntegrationServices.csproj";
-                    if (!await RebuildSqlIntegrationServices(projPath))
+                    if (!await RebuildSqlIntegrationServices(SqlIntegrationServicesProject))
                         Console.WriteLine("SqlIntegrationServices project could not be built!");
                 }
                 // Start the process again
@@ -195,7 +214,7 @@ namespace SqlIntegrationUI.Controllers
                 ProcessStartInfo startInfo = new()
                 {
                     FileName = "cmd.exe",
-                    /*Arguments = $"/c dotnet run --project \"{projPath}\"",*/
+                    /*Arguments = $"/c dotnet run --project \"{SqlIntegrationServicesProject}\"",*/
                     Arguments = $"/c start \"\" \"{ProcessExecutable}\"", // /c tells cmd to execute the command that follows and then exit
                     UseShellExecute = true,
                     CreateNoWindow = false
@@ -232,6 +251,29 @@ namespace SqlIntegrationUI.Controllers
 
         private static async Task<bool> BuildProject(string projPath, string config, string logFilePath)
         {
+            ProcessStartInfo cleanInfo = new()
+            {
+                FileName = "dotnet",
+                Arguments = $"clean \"{projPath}\" --configuration {config}",
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            using Process cleanProcess = Process.Start(cleanInfo);
+            cleanProcess.WaitForExitAsync();
+
+            string output = await cleanProcess.StandardOutput.ReadToEndAsync();
+            string error = await cleanProcess.StandardError.ReadToEndAsync();
+            // Log output and errors
+            SysFile.AppendAllText(logFilePath, $"{DateTime.Now} - {config} Clean Output:\n{output}\n");
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                SysFile.AppendAllText(logFilePath, $"{DateTime.Now} - {config} Build Errors:\n{error}\n");
+            }
+
             ProcessStartInfo proInfo = new()
             {
                 FileName = "dotnet",
@@ -242,6 +284,7 @@ namespace SqlIntegrationUI.Controllers
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
+            await Task.Delay(2000);
             using Process process = Process.Start(proInfo);
             if (process is null)
             {
@@ -249,8 +292,8 @@ namespace SqlIntegrationUI.Controllers
                 return false;
             }
 
-            string output = await process.StandardOutput.ReadToEndAsync();
-            string error = await process.StandardError.ReadToEndAsync();
+            output = await process.StandardOutput.ReadToEndAsync();
+            error = await process.StandardError.ReadToEndAsync();
             await process.WaitForExitAsync();
 
             // Log output and errors
@@ -263,6 +306,7 @@ namespace SqlIntegrationUI.Controllers
             // Check if build was successful
             if (process.ExitCode != 0)
             {
+                SysFile.AppendAllText(logFilePath, $"{DateTime.Now} - {config} Build Output:\n{error}\n");
                 Console.WriteLine($"{config} build failed.");
                 return false;
             }
@@ -311,7 +355,6 @@ namespace SqlIntegrationUI.Controllers
             if (service is null)
                 Problem("Error creating Service! \r\n Service is null.");
 
-            StringComparison comp = StringComparison.InvariantCultureIgnoreCase;
             try
             {
                 service.Name = service.Name?.Trim();
@@ -321,11 +364,11 @@ namespace SqlIntegrationUI.Controllers
 
                 string qStr = service.QueryString;
                 string fltr = "cross-company=true";
-                service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, comp) ? Emp : "&" + fltr;
+                service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : "&" + fltr;
                 JObject jObj = await GetServiceJObject(service);
                 AddedServices ??= [];
                 AddedServices.TryAdd(service.Table, jObj);
-                if (!Services.ServiceSet.Any(s => s.Name.Equals(service.Name, comp)))
+                if (!Services.ServiceSet.Any(s => s.Name.Equals(service.Name, StrComp)))
                 {
                     service.Columns = await GetColumns(jObj);
                     Services.ServiceSet.Add(service);
@@ -346,7 +389,7 @@ namespace SqlIntegrationUI.Controllers
         {
             try
             {
-                if (!Services.ServiceSet.Any(s => s.Name.Equals(service.Name, StringComparison.CurrentCultureIgnoreCase)))
+                if (!Services.ServiceSet.Any(s => s.Name.Equals(service.Name, StrComp)))
                 {
                     JObject jObj = await GetServiceJObject(service);
                     service.Columns = await GetColumns(jObj);
@@ -366,103 +409,129 @@ namespace SqlIntegrationUI.Controllers
         {
             //obtaining ConnectionString from user secret
             string connectionString = "Name=ConnectionStrings:DefaultConnection";
-            string batchFilePath = "command.bat", logFilePath = "output.log";
             string tbls = Emp;
             bool genSuccess = true;
-            if (AddedServices != null && AddedServices.Count > 0)
+            List<Type> types = GetTypes();
+
+            foreach (ServiceDetail service in Services.ServiceSet)
             {
-                foreach (KeyValuePair<string, JObject> item in AddedServices)
+                string tblName = service.Table.Trim();
+                Type typ = Type.GetType($"SqlIntegrationServices.{tblName}, SqlIntegrationServices", throwOnError: false, ignoreCase: true);
+                if (!types.Contains(typ))
                 {
-                    tbls += $"-t {item.Key.Trim().Replace("TEST", Emp, StringComparison.InvariantCultureIgnoreCase)} ";
+                    JObject jObj = await GetServiceJObject(service);
+                    AddedServices ??= [];
+                    AddedServices.TryAdd(tblName, jObj);
                 }
-                if (IsEmpty(tbls)) return false;
-                // Write commands to the batch file
-                SysFile.WriteAllLines(batchFilePath,
-                [
-                    "@echo off",
-                        $@"cd {crntSolnDirectory}\SqlIntegrationServices",
-                        "echo Current Directory: %cd%",
-                        $"dotnet ef dbcontext scaffold \"{connectionString}\" Microsoft.EntityFrameworkCore.SqlServer -o Models --no-pluralize --use-database-names --context-namespace SqlIntegrationServices --no-onconfiguring --namespace SqlIntegrationServices --data-annotations {tbls} --no-build --force",
-                        "echo Done" // Optional: indicate completion
-                ]);
-
-                // Set up the process start info to run the batch file
-                ProcessStartInfo processInfo = new("cmd.exe", $"/c start cmd.exe /k \"{batchFilePath} > {logFilePath} 2>&1\"")
-                {
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false, // This allows the cmd to open in a new window
-                    CreateNoWindow = true
-                };
-
-                using Process process = Process.Start(processInfo);
-
-                // Wait for the process to exit (optional)
-                await process.WaitForExitAsync();
-                await Task.Delay(3000);
-
-                if (process.ExitCode != 0)
-                {
-                    genSuccess = false;
-                    Problem("Error while genearting Models! \r\n Please see console for more details.");
-                }
-                try
-                {
-                    process.Kill(true);
-                    await process.WaitForExitAsync();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error killing process: {ex.Message}");
-                    return false;
-                }
-                // Read and display the output from the log file
-                string output = SysFile.ReadAllText(logFilePath);
-
-                Console.WriteLine($"Output:\r\n{output}");
-                // Clean up
-                if (!SysFile.Exists(batchFilePath))
-                    SysFile.Delete(batchFilePath);
-                if (!SysFile.Exists(logFilePath))
-                    SysFile.Delete(logFilePath);
-                string projPath = $@"{crntSolnDirectory}\SqlIntegrationServices\SqlIntegrationServices.csproj";
-
-                if (genSuccess && !await RebuildSqlIntegrationServices(projPath))
-                {
-                    Console.WriteLine("SqlIntegrationServices project could not be built!");
-                    return false;
-                }
-                foreach (KeyValuePair<string, JObject> item in AddedServices)
-                {
-                    string entityName = $"{item.Key.Trim().Replace("TEST", Emp, StringComparison.InvariantCultureIgnoreCase)}";
-                    if (UpdtModel(entityName, item.Value))
-                        if (!await RebuildSqlIntegrationServices(projPath))
-                        {
-                            Console.WriteLine("SqlIntegrationServices project could not be re-built!");
-                            return false;
-                        }
-                }
-                return true;
             }
-            return false;
+
+            if (AddedServices != null && AddedServices.Count > 0)
+                foreach (KeyValuePair<string, JObject> item in AddedServices)
+                {
+                    string tblName = item.Key.Trim();
+                    tblName = tblName.EndsWith("TEST", StrComp) ? tblName.Remove(tblName.LastIndexOf("Test"), 4) : tblName;
+                    tbls += $"-t {tblName} ";
+                }
+
+            if (IsEmpty(tbls)) return false;
+
+            genSuccess = await GenerateModel(tbls);
+
+            if (genSuccess && !await RebuildSqlIntegrationServices(SqlIntegrationServicesProject))
+            {
+                Console.WriteLine("SqlIntegrationServices project could not be built!");
+                return false;
+            }
+            foreach (KeyValuePair<string, JObject> item in AddedServices)
+            {
+                string entityName = item.Key.Trim();
+                entityName = entityName.EndsWith("TEST", StrComp) ? entityName.Remove(entityName.LastIndexOf("Test"), 4) : entityName;
+                string filePath = $@"{SqlIntegrationServicesPath}\Models\{entityName}.cs";
+                bool updated = false;
+
+                Type typ = Type.GetType($"SqlIntegrationServices.{entityName}, SqlIntegrationServices", throwOnError: false, ignoreCase: true);
+                if ((typ is null) || !types.Contains(typ))
+                {
+                    Console.WriteLine($"Given type {entityName} does not exist!");
+                    return false;
+                }
+                bool updtModel = UpdtModel(entityName, item.Value, filePath, typ);
+                if (updtModel)
+                {
+                    if (!await RebuildSqlIntegrationServices(SqlIntegrationServicesProject))
+                    {
+                        Console.WriteLine("SqlIntegrationServices project could not be re-built!");
+                        return false;
+                    }
+                    Services.ServiceSet.First(s => s.Table.Equals(item.Key, StrComp)).Altered = true;
+                }
+            }
+            return true;
         }
 
-        private bool UpdtModel(string tableName, JObject jObj)
+        private async Task<bool> GenerateModel(string tbls)
         {
-            string nm = tableName.EndsWith("s", StringComparison.OrdinalIgnoreCase) ? "" : "";
-            string projPath = @"C:\Users\rashmi.gupta\source\repos\WorkerServices\SqlIntegrationServices";
-            string debugPath = @$"{projPath}\bin\Debug\net8.0\SqlIntegrationServices.dll";
-            string rlzPath = @$"{projPath}\bin\Debug\net8.0\SqlIntegrationServices.dll";
-            string filePath = $@"{projPath}\Models\{tableName}.cs";
-            bool updated = false;
+            string batchFilePath = "command.bat", logFilePath = "output.log";
+            bool genSuccess = true;
 
-            Assembly asmbly = Assembly.LoadFrom(debugPath);
-            asmbly ??= Assembly.LoadFrom(rlzPath);
+            SysFile.WriteAllLines(batchFilePath,
+            [
+                "@echo off",
+                 $@"cd {CrntSolnDirectory}\SqlIntegrationServices",
+                 "echo Current Directory: %cd%",
+                 $"dotnet ef dbcontext scaffold \"Data Source=10.10.1.138;Initial Catalog=MFELDynamics365;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False\" Microsoft.EntityFrameworkCore.SqlServer -o Models --no-pluralize " +
+                 $"--use-database-names --context-namespace SqlIntegrationServices --namespace SqlIntegrationServices " +
+                 $"--data-annotations {tbls} --no-build --force",
+                 "echo Done" // Optional: indicate completion
+            ]);
+            // Set up the process start info to run the batch file
+            ProcessStartInfo processInfo = new("cmd.exe", $"/c start cmd.exe /k \"{batchFilePath} > {logFilePath} 2>&1\"")
+            {
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false, // This allows the cmd to open in a new window
+                CreateNoWindow = true
+            };
 
-            if (asmbly is null) return false;
+            using Process process = Process.Start(processInfo);
 
-            Type typ = asmbly.GetType($"SqlIntegrationServices.{tableName}Base");
+            // Wait for the process to exit (optional)
+            await process.WaitForExitAsync();
+            await Task.Delay(3000);
+
+            if (process.ExitCode != 0)
+            {
+                genSuccess = false;
+                Problem("Error while genearting Models! \r\n Please see console for more details.");
+            }
+            try
+            {
+                process.Kill(true);
+                await process.WaitForExitAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error killing process: {ex.Message}");
+                return false;
+            }
+
+            // Read and display the output from the log file
+            string output = SysFile.ReadAllText(logFilePath);
+
+            Console.WriteLine($"Output:\r\n{output}");
+            // Clean up
+            if (!SysFile.Exists(batchFilePath))
+                SysFile.Delete(batchFilePath);
+            if (!SysFile.Exists(logFilePath))
+                SysFile.Delete(logFilePath);
+
+            return genSuccess;
+        }
+
+        private bool UpdtModel(string tableName, JObject jObj, string filePath, Type typ)
+        {
             if (typ is null) return false;
+            if (jObj is null) return false;
 
             HashSet<string> classProps = typ.GetProperties(BindingFlags.Instance | BindingFlags.Public).Select(p => p.Name).ToHashSet();
             HashSet<string> jsonProps = jObj.Properties().Select(p => p.Name).ToHashSet();
@@ -476,7 +545,7 @@ namespace SqlIntegrationUI.Controllers
             string propStr = Emp;
             foreach (string item in missingProps)
             {
-                if (item.Equals("@odata.etag", StringComparison.InvariantCultureIgnoreCase)) continue;
+                if (item.Equals("@odata.etag", StrComp)) continue;
 
                 JToken token = jObj[item];
                 string propType = GetCSharpTypeFromJToken(token);
@@ -490,6 +559,20 @@ namespace SqlIntegrationUI.Controllers
                 return true;
             }
             return false;
+        }
+
+        private List<Type> GetTypes()
+        {
+            string debugPath = @$"{SqlIntegrationServicesPath}\bin\Debug\net8.0\SqlIntegrationServices.dll";
+            string rlzPath = @$"{SqlIntegrationServicesPath}\bin\Debug\net8.0\SqlIntegrationServices.dll";
+
+            Assembly asmbly = Assembly.LoadFrom(rlzPath);
+            asmbly ??= Assembly.LoadFrom(debugPath);
+
+            if (asmbly is null) return null;
+
+            Type[] typs = asmbly.GetTypes();
+            return [.. typs];
         }
 
         private static string GetCSharpTypeFromJToken(JToken token)
@@ -598,7 +681,7 @@ namespace SqlIntegrationUI.Controllers
             ViewData["ColumnList"] = new SelectList(lst, "Name", "Name");
 
             if (!IsEmpty(colSearch))
-                lst = lst.Where(col => col.Name.Contains(colSearch, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                lst = lst.Where(col => col.Name.Contains(colSearch, StrComp)).ToList();
 
             ViewData["FiltrdColumnList"] = new SelectList(lst, "Name", "Name");
 
@@ -607,13 +690,12 @@ namespace SqlIntegrationUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(string name, ServiceDetail service)
+        public async Task<ActionResult> Edit(string name, ServiceDetail service)
         {
             if (service is null)
                 return NotFound();
             if (!name.Equals(service.Name))
                 return NotFound();
-            StringComparison comp = StringComparison.InvariantCultureIgnoreCase;
 
             service.Name = service.Name?.Trim();
             service.Endpoint = service.Endpoint?.Trim();
@@ -622,7 +704,7 @@ namespace SqlIntegrationUI.Controllers
 
             string qStr = service.QueryString;
             string fltr = "cross-company=true";
-            service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, comp) ? Emp : "&" + fltr;
+            service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : "&" + fltr;
 
 
             //if (ModelState.IsValid)
@@ -634,6 +716,7 @@ namespace SqlIntegrationUI.Controllers
                 try
                 {
                     set.Remove(existingService);
+                    service.Columns ??= await GetColumns(null, service) ?? [];
                     bool success = set.Add(service);
                     if (!success)
                         throw new Exception("Error: Passed Service could not be added to ServiceList!");

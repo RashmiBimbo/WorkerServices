@@ -19,10 +19,7 @@
         }
 
         th {
-            /*   background-color: 33, 37, 41 !important;
-                            background: 33, 37, 41 !important;
-                            color: white !important;
-                 */ position: sticky !important;
+            position: sticky !important;
             top: 0;
             box-shadow: 0 2px 2px -1px #01255a;
         }
@@ -37,15 +34,11 @@
 
         h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
             text-transform: none;
-            /* font-size: 1.1em; */
         }
-        /*  th, td {
-                    padding: 0.25rem;
-                } */
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark" style="position: sticky !important">
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div class="container">
             <a class="navbar-brand" href="#">SQL Integration</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +49,7 @@
                     <li class="nav-item dropdown" data-bs-theme="light">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false"> Services</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" asp-controller="Services" asp-action="Create">Add</a>
-                            <a class="dropdown-item" asp-controller="CreateFromExcel" asp-action="CreateFromExcel">Add From Excel</a>
+                            <a class="dropdown-item" asp-controller="Services" asp-action="Create">Add New</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" asp-controller="Services" asp-action="Index">View</a>
                         </div>
@@ -67,11 +59,30 @@
         </div>
     </nav>
     <div class="container">
+        <header>
+            <div class="col-lg-12">
+                <ul class="list-unstyled">
+                    <li class="float-end">
+                        <a href="#bottom">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </header>
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+        <footer id="bottom">
+            <a href="#Top" class="float-end">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z" />
+                </svg>
+            </a>
+        </footer>
     </div>
-
     @*  <footer class="border-top footer text-muted">
     <div class="container">
     &copy; 2024 - SqlIntegration - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

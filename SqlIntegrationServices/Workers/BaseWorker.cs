@@ -437,17 +437,18 @@ namespace SqlIntegrationServices
             {
                 T ent = new T();
                 var propDicnry = typeof(T).GetProperties().ToDictionary(prop => NormalizeStr(prop.Name), prop => prop);
-
-                foreach (var col in ServiceConfig.Columns)
+                //if (ServiceConfig is null || ServiceConfig.Columns is null)
+                //if (ServiceConfig.Name.Equals("PurchaseAgreements")) return default;
+                foreach (var col in ServiceConfig.Columns!)
                 {
                     string propName = NormalizeStr(col.Name);
-                    if(propDicnry.TryGetValue(propName, out PropertyInfo propInfo))
-                    //var propInfo = typeof(T).GetProperty(propName);
-                    if (propInfo != null && col.Include)
-                    {
-                        var val = propInfo.GetValue(poco);
-                        propInfo.SetValue(ent, val, null);
-                    }
+                    if (propDicnry.TryGetValue(propName, out PropertyInfo propInfo))
+                        //var propInfo = typeof(T).GetProperty(propName);
+                        if (propInfo != null && col.Include)
+                        {
+                            var val = propInfo.GetValue(poco);
+                            propInfo.SetValue(ent, val, null);
+                        }
                 }
                 return ent;
             }
@@ -662,7 +663,7 @@ namespace SqlIntegrationServices
                         foreach (var prop in props)
                         {
                             string name = prop.GetColumnName();
-                            if (!crntCols.Keys.Any(key => key.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
+                            if (!crntCols.Keys.Any(key => key.Equals(name, StrComp)))
                             {
                                 success = false;
                                 string colTyp = prop.GetColumnType() ?? GetColumnType(prop);

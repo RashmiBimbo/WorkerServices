@@ -8,6 +8,29 @@ namespace CommonCode
     {
         public const string Emp = "";
         public static readonly string Entr = Environment.NewLine;
+        public static readonly string ConnectionString = "Name=ConnectionStrings:DefaultConnection";
+        public static readonly StringComparison StrComp = StringComparison.InvariantCultureIgnoreCase;
+
+        public static string GetConfigFullPath()
+        {
+            string solnPath = GetSolnFolder();
+            string ConfigFullPath = Path.Combine(solnPath, "Config.json");
+            //Console.WriteLine(ConfigFullPath);
+            return ConfigFullPath;
+        }
+
+        public static string GetSolnFolder()
+        {
+            string solnPath = Directory.GetCurrentDirectory();
+            //Console.WriteLine(solnPath);
+            string debugStr = @"\bin\Debug\net8.0";
+            string rlzStr = @"\bin\Release\net8.0";
+            solnPath = solnPath.Replace(debugStr, Emp, StrComp).Replace(rlzStr, Emp, StrComp);
+            //Console.WriteLine(solnPath);
+            solnPath = Directory.GetParent(solnPath).FullName;
+            //Console.WriteLine(solnPath);
+            return solnPath;
+        }
 
         public static bool IsEmpty(string input)
         {
@@ -153,6 +176,11 @@ namespace CommonCode
     public static class Serialize
     {
         public static string ToJson<T>(this T self) => JsonConvert.SerializeObject(self, Converter.Settings);
+    }
+
+    public partial class DeserializeJson<T> where T : notnull
+    {
+        public static T Deserialize(string json) => JsonConvert.DeserializeObject<T>(json, settings: Converter.Settings);
     }
 
     public static class Converter

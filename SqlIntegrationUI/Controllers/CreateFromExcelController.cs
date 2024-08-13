@@ -44,7 +44,7 @@ namespace SqlIntegrationUI.Controllers
                 await XlFile.CopyToAsync(stream);
             }
             // Set a success message
-            ViewData["Message"] = $"File '{XlFile.FileName}' uploaded successfully!";
+            ViewData["Success"] = $"File '{XlFile.FileName}' uploaded successfully!";
 
             return View("CreateFromExcel");
         }

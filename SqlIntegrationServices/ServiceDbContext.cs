@@ -4,10 +4,6 @@ using System.Reflection;
 
 namespace SqlIntegrationServices
 {
-    public partial class DeserializeJson<T> where T : notnull
-    {
-        public static T Deserialize(string json) => JsonConvert.DeserializeObject<T>(json, settings: Converter.Settings);
-    }
     public class ServiceDbContext : DbContext
     {
         public ServiceDbContext(DbContextOptions<ServiceDbContext> options) : base(options)
@@ -52,6 +48,7 @@ namespace SqlIntegrationServices
         //public DbSet<UnitOfMeasureConversionsTest> UnitOfMeasureConversionsTest { get; set; } = default!;
         //public DbSet<UnitsOfMeasure> UnitsOfMeasure { get; set; } = default!;
         //public DbSet<UnitsOfMeasureTest> UnitsOfMeasureTest { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -61,7 +58,7 @@ namespace SqlIntegrationServices
 
             foreach (Type entityType in entityTypes)
             {
-                if (entityType.FullName.Contains("Base", StringComparison.InvariantCultureIgnoreCase)) continue;
+                if (entityType.FullName.Contains("Base", StrComp)) continue;
 
                 var primaryKeyAttribute = entityType.GetCustomAttribute<PrimaryKeyAttribute>();
                 IReadOnlyList<string> primaryKeyProperties = primaryKeyAttribute.PropertyNames;

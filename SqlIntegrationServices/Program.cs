@@ -26,22 +26,21 @@ class Program
 
         // Set of registered types to avoid duplicates
         HashSet<Type> registeredTypes = [];
-        string solnPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-        string debugStr = @"\SqlIntegrationServices\bin\Debug";
-        string rlzStr = @"\SqlIntegrationServices\bin\Release";
-        StringComparison comp = StringComparison.CurrentCultureIgnoreCase;
-        solnPath = solnPath.Replace(debugStr, string.Empty, comp).Replace(rlzStr, string.Empty, comp);
-        string configFullPath = Path.Combine(solnPath, "Config.json");
+        string configFullPath = GetConfigFullPath();
 
+        if (!File.Exists(configFullPath))
+        {
+            Console.WriteLine("Config not found;");
+            return;
+        }
         string ConfigJson = File.ReadAllText(configFullPath);
-        //string ConfigJson = File.ReadAllText("C:\\Users\\rashmi.gupta\\source\\repos\\WorkerServices\\Config.json");
 
         Services services = JsonConvert.DeserializeObject<Services>(ConfigJson);
         if (services is null) return;
 
         IEnumerable<Type> entityTypes = Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttributes<PrimaryKeyAttribute>().Any());
-        //entityTypes.Except(entityTypes.Select(p => p.Name.Contains("Base", StringComparison.CurrentCultureIgnoreCase)));
+
         // Iterate over the services to configure
         foreach (ServiceDetail serviceDtl in services.ServiceSet)
         {
@@ -79,16 +78,13 @@ class Program
             }
         }
         // Register DbContext
-        //var connectionString = hostBuilderCntxt.Configuration.GetConnectionString("DefaultConnection");
-        //string connectionString = "Data Source=10.10.1.138;Initial Catalog=MFELDynamics365;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-        string connectionString = "Name=ConnectionStrings:DefaultConnection";
-        if (string.IsNullOrEmpty(connectionString))
+        if (string.IsNullOrEmpty(ConnectionString))
         {
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found or is empty.");
         }
 
         serviceCln.AddDbContext<ServiceDbContext>(options =>
-            options.UseSqlServer(connectionString, sqlOptions =>
+            options.UseSqlServer(ConnectionString, sqlOptions =>
                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
 
         serviceCln.AddLogging();
