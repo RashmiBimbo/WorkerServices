@@ -19,7 +19,7 @@ namespace CommonCode.Config
         public string Endpoint { get; set; }
 
         [JsonProperty("QueryString")]
-        public string QueryString { get; set; } = "cross-company=true";
+        public string? QueryString { get; set; } = "cross-company=true";
 
         [JsonProperty("Period")]
         public int Period { get; set; } = 30;

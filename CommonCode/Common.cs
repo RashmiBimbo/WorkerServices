@@ -141,7 +141,7 @@ namespace CommonCode
                 if (!IsEmpty(result))
                     break;
             }
-
+            if (IsEmpty(result)) return null;
             JObject obj = JObject.Parse(result);
             JArray Items = (JArray)obj["value"];
 
@@ -183,7 +183,7 @@ namespace CommonCode
                         jObj = await GetServiceJObject(service);
                     else
                         ArgumentNullException.ThrowIfNull(service);
-
+                if (jObj is null) return null;
                 columns = jObj.Properties().Select(p => new Column() { Name = p.Name, Include = true }).ToList();
                 columns.ForEach(col => { if (col.Name == "@odata.etag") { col.Name = "Etag"; } });
                 return columns;
