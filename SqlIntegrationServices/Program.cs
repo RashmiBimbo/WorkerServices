@@ -33,9 +33,8 @@ class Program
             Console.WriteLine("Config not found;");
             return;
         }
-        string ConfigJson = File.ReadAllText(configFullPath);
 
-        Services services = JsonConvert.DeserializeObject<Services>(ConfigJson);
+        Services services = ReadConfig();
         if (services is null) return;
 
         IEnumerable<Type> entityTypes = Assembly.GetExecutingAssembly().GetTypes()

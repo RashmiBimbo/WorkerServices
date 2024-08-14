@@ -8,14 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Workers\AllProductsWorker.cs" />
-	  <Compile Remove="Workers\CustomerItemsWorker.cs" />
-	  <Compile Remove="Workers\HSNCodeWorker.cs" />
-	  <Compile Remove="Workers\SubledgerVoucherGeneralJournalEntryEntitiesWorker.cs" />
-	  <Compile Remove="Workers\UnitOfMeasureConversionsWorker.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Using Include="CommonCode" />
 		<Using Include="CommonCode.Common">
 		  <Static>True</Static>

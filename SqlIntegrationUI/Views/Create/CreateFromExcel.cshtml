@@ -1,0 +1,117 @@
+﻿@model List<ServiceDetail>
+
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-dismissible alert-info">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @ViewData["Message"]
+    </div>
+}
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-dismissible alert-danger">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @ViewData["ErrorMessage"]
+    </div>
+}
+@if (ViewData["SuccessMessage"] != null)
+{
+    <div class="alert alert-dismissible alert-success">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @ViewData["SuccessMessage"]
+    </div>
+}
+@{
+    ViewData["Title"] = "View";
+}
+<br />
+<h3>Add From Excel</h3>
+<hr />
+
+<form asp-controller="Create" asp-action="CreateFromExcel" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-6">
+            <div class="input-group mb-3">
+                <input type="file" class="form-control" name="excelFile" placeholder="Upload Excel" aria-label="Upload Excel" aria-describedby="BtnXlUpload" id="TxtXlUpload" accept=".xls,.xlsx">
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6">
+            <button class="btn btn-primary" type="submit" id="BtnXlUpload" asp-action="Upload">Upload</button>
+            <input type="submit" value="Cancel" class="btn btn-outline-secondary" asp-controller="Services" asp-action="Index" id="CancelBtn" />
+        </div>
+    </div>
+</form>
+<form asp-controller="Create" method="get">
+    @if (Model is null) return;
+    <br />
+    <br />
+    <legend>Services</legend>
+    <table class="table table-hover table-bordered table-responsive table-group-divider" asp>
+        <thead>
+            <tr>
+                <th scope="col">@Html.DisplayNameFor(model => model![0].Name)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model![0].Enable)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model![0].Period)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model![0].Endpoint)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model![0].Table)</th>
+                <th scope="col">Query String</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td title="@item.Name">
+                        <input type="text" value="@item.Name" asp-for="@item.Name" class="form-control-plaintext" />
+                        <span asp-validation-for="@item.Name" class="text-danger"></span>
+                    </td>
+                    <td title="@item.Enable">
+                        <input class="form-check-input" type="checkbox" asp-for="@item.Enable" />
+                        <span asp-validation-for="@item.Enable" class="text-danger"></span>
+                    </td>
+                    <td title="@item.Period">
+                        <input type="text" asp-for="@item.Period" value="@item.Period" class="form-control-plaintext" />
+                        <span asp-validation-for="@item.Period" class="text-danger"></span>
+                    </td>
+                    <td title="@item.Table">
+                        <input type="text" asp-for="@item.Table" value="@item.Table" class="form-control-plaintext" />
+                        <span asp-validation-for="@item.Table" class="text-danger"></span>
+                    </td>
+                    <td title="@item.Endpoint">
+                        <input type="text" asp-for="@item.Endpoint" value="@item.Endpoint" class="form-control-plaintext" />
+                        <span asp-validation-for="@item.Endpoint" class="text-danger"></span>
+                    </td>
+                    <td title="@item.QueryString">
+                        <input type="text" asp-for="@item.QueryString" value="@item.QueryString" class="form-control-plaintext" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <input type="submit" value="Add" class="btn btn-primary" asp-action="CreateFromExcel" />
+    <button type="button" class="btn btn-outline-secondary" onclick="location.href='@Url.Action("Index", "Services")'">Reset</button>
+</form>
+<script>
+    document.getElementById("CancelBtn").
+        addEventListener("click", function () {
+            window.location.href =
+                '@Url.Action("Index", "Services")';
+        });
+    // Update the label to show the selected file name or default message
+    document.getElementById('TxtXlUpload').addEventListener('change', function (event) {
+        const input = event.target;
+        const label = document.getElementById('file-label');
+        const fileName = input.files.length > 0 ? input.files[0].name : 'Upload Excel';
+        label.textContent = fileName;
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
