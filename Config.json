@@ -2053,6 +2053,81 @@
     },
     {
       "Enable": true,
+      "Name": "KPIStdDatas",
+      "Endpoint": "KPIStdDatas",
+      "QueryString": "cross-company=true",
+      "Period": 30,
+      "Table": "KPIStdDatasTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "ItemId",
+          "Include": true
+        },
+        {
+          "Name": "InventSiteId",
+          "Include": true
+        },
+        {
+          "Name": "KPIBatchNo",
+          "Include": true
+        },
+        {
+          "Name": "BagQty",
+          "Include": true
+        },
+        {
+          "Name": "StdProdQuantity",
+          "Include": true
+        },
+        {
+          "Name": "Count1",
+          "Include": true
+        },
+        {
+          "Name": "ValidTillDate",
+          "Include": true
+        },
+        {
+          "Name": "FSTDRej",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "FromDate",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "TargetWeight",
+          "Include": true
+        },
+        {
+          "Name": "StdStockDays",
+          "Include": true
+        },
+        {
+          "Name": "StdChangeOverMinute",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
       "Name": "LineDiscountCustomerGroups",
       "Endpoint": "LineDiscountCustomerGroups",
       "QueryString": "cross-company=true",
@@ -3278,6 +3353,41 @@
         },
         {
           "Name": "ProjId",
+          "Include": true
+        }
+      ]
+    },
+    {
+      "Enable": true,
+      "Name": "ProductCategoryAssignments",
+      "Endpoint": "ProductCategoryAssignments",
+      "QueryString": "cross-company=true",
+      "Period": 30,
+      "Table": "ProductCategoryAssignmentsTest",
+      "Altered": false,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "ProductNumber",
+          "Include": true
+        },
+        {
+          "Name": "ProductCategoryName",
+          "Include": true
+        },
+        {
+          "Name": "ProductCategoryHierarchyName",
+          "Include": true
+        },
+        {
+          "Name": "DisplayOrder",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
           "Include": true
         }
       ]
@@ -7142,41 +7252,6 @@
         },
         {
           "Name": "DeliveryType",
-          "Include": true
-        }
-      ]
-    },
-    {
-      "Enable": true,
-      "Name": "ProductCategoryAssignments",
-      "Endpoint": "ProductCategoryAssignments",
-      "QueryString": "cross-company=true",
-      "Period": 30,
-      "Table": "ProductCategoryAssignmentsTest",
-      "Altered": false,
-      "Columns": [
-        {
-          "Name": "Etag",
-          "Include": true
-        },
-        {
-          "Name": "ProductNumber",
-          "Include": true
-        },
-        {
-          "Name": "ProductCategoryName",
-          "Include": true
-        },
-        {
-          "Name": "ProductCategoryHierarchyName",
-          "Include": true
-        },
-        {
-          "Name": "DisplayOrder",
-          "Include": true
-        },
-        {
-          "Name": "ModifiedDateTime1",
           "Include": true
         }
       ]

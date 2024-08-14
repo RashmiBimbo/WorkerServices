@@ -1,128 +1,53 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
+using SqlIntegrationUI.Models;
 using System.Linq;
 
 namespace SqlIntegrationUI.Controllers
 {
     public class CreateController : Controller
     {
-        // GET: CreateController
-        public ActionResult CreateFromExcel()
+        public static List<ServiceDetail>? ProposedServices
         {
-            return View();
-        }
-
-        // Post: CreateController/
-        [HttpPost]
-        public async Task<IActionResult> Upload(IFormFile excelFile)
-        {
-            // Validate if file is selected
-            if (excelFile == null || excelFile.Length == 0)
+            get
             {
-                // Handle the case when no file is uploaded
-                ModelState.AddModelError("file", "Please upload a file.");
-                ViewData["ErrorMessage"] = "Please upload a file.";
-                return View("CreateFromExcel");
-            }
-            var serviceList = new List<ServiceDetail>();
-
-            // Save the file to the specified path
-            using (var stream = new MemoryStream())
-            {
-                await excelFile.CopyToAsync(stream);
-                stream.Position = 0;
-
-                using SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false);
-                WorkbookPart workbookPart = doc.WorkbookPart;
-                Sheet sheet = workbookPart.Workbook.Sheets.GetFirstChild<Sheet>();
-                WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
-                SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
-
-                foreach (Row row in sheetData.Elements<Row>().Skip(1)) // Assuming the first row is a header
+                try
                 {
-                    int i = 0;
-                    ServiceDetail rowData = new ServiceDetail
+                    if (!memoryCache.TryGetValue("ProposedServices", out List<ServiceDetail> services))
                     {
-                        Name = GetCellValue(doc, row.Elements<Cell>().ElementAt(i++)),
-                        Enable = true,
-                        Period = Convert.ToInt16(GetCellValue(doc, row.Elements<Cell>().ElementAt(i++))),
-                        Table = GetCellValue(doc, row.Elements<Cell>().ElementAt(i++)),
-                        Endpoint = GetCellValue(doc, row.Elements<Cell>().ElementAt(i++))
-                    };
-                    try
-                    {
-                        rowData.QueryString = GetCellValue(doc, row.Elements<Cell>().ElementAt(i++));
+                        return null;
                     }
-                    catch (Exception ex)
-                    {
-                        rowData.QueryString = Emp;
-                    }
-                    serviceList.Add(rowData);
+                    return services;
+                }
+                catch (Exception Ex)
+                {
+                    throw;
                 }
             }
-            // Set a success message
-            // Set a success message
-            //ViewData["SuccessMessage"] = $"File '{XlFile.FileName}' uploaded successfully!";
-
-            return View("CreateFromExcel", serviceList);
-        }
-
-        private string GetCellValue(SpreadsheetDocument doc, Cell cell)
-        {
-            try
+            set
             {
-                if (cell == null)
-                    return Emp;
-
-                SharedStringTablePart stringTablePart = doc.WorkbookPart.SharedStringTablePart;
-                string value = cell.CellValue?.InnerText;
-
-                if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+                if (value == null)
                 {
-                    value = stringTablePart?.SharedStringTable?.ChildElements[int.Parse(IsEmpty(value) ? Emp : value)].InnerText;
-                    return value;
+                    memoryCache.Remove("ProposedServices");
                 }
-                return value;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + ex.StackTrace);
-                return Emp;
-            }
-        }
-
-
-        // POST: CreateController/CreateFromExcel
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFromExcel(List<ServiceDetail> serviceList)
-        {
-            try
-            {
-                foreach (ServiceDetail service in serviceList)
+                else if (value is List<ServiceDetail>)
                 {
-                    if (!Common.Services.ServiceSet.Any(s => s.Name.Equals(service.Name, StrComp)))
-                    {
-                        JObject jObj = await GetServiceJObject(service);
-                        service.Columns = await GetColumns(jObj);
-                        Common.Services.ServiceSet.Add(service);
-                        AddedServices ??= [];
-                        AddedServices.TryAdd(service.Table, jObj);
-                    }
+                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60));
+                    memoryCache.Set("ProposedServices", value, cacheEntryOptions);
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    throw new Exception("The passed object is not of List<ServiceDetail> type!");
+                }
             }
-            catch (Exception ex)
-            {
-                return View();
-            }
-            return View();
         }
-
 
         // GET: CreateController/Create
         public ActionResult Create()
@@ -156,7 +81,7 @@ namespace SqlIntegrationUI.Controllers
                     service.Columns = await GetColumns(jObj);
                     Common.Services.ServiceSet.Add(service);
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Create));
             }
             catch (Exception ex)
             {
@@ -164,61 +89,182 @@ namespace SqlIntegrationUI.Controllers
             }
         }
 
-        // POST: CreateFromExcelController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: CreateFromExcelController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: CreateController
+        public ActionResult CreateFromExcel()
         {
             return View();
         }
 
-        // POST: CreateFromExcelController/Edit/5
+        // POST: CreateController/CreateFromExcel
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> CreateFromExcel(List<ServiceDetail> serviceList)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                ProposedServices = serviceList;
+                foreach (ServiceDetail service in serviceList)
+                {
+                    if (!Common.Services.ServiceSet.Any(s => s.Endpoint.Equals(service.Endpoint, StrComp)))
+                    {
+                        JObject jObj = await GetServiceJObject(service);
+                        service.Columns = await GetColumns(jObj, service);
+                        if (IsEmpty(service.QueryString))
+                            service.QueryString = "cross-company = true";
+                        else
+                        {
+                            _ = service.QueryString.Replace("?", Emp);
+                            service.QueryString += service.QueryString.Contains("cross-company=true") ? Emp : "cross-company = true";
+                        }
+                        Common.Services.ServiceSet.Add(service);
+                        AddedServices ??= [];
+                        AddedServices.TryAdd(service.Table, jObj);
+                    }
+                }
+                ProposedServices = null;
+                return RedirectToAction(nameof(ServicesController.Index), "Services");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                //ErrorViewModel errMdl = new();
+                //return View("Error", errMdl);
+                throw;
+            }
+            //return View();
+        }
+
+        // Post: CreateController/Upload
+        [HttpPost]
+        public async Task<IActionResult> Upload(IFormFile excelFile)
+        {
+            IActionResult rslt = await Validate(excelFile);
+            if (rslt != null) return rslt;
+
+            ProposedServices = null;
+            var serviceList = new List<ServiceDetail>();
+
+            // Save the file to the specified path
+            using (var stream = new MemoryStream())
+            {
+                await excelFile.CopyToAsync(stream);
+                stream.Position = 0;
+
+                using SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false);
+                WorkbookPart workbookPart = doc.WorkbookPart;
+                Sheet sheet = workbookPart.Workbook.Sheets.GetFirstChild<Sheet>();
+                WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
+                SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+                int columnIndex = 0;
+
+                // Assuming that Emp is a predefined string, and GetCellValue is a method that retrieves the cell's value
+                var headerRow = sheetData.Elements<Row>().First(); // Get the first row, which is the header
+
+                // Map column names to their Excel cell references (e.g., "A", "B", "C", etc.)
+                Dictionary<string, string> columnMappings = new();
+                foreach (Cell headerCell in headerRow.Elements<Cell>())
+                {
+                    string columnName = GetCellValue(doc, headerCell);
+                    string cellReference = headerCell.CellReference.Value.Substring(0, 1); // "A", "B", etc.
+                    columnMappings[columnName] = cellReference;
+                }
+
+                foreach (Row row in sheetData.Elements<Row>().Skip(1))
+                {
+                    ServiceDetail service = new ServiceDetail();
+
+                    service.Name = GetCellValueByColumn(doc, row, columnMappings, "Name");
+                    service.Enable = true; // Set Enable to true by default
+                    service.Period = Convert.ToInt16(GetCellValueByColumn(doc, row, columnMappings, "Period"));
+                    service.Table = GetCellValueByColumn(doc, row, columnMappings, "Table");
+                    service.Endpoint = GetCellValueByColumn(doc, row, columnMappings, "Endpoint");
+
+                    string queryString = GetCellValueByColumn(doc, row, columnMappings, "QueryString");
+                    service.QueryString = string.IsNullOrWhiteSpace(queryString) ? "cross-company=true" : queryString;
+                    if (!service.QueryString.Contains("cross-company=true"))
+                    {
+                        service.QueryString += "cross-company=true";
+                    }
+                    serviceList.Add(service);
+                }
+                ProposedServices = serviceList;
+                // Set a success message
+                //ViewData["SuccessMessage"] = $"File '{XlFile.FileName}' uploaded successfully!";
+
+                return View("CreateFromExcel", ProposedServices);
             }
         }
 
-        // GET: CreateFromExcelController/Delete/5
-        public ActionResult Delete(int id)
+        // Retrieves the cell value based on the column name
+        private string GetCellValueByColumn(SpreadsheetDocument doc, Row row, Dictionary<string, string> columnMappings, string columnName)
         {
-            return View();
+            if (columnMappings.TryGetValue(columnName, out string cellReference))
+            {
+                Cell cell = row.Elements<Cell>().FirstOrDefault(c => c.CellReference.Value.StartsWith(cellReference));
+                return GetCellValue(doc, cell);
+            }
+            return string.Empty;
         }
 
-        // POST: CreateFromExcelController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        private async Task<IActionResult> Validate(IFormFile excelFile)
+        {
+            // Validate if file is selected
+            if (excelFile == null || excelFile.Length == 0)
+            {
+                // Handle the case when no file is uploaded
+                ModelState.AddModelError("file", "Please upload a file.");
+                ViewData["ErrorMessage"] = "Please upload a file.";
+                return View("CreateFromExcel");
+            }
+            // Validate based on file extension
+            var allowedExtensions = new[] { ".xls", ".xlsx" };
+            var extension = Path.GetExtension(excelFile.FileName).ToLower();
+
+            if (!allowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("file", "Please upload a valid Excel file (.xls or .xlsx).");
+                ViewData["ErrorMessage"] = "Please upload a valid Excel file (.xls or .xlsx).";
+                return View("CreateFromExcel");
+            }
+            // Validate based on MIME type
+            var allowedMimeTypes = new[] { "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
+
+            if (!allowedMimeTypes.Contains(excelFile.ContentType))
+            {
+                ModelState.AddModelError("file", "Please upload a valid Excel file.");
+                ViewData["ErrorMessage"] = "Please upload a valid Excel file.";
+                return View("CreateFromExcel");
+            }
+            return null;
+        }
+
+        private string GetCellValue(SpreadsheetDocument doc, Cell cell)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (cell == null)
+                    return Emp;
+
+                SharedStringTablePart stringTablePart = doc.WorkbookPart.SharedStringTablePart;
+                string value = cell.CellValue?.InnerText;
+
+                if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+                {
+                    value = stringTablePart?.SharedStringTable?.ChildElements[int.Parse(IsEmpty(value) ? Emp : value)].InnerText;
+                    return value;
+                }
+                return value;
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                return Emp;
             }
+        }
+
+        [HttpGet]
+        public IActionResult Reset()
+        {
+            return View("CreateFromExcel", ProposedServices);
         }
     }
 }
