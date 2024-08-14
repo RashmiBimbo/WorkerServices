@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System.Text;
 using System.Data;
 
 namespace SqlIntegrationServices
@@ -22,15 +21,13 @@ namespace SqlIntegrationServices
         protected Timer timer;
         protected Thread BackgroundThread;
         private CancellationTokenSource? _stoppingCts;
-        //protected readonly ServiceConfiguration ServiceConfig;
         protected readonly ServiceDetail ServiceConfig;
         private readonly string ServiceName, ServiceEndpoint, ServiceTbl;
+        private ExceptionLogger ErrMsgFltr;
 
         public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDetail ServiceConfiguration)
         {
-            //ServiceEndpoint = ServiceDetail.ServiceConfiguration.Table.Replace("Test", string.Empty, StringComparison.OrdinalIgnoreCase);
-            //ServiceName = Regex.Replace(ServiceEndpoint, "(\\B[A-Z])", " $1");
-
+            ErrMsgFltr = new ExceptionLogger(["SqlIntegrationServices", "CommonCode"]);
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             ServiceConfig = ServiceConfiguration;
@@ -45,7 +42,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{Now}: {ex?.Message} \r\n {ex?.StackTrace}");
+                Console.WriteLine($"{Now}: {ErrMsgFltr.GetRelErrorMsg(ex)}");
             }
         }
 
@@ -58,7 +55,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{Now}: {ex?.Message} \r\n {ex?.StackTrace}");
+                Console.WriteLine($"{Now}: {ErrMsgFltr.GetRelErrorMsg(ex)}");
             }
         }
 
@@ -74,7 +71,8 @@ namespace SqlIntegrationServices
                 }
                 catch (Exception ex)
                 {
-                    LogInfo($"\r\n{Now}: An error occurred in the background service.");
+                    string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                    LogInfo($"\r\n{Now}: An error occurred in the background service.{Entr}{msg}");
                 }
             })
             {
@@ -125,7 +123,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex?.StackTrace}");
+                LogInfo($"{Now}: Error: {ErrMsgFltr.GetRelErrorMsg(ex)}");
             }
             finally
             {
@@ -138,16 +136,22 @@ namespace SqlIntegrationServices
             string result = Emp;
             for (int cnt = 1; cnt <= 2; cnt++)
             {
-                result = await GetJson(resource, url);
-                if (!IsEmpty(result))
-                    break;
-                else if (cnt < 2)
+                try
                 {
-                    LogInfo($"{Now}: Error: Getting JSON failed! Retrying...");
+                    result = await GetJson(resource, url);
+                    if (!IsEmpty(result))
+                        break;
+                    else if (cnt < 2)
+                    {
+                        LogInfo($"{Now}: Error: Getting JSON failed! Retrying...");
+                    }
+                }
+                catch (Exception)
+                {
                 }
             }
-            await RunStrategy(result);
             if (IsEmpty(result)) return Emp;
+            await RunStrategy(result);
             string[] strArr = result.Split("@odata.nextLink");
             if (strArr.Length > 1 && !IsEmpty(strArr[1]))
             {
@@ -179,7 +183,8 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                LogInfo($"{Now} : Error: {ex?.Message} + \r\n {ex?.StackTrace}");
+                string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                LogInfo($"{Now} : Error: {msg}");
             }
         }
 
@@ -206,10 +211,11 @@ namespace SqlIntegrationServices
                         }
                         catch (Exception ex)
                         {
-                            LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex.StackTrace}");
+                            string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                            LogInfo($"{Now}: Error: {msg}");
                             if (cnt < 2)
                             {
-                                string msg = $"{Now}: Error: Saving changes failed! Retrying...";
+                                msg = $"{Now}: Error: Saving changes failed! Retrying...";
                                 LogInfo(msg);
                             }
                             else
@@ -229,7 +235,8 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex?.StackTrace}");
+                string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                LogInfo($"{Now}: Error: {msg}");
             }
         }
 
@@ -323,7 +330,8 @@ namespace SqlIntegrationServices
                         }
                         catch (Exception ex)
                         {
-                            LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex?.StackTrace}");
+                            string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                            LogInfo($"{Now}: Error: {msg}");
                             if (cnt < 2)
                                 LogInfo($"{Now}: Saving entity failed. Retrying...");
                         }
@@ -370,7 +378,7 @@ namespace SqlIntegrationServices
                 }
                 catch (Exception ex)
                 {
-                    string msg = $"{Now}: Error checking if table exists: {ex.Message} \r\n {ex.StackTrace}";
+                    string msg = $"{Now}: Error checking if table exists: {ErrMsgFltr.GetRelErrorMsg(ex)}";
                     // Log the error if necessary
                     if (i == 2)
                     {
@@ -454,7 +462,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                LogInfo($"{Now}: Error: {ex?.Message} + \r\n {ex?.StackTrace}");
+                LogInfo($"{Now}: Error: {ErrMsgFltr.GetRelErrorMsg(ex)}");
                 return default;
             }
         }

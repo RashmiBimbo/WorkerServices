@@ -132,14 +132,20 @@ namespace CommonCode
         public static async Task<JObject> GetServiceJObject(ServiceDetail service)
         {
             JObject jObjRslt = null;
-            string and = IsEmpty(service.QueryString) ? Emp : "&";
-            string url = $"{Resource}/data/{service.Endpoint}?{service.QueryString}{and}$top=1";
             string result = Emp;
-            for (int cnt = 1; cnt <= 2; cnt++)
+            try
             {
-                result = await GetJson(Resource, url);
-                if (!IsEmpty(result))
-                    break;
+                string and = IsEmpty(service.QueryString) ? Emp : "&";
+                string url = $"{Resource}/data/{service.Endpoint}?{service.QueryString}{and}$top=1";
+                for (int cnt = 1; cnt <= 2; cnt++)
+                {
+                    result = await GetJson(Resource, url);
+                    if (!IsEmpty(result))
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
             }
             if (IsEmpty(result)) return null;
             JObject obj = JObject.Parse(result);
@@ -157,6 +163,7 @@ namespace CommonCode
                     if (cnt == 2)
                         throw;
                 }
+
             }
             return jObjRslt;
         }
@@ -290,11 +297,7 @@ namespace CommonCode
             }
             catch (Exception ex)
             {
-                string msg = $"Error: {ex?.ToString()}";
-                Console.WriteLine(msg);
-                if (!IsEmpty(logFile))
-                    File.AppendAllText(logFile, "\r\n" + msg);
-                return null;
+                throw;
             }
         }
     }

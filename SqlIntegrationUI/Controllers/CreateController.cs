@@ -1,14 +1,8 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json.Linq;
-using OfficeOpenXml;
-using SqlIntegrationUI.Models;
-using System.Linq;
 
 namespace SqlIntegrationUI.Controllers
 {
@@ -170,13 +164,14 @@ namespace SqlIntegrationUI.Controllers
 
                 foreach (Row row in sheetData.Elements<Row>().Skip(1))
                 {
-                    ServiceDetail service = new ServiceDetail();
-
-                    service.Name = GetCellValueByColumn(doc, row, columnMappings, "Name");
-                    service.Enable = true; // Set Enable to true by default
-                    service.Period = Convert.ToInt16(GetCellValueByColumn(doc, row, columnMappings, "Period"));
-                    service.Table = GetCellValueByColumn(doc, row, columnMappings, "Table");
-                    service.Endpoint = GetCellValueByColumn(doc, row, columnMappings, "Endpoint");
+                    ServiceDetail service = new()
+                    {
+                        Name = GetCellValueByColumn(doc, row, columnMappings, "Name"),
+                        Enable = true, // Set Enable to true by default
+                        Period = Convert.ToInt16(GetCellValueByColumn(doc, row, columnMappings, "Period")),
+                        Table = GetCellValueByColumn(doc, row, columnMappings, "Table"),
+                        Endpoint = GetCellValueByColumn(doc, row, columnMappings, "Endpoint")
+                    };
 
                     string queryString = GetCellValueByColumn(doc, row, columnMappings, "QueryString");
                     service.QueryString = string.IsNullOrWhiteSpace(queryString) ? "cross-company=true" : queryString;
