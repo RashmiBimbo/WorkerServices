@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-[PrimaryKey("DataAreaId", "InventTransOrigin", "InventTransPostingType", "TransDate", "Voucher")]
+[PrimaryKey("dataAreaId", "InventTransOrigin", "InventTransPostingType", "TransDate", "Voucher")]
 public abstract partial class InventTransPostingsBase
 {
     [StringLength(2000)]
@@ -17,9 +17,8 @@ public abstract partial class InventTransPostingsBase
     public string? ParentReference { get; set; }
 
     [Key]
-    [Column("dataAreaId")]
     [StringLength(255)]
-    public string DataAreaId { get; set; } = null!;
+    public string dataAreaId { get; set; } = null!;
 
     [Key]
     public long InventTransOrigin { get; set; }

@@ -1,7 +1,6 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@using CommonCode.Config
 
 @model List<List<ServiceDetail>>
 
@@ -9,59 +8,72 @@
     ViewData["Title"] = "Services";
 }
 <br />
-<div runat="server" class="form-horizontal">
-    <div runat="server" class="form-group">
-        <form asp-controller="Services" asp-action="Index" method="get">
-            <div class="row">
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <label asp-for="@Model[0][0].Name" class="control-label">Services</label>
-                    <select asp-items="@ViewData["ServiceSet"] as SelectList" id="DdlNames" class="form-select" name="searchString">
-                        <option class="dropdown-item" value="">All</option>
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <br />
-                    <input type="submit" value="View" class="btn btn-primary" />
-                </div>
-                <br />
+<div runat="server" class="form-horizontal form-group">
+    <form asp-controller="Services" asp-action="Index" method="get">
+        <div class="row">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <label asp-for="@Model[0][0].Name" class="control-label">Services</label>
+                <select asp-items="@ViewData["ServiceSet"] as SelectList" id="DdlNames" class="form-select" name="searchString">
+                    <option class="dropdown-item" value="">All</option>
+                </select>
             </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <br />
+                <input type="submit" value="View" class="btn btn-primary" />
+            </div>
+            @*  <div class="row">
             <br />
             <br />
-            @* <legend>Services</legend> *@
-            <table class="table table-hover table-bordered table-responsive table-group-divider">
-                <thead>
-                    <tr>
-                        <th>Edit</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Name)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Enable)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Period)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Table)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Endpoint)</th>
-                        <th scope="col">Query String</th>
+            <br />
+            <div class="col-1">
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+            <button type="button" class="btn btn-primary" asp-action="Submit">Submit</button>
+            <div class="btn-group" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            <input type="submit" class="dropdown-item" value="Submit & Restart" asp-action="SubmitNRestart" />
+            </div>
+            </div>
+            </div>
+            </div>
+            </div> *@
+        </div>
+        <br />
+        <br />
+        @* <legend>Services</legend> *@
+        <table class="table table-hover table-bordered table-responsive table-group-divider">
+            <thead>
+                <tr>
+                    <th>Edit</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model[1][0].Name)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model[1][0].Enable)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model[1][0].Period)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model[1][0].Table)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model[1][0].Endpoint)</th>
+                    <th scope="col">Query String</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model![1])
+                {
+                    <tr class="table">
+                        <td>
+                            <a asp-action="Edit" asp-route-name="@item.Name">Edit
+                            </a>
+                        </td>
+                        <td title="@item.Name"> @Html.DisplayFor(modelItem => item.Name)</td>
+                        <td title="@item.Enable"> @Html.DisplayFor(modelItem => item.Enable)</td>
+                        <td title="@item.Period"> @Html.DisplayFor(modelItem => item.Period)</td>
+                        <td title="@item.Table"> @Html.DisplayFor(modelItem => item.Table)</td>
+                        <td title="@item.Endpoint"> @Html.DisplayFor(modelItem => item.Endpoint)</td>
+                        <td title="@item.QueryString"> @Html.DisplayFor(modelItem => item.QueryString)</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model![1])
-                    {
-                        <tr class="table">
-                            <td><a asp-action="Edit" asp-route-name="@item.Name">Edit</a></td>
-                            <td title="@item.Name"> @Html.DisplayFor(modelItem => item.Name)</td>
-                            <td title="@item.Enable"> @Html.DisplayFor(modelItem => item.Enable)</td>
-                            <td title="@item.Period"> @Html.DisplayFor(modelItem => item.Period)</td>
-                            <td title="@item.Table"> @Html.DisplayFor(modelItem => item.Table)</td>
-                            <td title="@item.Endpoint"> @Html.DisplayFor(modelItem => item.Endpoint)</td>
-                            <td title="@item.QueryString"> @Html.DisplayFor(modelItem => item.QueryString)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <br />
-            <form>
-                <input type="submit" value="Submit" class="btn btn-primary" asp-action="Submit" />
-                <button type="button" class="btn btn-outline-secondary" onclick="location.href='@Url.Action("Reset", "Services")'">Reset</button>
-            </form>
+                }
+            </tbody>
+        </table>
+        <form>
+            <input type="submit" value="Submit" class="btn btn-primary" asp-action="Submit" />
+            <button type="button" class="btn btn-outline-secondary" onclick="location.href='@Url.Action("Reset", "Services")'">Reset</button>
         </form>
-    </div>
-</div>
-</div>
+    </form>
 </div>

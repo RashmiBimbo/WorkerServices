@@ -40,7 +40,10 @@
 
   <ItemGroup>
     <PackageReference Include="Clide" Version="4.1.1" />
+    <PackageReference Include="DocumentFormat.OpenXml.Features" Version="3.1.0" />
+    <PackageReference Include="DocumentFormat.OpenXml.Linq" Version="3.1.0" />
     <PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />
+    <PackageReference Include="EPPlus" Version="7.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7" />
       <!--<PrivateAssets>all</PrivateAssets>
@@ -52,7 +55,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.IO.Packaging" Version="8.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Threading.Timer" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -69,7 +77,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Views\CreateFromExcel\CreateFromExcel.cshtml">
+    <Content Update="Views\Create\CreateFromExcel.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
