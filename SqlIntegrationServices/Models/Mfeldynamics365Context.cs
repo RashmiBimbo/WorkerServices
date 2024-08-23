@@ -16,16 +16,16 @@ public partial class MFELDynamics365Context : DbContext
     }
 
 
-    public virtual DbSet<KPIStdDatas> KPIStdDatas { get; set; }
+    public virtual DbSet<VendTransDatasEntity> VendTransDatasEntity { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<KPIStdDatas>(entity =>
+        modelBuilder.Entity<VendTransDatasEntity>(entity =>
         {
-            entity.HasKey(e => new { e.BagQty, e.dataAreaId, e.InventSiteId, e.ItemId, e.KPIBatchNo }).HasName("PK__KPIStdDa__CC15B33D3E99CA6A");
+            entity.HasKey(e => new { e.AccountNum, e.dataAreaId, e.RecId1 }).HasName("PK__VendTran__910D226CCAEF0A96");
         });
 
         OnModelCreatingPartial(modelBuilder);

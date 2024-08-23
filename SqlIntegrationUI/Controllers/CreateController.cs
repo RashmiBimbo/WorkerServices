@@ -70,7 +70,7 @@ namespace SqlIntegrationUI.Controllers
                 JObject jObj = await GetServiceJObject(service);
                 AddedServices ??= [];
                 AddedServices.TryAdd(service.Table, jObj);
-                if (!Common.Services.ServiceSet.Any(s => s.Name.Equals(service.Name, StrComp)))
+                if (!Common.Services.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)))
                 {
                     service.Columns = await GetColumns(jObj);
                     Common.Services.ServiceSet.Add(service);
@@ -99,21 +99,24 @@ namespace SqlIntegrationUI.Controllers
                 ProposedServices = serviceList;
                 foreach (ServiceDetail service in serviceList)
                 {
+                    if (service is null || IsEmpty(service.Endpoint))
+                        continue;
+
                     if (!Common.Services.ServiceSet.Any(s => s.Endpoint.Equals(service.Endpoint, StrComp)))
-                    {
-                        JObject jObj = await GetServiceJObject(service);
-                        service.Columns = await GetColumns(jObj, service);
-                        if (IsEmpty(service.QueryString))
-                            service.QueryString = "cross-company = true";
-                        else
                         {
-                            _ = service.QueryString.Replace("?", Emp);
-                            service.QueryString += service.QueryString.Contains("cross-company=true") ? Emp : "cross-company = true";
+                            JObject jObj = await GetServiceJObject(service);
+                            service.Columns = await GetColumns(jObj, service);
+                            if (IsEmpty(service.QueryString))
+                                service.QueryString = "cross-company = true";
+                            else
+                            {
+                                _ = service.QueryString.Replace("?", Emp);
+                                service.QueryString += service.QueryString.Contains("cross-company=true") ? Emp : "cross-company = true";
+                            }
+                            Common.Services.ServiceSet.Add(service);
+                            AddedServices ??= [];
+                            AddedServices.TryAdd(service.Endpoint, jObj);
                         }
-                        Common.Services.ServiceSet.Add(service);
-                        AddedServices ??= [];
-                        AddedServices.TryAdd(service.Table, jObj);
-                    }
                 }
                 ProposedServices = null;
                 return RedirectToAction(nameof(ServicesController.Index), "Services");
@@ -129,64 +132,73 @@ namespace SqlIntegrationUI.Controllers
 
         // Post: CreateController/Upload
         [HttpPost]
-        public async Task<IActionResult> Upload(IFormFile excelFile)
+        public IActionResult Upload(IFormFile excelFile)
         {
-            IActionResult rslt = await Validate(excelFile);
-            if (rslt != null) return rslt;
+            //IActionResult rslt =  Validate(excelFile);
+            //if (rslt != null) return rslt;
 
             ProposedServices = null;
             var serviceList = new List<ServiceDetail>();
 
             // Save the file to the specified path
-            using (var stream = new MemoryStream())
+            using var stream = new MemoryStream();
+            excelFile.CopyToAsync(stream);
+            stream.Position = 0;
+
+            using SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false);
+            WorkbookPart workbookPart = doc.WorkbookPart;
+            Sheet sheet = workbookPart.Workbook.Sheets.GetFirstChild<Sheet>();
+            WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
+            SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+            int columnIndex = 0;
+
+            // Assuming that Emp is a predefined string, and GetCellValue is a method that retrieves the cell's value
+            var headerRow = sheetData.Elements<Row>().First(); // Get the first row, which is the header
+
+            // Map column names to their Excel cell references (e.g., "A", "B", "C", etc.)
+            Dictionary<string, string> columnMappings = [];
+            foreach (Cell headerCell in headerRow.Elements<Cell>())
             {
-                await excelFile.CopyToAsync(stream);
-                stream.Position = 0;
-
-                using SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false);
-                WorkbookPart workbookPart = doc.WorkbookPart;
-                Sheet sheet = workbookPart.Workbook.Sheets.GetFirstChild<Sheet>();
-                WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
-                SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
-                int columnIndex = 0;
-
-                // Assuming that Emp is a predefined string, and GetCellValue is a method that retrieves the cell's value
-                var headerRow = sheetData.Elements<Row>().First(); // Get the first row, which is the header
-
-                // Map column names to their Excel cell references (e.g., "A", "B", "C", etc.)
-                Dictionary<string, string> columnMappings = new();
-                foreach (Cell headerCell in headerRow.Elements<Cell>())
-                {
-                    string columnName = GetCellValue(doc, headerCell);
-                    string cellReference = headerCell.CellReference.Value.Substring(0, 1); // "A", "B", etc.
-                    columnMappings[columnName] = cellReference;
-                }
-
-                foreach (Row row in sheetData.Elements<Row>().Skip(1))
-                {
-                    ServiceDetail service = new()
-                    {
-                        Name = GetCellValueByColumn(doc, row, columnMappings, "Name"),
-                        Enable = true, // Set Enable to true by default
-                        Period = Convert.ToInt16(GetCellValueByColumn(doc, row, columnMappings, "Period")),
-                        Table = GetCellValueByColumn(doc, row, columnMappings, "Table"),
-                        Endpoint = GetCellValueByColumn(doc, row, columnMappings, "Endpoint")
-                    };
-
-                    string queryString = GetCellValueByColumn(doc, row, columnMappings, "QueryString");
-                    service.QueryString = string.IsNullOrWhiteSpace(queryString) ? "cross-company=true" : queryString;
-                    if (!service.QueryString.Contains("cross-company=true"))
-                    {
-                        service.QueryString += "cross-company=true";
-                    }
-                    serviceList.Add(service);
-                }
-                ProposedServices = serviceList;
-                // Set a success message
-                //ViewData["SuccessMessage"] = $"File '{XlFile.FileName}' uploaded successfully!";
-
-                return View("CreateFromExcel", ProposedServices);
+                string columnName = GetCellValue(doc, headerCell);
+                columnName = columnName.Replace(" ", Emp).ToUpper();
+                string cellReference = headerCell.CellReference.Value.Substring(0, 1); // "A", "B", etc.
+                columnMappings[columnName] = cellReference;
             }
+            foreach (Row row in sheetData.Elements<Row>().Skip(1))
+            {
+                string endPoint = GetCellValueByColumn(doc, row, columnMappings, "ENDPOINT");
+                if (IsEmpty(endPoint))
+                    continue;
+                //string name = GetCellValueByColumn(doc, row, columnMappings, "Name");
+                //if (IsEmpty(name)) name = endPoint;
+
+                //string period = GetCellValueByColumn(doc, row, columnMappings, "PERIOD");
+                //if (IsEmpty(period)) period = "30";
+
+                //string tbl = GetCellValueByColumn(doc, row, columnMappings, "Table");
+                //if (IsEmpty(name)) tbl = endPoint + "Test";
+
+                ServiceDetail service = new()
+                {
+                    Name = GetCellValueByColumn(doc, row, columnMappings, "NAME"),
+                    Endpoint = endPoint,
+                    Period = Convert.ToInt16(GetCellValueByColumn(doc, row, columnMappings, "PERIOD")),
+                    Table = GetCellValueByColumn(doc, row, columnMappings, "TABLE")
+                };
+
+                string queryString = GetCellValueByColumn(doc, row, columnMappings, "QueryString");
+                service.QueryString = string.IsNullOrWhiteSpace(queryString) ? "cross-company=true" : queryString;
+                if (!service.QueryString.Contains("cross-company=true"))
+                {
+                    service.QueryString += "cross-company=true";
+                }
+                serviceList.Add(service);
+            }
+            ProposedServices = serviceList;
+            // Set a success message
+            //ViewData["SuccessMessage"] = $"File '{XlFile.FileName}' uploaded successfully!";
+
+            return View("CreateFromExcel", ProposedServices);
         }
 
         // Retrieves the cell value based on the column name
@@ -197,7 +209,7 @@ namespace SqlIntegrationUI.Controllers
                 Cell cell = row.Elements<Cell>().FirstOrDefault(c => c.CellReference.Value.StartsWith(cellReference));
                 return GetCellValue(doc, cell);
             }
-            return string.Empty;
+            return null;
         }
 
         private async Task<IActionResult> Validate(IFormFile excelFile)

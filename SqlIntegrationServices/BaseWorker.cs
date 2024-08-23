@@ -1,11 +1,12 @@
 ﻿using CommonCode.Config;
 using Newtonsoft.Json.Linq;
-using static System.DateTime;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Data;
+using static System.DateTime;
+using static CommonCode.ExceptionLogger;
 
 namespace SqlIntegrationServices
 {
@@ -14,35 +15,37 @@ namespace SqlIntegrationServices
         protected int ExecutionCount;
         protected ServiceDbContext cntxt;
         protected string msg;
-        protected readonly string logFile;
         protected readonly double period = 30;
         protected readonly IServiceScopeFactory serviceScopeFactory;
         protected readonly ILogger<BaseWorker> logger;
         protected Timer timer;
         protected Thread BackgroundThread;
         private CancellationTokenSource? _stoppingCts;
-        protected readonly ServiceDetail ServiceConfig;
-        private readonly string ServiceName, ServiceEndpoint, ServiceTbl;
-        private ExceptionLogger ErrMsgFltr;
+        private readonly ServiceDetail CrntService;
+        private readonly Services Services;
+        private readonly string logFile, ServiceName, ServiceEndpoint, ServiceTbl, QueryString;
+        private readonly List<string> NameSpaces = ["SqlIntegrationServices", "CommonCode"];
+        //private ExceptionLogger ErrMsgFltr;
 
-        public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDetail ServiceConfiguration)
+        public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDetail service)
         {
-            ErrMsgFltr = new ExceptionLogger(["SqlIntegrationServices", "CommonCode"]);
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
-            ServiceConfig = ServiceConfiguration;
-            ServiceEndpoint = ServiceConfig.Endpoint + (!IsEmpty(ServiceConfig.QueryString) ? "?" + ServiceConfig.QueryString : "");
-            ServiceTbl = ServiceConfig.Table;
-            logFile = AppDomain.CurrentDomain.BaseDirectory + $"{ServiceTbl.Replace("Test", Emp)}Service_Log.txt";
-            ServiceName = ServiceConfig.Name;
-            period = ServiceConfig.Period;
+            CrntService = service;
+            ServiceTbl = CrntService.Table;
+            logFile = AppDomain.CurrentDomain.BaseDirectory + $"{CrntService.Endpoint}Service_Log.txt";
+            ServiceEndpoint = CrntService.Endpoint ;
+            ServiceName = CrntService.Name;
+            period = CrntService.Period;
             try
             {
-                if (!File.Exists(logFile)) File.Create(logFile);
+                if (!File.Exists(logFile)) 
+                    File.Create(logFile);
+                Services = ReadConfig();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{Now}: {ErrMsgFltr.GetRelErrorMsg(ex)}");
+                Console.WriteLine($"{Now}: {GetRelErrorMsg(ex, NameSpaces)}");
             }
         }
 
@@ -51,11 +54,11 @@ namespace SqlIntegrationServices
             try
             {
                 logger.LogInformation(msg);
-                File.AppendAllText(logFile, "\r\n" + msg);
+                File.AppendAllText(logFile, $"{Entr}" + msg);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{Now}: {ErrMsgFltr.GetRelErrorMsg(ex)}");
+                Console.WriteLine($"{Now}: {GetRelErrorMsg(ex, NameSpaces)}");
             }
         }
 
@@ -63,7 +66,7 @@ namespace SqlIntegrationServices
         {
             // Create linked token to allow cancelling executing tsk from provided token
             _stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            BackgroundThread = new Thread(async () =>
+            BackgroundThread = new(async () =>
             {
                 try
                 {
@@ -71,8 +74,8 @@ namespace SqlIntegrationServices
                 }
                 catch (Exception ex)
                 {
-                    string msg = ErrMsgFltr.GetRelErrorMsg(ex);
-                    LogInfo($"\r\n{Now}: An error occurred in the background service.{Entr}{msg}");
+                    string msg = GetRelErrorMsg(ex, NameSpaces);
+                    LogInfo($"{Entr}{Now}: An error occurred in the background service.{Entr}{msg}");
                 }
             })
             {
@@ -93,37 +96,39 @@ namespace SqlIntegrationServices
                 do
                 {
                     int count = Interlocked.Increment(ref ExecutionCount);
-                    string url = $"{resource}/data/{ServiceEndpoint}";
+                    string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
 
-                    string msg = $"{Now}: {ServiceName} Service is running; Count: {count}";
+                    string msg = $"{Entr}{Now}: {ServiceName} Service is running; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = Now;
-                    msg = $"{Now}: Data migration started.";
+                    msg = $"{Entr}{Now}: Data migration started.";
                     LogInfo(msg);
+
+                    CrntService.Status = "Running";
+                    await WriteToConfig();
 
                     int i = 0;
                     while (!IsEmpty(url))
                     {
-                        LogInfo($"\r\n{Now}: API iteration no. {++i}");
+                        LogInfo($"{Entr}{Now}: API iteration no. {++i}");
                         url = await DoWork(resource, url);
-                        //i++;
                     }
                     var endTime = Now;
                     var elapsedTime = endTime - startTime;
 
-                    LogInfo($"\r\n{Now}: Data migration completed."
-                          + $"\r\n{Now}: No. of times api executed : {i}"
-                          + $"\r\n{Now}: Task execution time: {elapsedTime}"
-                          + $"\r\n{Now}: Next iteration will start after {period} minutes at {Now.AddMinutes(period)}"
-                          + "\r\n***********************************************************\r\n");
+                    LogInfo($"{Entr}{Now}: Data migration completed."
+                          + $"{Entr}{Now}: No. of times api executed : {i}"
+                          + $"{Entr}{Now}: Task execution time: {elapsedTime}"
+                          + $"{Entr}{Now}: Next iteration will start after {period} minutes at {Now.AddMinutes(period)}"
+                          + "{Entr}***********************************************************{Entr}");
                     await Task.Delay(TimeSpan.FromMinutes(period), stoppingToken);
                 }
                 while (await timer.WaitForNextTickAsync(stoppingToken));
             }
             catch (Exception ex)
             {
-                LogInfo($"{Now}: Error: {ErrMsgFltr.GetRelErrorMsg(ex)}");
+                LogInfo($"{Now}: Error: {GetRelErrorMsg(ex, NameSpaces)}");
             }
             finally
             {
@@ -183,7 +188,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                string msg = GetRelErrorMsg(ex, NameSpaces);
                 LogInfo($"{Now} : Error: {msg}");
             }
         }
@@ -196,7 +201,7 @@ namespace SqlIntegrationServices
                 JArray Items = (JArray)obj?["value"];
 
                 int? i = Items?.Count;
-                List<long> cnts = await CallUpdateCntxt(context, Items, ServiceConfig.Table);
+                List<long> cnts = await CallUpdateCntxt(context, Items, CrntService.Table);
                 long updtCnt = cnts[1], addCnt = cnts[0];
 
                 using var transaction = await context.Database.BeginTransactionAsync();
@@ -211,7 +216,7 @@ namespace SqlIntegrationServices
                         }
                         catch (Exception ex)
                         {
-                            string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                            string msg = GetRelErrorMsg(ex, NameSpaces);
                             LogInfo($"{Now}: Error: {msg}");
                             if (cnt < 2)
                             {
@@ -226,16 +231,16 @@ namespace SqlIntegrationServices
                         }
                     }
                 }
-                msg = $"\r\n{Now}: Success: Saved data successfully." +
-                      $"\r\n{Now}: Total no. of records tracked:{i}" +
-                      $"\r\n{Now}: Total no. of records added: {addCnt}" +
-                      $"\r\n{Now}: Total no. of records updated: {updtCnt}\r\n";
+                msg = $"{Entr}{Now}: Success: Saved data successfully." +
+                      $"{Entr}{Now}: Total no. of records tracked:{i}" +
+                      $"{Entr}{Now}: Total no. of records added: {addCnt}" +
+                      $"{Entr}{Now}: Total no. of records updated: {updtCnt}{Entr}";
 
                 LogInfo(msg);
             }
             catch (Exception ex)
             {
-                string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                string msg = GetRelErrorMsg(ex, NameSpaces);
                 LogInfo($"{Now}: Error: {msg}");
             }
         }
@@ -269,8 +274,8 @@ namespace SqlIntegrationServices
             {
                 if (!await CheckTable<T>(context))
                 {
-                    //LogInfo($"\r\n{Now}: Error: Could not find or create or alter the table {ServiceConfig.Table}!");
-                    throw new Exception($"Could not find or create or alter the table {ServiceConfig.Table}!");
+                    //LogInfo($"\r\n{Now}: Error: Could not find or create or alter the table {CrntService.Table}!");
+                    throw new Exception($"Could not find or create or alter the table {CrntService.Table}!");
                 }
 
                 DbSet<T> dbSet = context.Set<T>();
@@ -318,7 +323,7 @@ namespace SqlIntegrationServices
                                 }
                                 else // Update the existing entity if modified
                                 {
-                                    if (typeof(T).GetProperties().Any(p => p.Name == "ModifiedDateTime1"))
+                                    if (typeof(T).GetProperties().Any(p => p.Name.ToLower().Trim() == "modifieddatetime1"))
                                         if (((poco as dynamic).ModifiedDateTime1 != null) && !((existingEntity as dynamic).ModifiedDateTime1 != null) && ((poco as dynamic).ModifiedDateTime1 > (existingEntity as dynamic).ModifiedDateTime1))
                                         {
                                             context.Entry(existingEntity).CurrentValues.SetValues(ent);
@@ -330,7 +335,7 @@ namespace SqlIntegrationServices
                         }
                         catch (Exception ex)
                         {
-                            string msg = ErrMsgFltr.GetRelErrorMsg(ex);
+                            string msg = GetRelErrorMsg(ex, NameSpaces);
                             LogInfo($"{Now}: Error: {msg}");
                             if (cnt < 2)
                                 LogInfo($"{Now}: Saving entity failed. Retrying...");
@@ -365,11 +370,11 @@ namespace SqlIntegrationServices
 
                     if (success)
                     {
-                        if (ServiceConfig.Altered)
+                        if (CrntService.Altered)
                         {
                             success = await AlterTable(context, entityType);
-                            ServiceConfig.Altered = !success;
-                            string jsn = JsonConvert.SerializeObject(ServiceConfig);
+                            CrntService.Altered = !success;
+                            string jsn = JsonConvert.SerializeObject(CrntService);
                         }
                         return success;
                     }
@@ -378,7 +383,7 @@ namespace SqlIntegrationServices
                 }
                 catch (Exception ex)
                 {
-                    string msg = $"{Now}: Error checking if table exists: {ErrMsgFltr.GetRelErrorMsg(ex)}";
+                    string msg = $"{Now}: Error checking if table exists: {GetRelErrorMsg(ex, NameSpaces)}";
                     // Log the error if necessary
                     if (i == 2)
                     {
@@ -445,9 +450,9 @@ namespace SqlIntegrationServices
             {
                 T ent = new T();
                 var propDicnry = typeof(T).GetProperties().ToDictionary(prop => NormalizeStr(prop.Name), prop => prop);
-                //if (ServiceConfig is null || ServiceConfig.Columns is null)
-                //if (ServiceConfig.Name.Equals("PurchaseAgreements")) return default;
-                foreach (var col in ServiceConfig.Columns!)
+                //if (CrntService is null || CrntService.Columns is null)
+                //if (CrntService.Name.Equals("PurchaseAgreements")) return default;
+                foreach (var col in CrntService.Columns!)
                 {
                     string propName = NormalizeStr(col.Name);
                     if (propDicnry.TryGetValue(propName, out PropertyInfo propInfo))
@@ -462,7 +467,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                LogInfo($"{Now}: Error: {ErrMsgFltr.GetRelErrorMsg(ex)}");
+                LogInfo($"{Now}: Error: {GetRelErrorMsg(ex, NameSpaces)}");
                 return default;
             }
         }
@@ -708,6 +713,7 @@ namespace SqlIntegrationServices
                             sql.Append(colDef + ";");
                             success = await ExecuteQuery(context, sql.ToString());
                         }
+                        if (success) break;
                     }
                 }
                 catch (Exception ex)
@@ -758,51 +764,68 @@ namespace SqlIntegrationServices
             return cols;
         }
 
-        //private async Task<bool> CreateTable<T>(ServiceDbContext context, IEntityType entityType, string tblName, String schemaName = "dbo")
-        //{
-        //    try
-        //    {
-        //        string sql = @$"CREATE TABLE [{schemaName}].[{tblName}] (";
-
-        //        var properties = entityType.GetProperties();
-
-        //        foreach (var prop in properties)
-        //        {
-        //            string colName = prop.GetColumnName();
-        //            string colType = prop.GetColumnType() ?? GetColumnType(prop);
-        //            bool isNull = prop.IsNullable;
-        //            string colDef = $" [{colName}] {colType.ToUpper()}";
-        //            colDef += (isNull ? " NULL," : " NOT NULL,");
-        //            //colDef += properties.Last() == prop ? "" : ",";
-        //            sql += colDef;
-        //        }
-        //        List<PropertyInfo> keyProps = GetPrimaryKeyProperties(typeof(T));
-        //        if (keyProps != null && keyProps.Count > 0)
-        //        {
-        //            sql += " PRIMARY KEY CLUSTERED (";
-        //            keyProps.ForEach(p => sql += $"[{p.Name}] ASC" + (keyProps.Last() == p ? ")" : ", "));
-        //        }
-        //        else
-        //            sql = sql.Remove(sql.Length - 1);
-
-        //        sql += ");";
-
-        //        return await ExecuteQuery(context, sql);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-        //}
-
-        //                RelationalDatabaseCreator databaseCreator =
-        //(RelationalDatabaseCreator)context.Database.GetService<IDatabaseCreator>();
-        //                databaseCreator.CreateTables();
-        //                var ServiceDetail = new DbMigrationsConfiguration<MyContext> { AutomaticMigrationsEnabled = true };
-        //                var migrator = new DbMigrator(ServiceDetail); dbm
-        //                migrator.Update();
-        //                Shar
-        //sucess = await context.Database.EnsureCreatedAsync();
+        private async Task WriteToConfig()
+        {
+            //try
+            //{
+            //    Services.ServiceSet.Remove(CrntService);
+            //    Services.ServiceSet.Add(CrntService);
+            //    string serviceJson = Serialize.ToJson(Services);
+            //    await LockNWriteToConfig(CrntService.Name, logFile);
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogInfo($"{Now}: {GetRelErrorMsg(ex, NameSpaces)}");
+            //}
+        }
     }
 }
+
+
+//private async Task<bool> CreateTable<T>(ServiceDbContext context, IEntityType entityType, string tblName, String schemaName = "dbo")
+//{
+//    try
+//    {
+//        string sql = @$"CREATE TABLE [{schemaName}].[{tblName}] (";
+
+//        var properties = entityType.GetProperties();
+
+//        foreach (var prop in properties)
+//        {
+//            string colName = prop.GetColumnName();
+//            string colType = prop.GetColumnType() ?? GetColumnType(prop);
+//            bool isNull = prop.IsNullable;
+//            string colDef = $" [{colName}] {colType.ToUpper()}";
+//            colDef += (isNull ? " NULL," : " NOT NULL,");
+//            //colDef += properties.Last() == prop ? "" : ",";
+//            sql += colDef;
+//        }
+//        List<PropertyInfo> keyProps = GetPrimaryKeyProperties(typeof(T));
+//        if (keyProps != null && keyProps.Count > 0)
+//        {
+//            sql += " PRIMARY KEY CLUSTERED (";
+//            keyProps.ForEach(p => sql += $"[{p.Name}] ASC" + (keyProps.Last() == p ? ")" : ", "));
+//        }
+//        else
+//            sql = sql.Remove(sql.Length - 1);
+
+//        sql += ");";
+
+//        return await ExecuteQuery(context, sql);
+//    }
+//    catch (Exception ex)
+//    {
+//        throw;
+//    }
+//}
+
+//                RelationalDatabaseCreator databaseCreator =
+//(RelationalDatabaseCreator)context.Database.GetService<IDatabaseCreator>();
+//                databaseCreator.CreateTables();
+//                var ServiceDetail = new DbMigrationsConfiguration<MyContext> { AutomaticMigrationsEnabled = true };
+//                var migrator = new DbMigrator(ServiceDetail); dbm
+//                migrator.Update();
+//                Shar
+//sucess = await context.Database.EnsureCreatedAsync();
+
 

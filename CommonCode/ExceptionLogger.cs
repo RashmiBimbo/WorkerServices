@@ -2,38 +2,34 @@
 
 namespace CommonCode
 {
-    public class ExceptionLogger
+    public static class ExceptionLogger
     {
-        private readonly List<string> _projectNamespaces;
-
-        public ExceptionLogger(List<string> projectNamespaces) => _projectNamespaces = projectNamespaces;
-
-        public string GetRelErrorMsg(Exception ex)
+        public static string GetRelErrorMsg(Exception ex, List<string> nameSpaces)
         {
-            string relevantStackTrace = GetRelevantStackTrace(ex);
+            string relevantStackTrace = GetRelevantStackTrace(ex, nameSpaces);
             relevantStackTrace = ex?.Message + (IsEmpty(relevantStackTrace) ? Emp : $"{Entr}StackTrace: {relevantStackTrace}");
 
             if (IsEmpty(relevantStackTrace)) return Emp;
 
             if (ex.InnerException != null)
             {
-                string innerStackTrace = GetRelevantStackTrace(ex.InnerException);
+                string innerStackTrace = GetRelevantStackTrace(ex.InnerException, nameSpaces);
                 relevantStackTrace += $"{Entr}Inner Exception Details:" + ex.InnerException.Message;
                 relevantStackTrace += $"{Entr}StackTrace:" + (IsEmpty(innerStackTrace) ? Emp : $"{Entr}StackTrace: {innerStackTrace}");
             }
             return relevantStackTrace;
         }
 
-        private string GetRelevantStackTrace(Exception ex)
+        private static string GetRelevantStackTrace(Exception ex, List<string> _projectNamespaces)
         {
             if (ex is null) return Emp;
             var stackTraceLines = ex.StackTrace?.Split(Entr);
             if (stackTraceLines == null) return Emp;
 
-            var relevantLines = stackTraceLines
+            string[]? relevantLines = stackTraceLines?
                 .Where(line => _projectNamespaces.Any(ns => line.Contains(ns)))?
                 .ToArray();
-
+            if (!(relevantLines?.Length > 0)) return Emp;
             return string.Join(Entr, relevantLines).Trim();
         }
     }

@@ -24,7 +24,15 @@ namespace SqlIntegrationUI.Controllers
                 ConfigFullPath = GetConfigFullPath();
                 SqlIntegrationServicesProject = Path.Combine(CrntSolnDirectory, "SqlIntegrationServices\\SqlIntegrationServices.csproj");
                 SqlIntegrationServicesPath = Path.Combine(CrntSolnDirectory, "SqlIntegrationServices");
-                if (Common.Services is null) throw new Exception("Services not found");
+                if (Common.Services is null)
+                {
+                    Console.WriteLine("Services not found");
+                    Common.Services = new Services
+                    {
+                        ServiceSet = []
+                    };
+                    //throw new Exception("Services not found")};
+                }
             }
             catch (Exception ex)
             {
@@ -36,9 +44,12 @@ namespace SqlIntegrationUI.Controllers
         {
             if (Common.Services is null)
             {
-                return Problem("Services could not be loaded!");
+                Console.WriteLine("Services could not be loaded!");
+                //return Problem("Services could not be loaded!");
+                return View();
             }
             IEnumerable<ServiceDetail> genreQry = from serviceDtl in Common.Services.ServiceSet orderby serviceDtl.Name select serviceDtl;
+            if (genreQry is null || genreQry.Count() < 1) return View();
             List<ServiceDetail> ServiceListOrgnl = genreQry.Distinct().ToList();
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -51,6 +62,86 @@ namespace SqlIntegrationUI.Controllers
             return View(lst);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(string name, string colSearch)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return NotFound();
+            }
+
+            ServiceDetail service = Common.Services.ServiceSet.First(s => s.Name == name);
+
+            if (service == null)
+                return NotFound();
+
+            List<Column> lst;
+            if (service.Columns is null)
+            {
+                Common.Services.ServiceSet.Remove(service);
+                lst = await GetColumns(null, service) ?? [];
+                service.Columns ??= lst;
+                Common.Services.ServiceSet.Add(service);
+            }
+            else
+                lst = service.Columns;
+
+            lst = lst.OrderBy(c => c?.Name)?.ToList();
+
+            ViewData["ColumnList"] = new SelectList(lst, "Name", "Name");
+
+            if (!IsEmpty(colSearch))
+                lst = lst.Where(col => col.Name.Contains(colSearch, StrComp)).ToList();
+
+            ViewData["FiltrdColumnList"] = new SelectList(lst, "Name", "Name");
+
+            return View(service);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(string name, ServiceDetail service)
+        {
+            if (service is null)
+                return NotFound();
+            if (!name.Equals(service.Name))
+                return NotFound();
+
+            service.Name = service.Name?.Trim();
+            service.Endpoint = service.Endpoint?.Trim();
+            service.Table = service.Table?.Trim();
+            service.QueryString = service.QueryString?.Trim().Replace("?", Emp);
+
+            string qStr = service.QueryString;
+            string fltr = "cross-company=true";
+            service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : "&" + fltr;
+
+
+            //if (ModelState.IsValid)
+            //{
+            HashSet<ServiceDetail> set = (Common.Services.ServiceSet) ?? throw new ArgumentNullException("Error: Services are null!");
+            ServiceDetail? existingService = set.FirstOrDefault(s => s.Endpoint == service.Endpoint);
+            if (existingService != null)
+            {
+                try
+                {
+                    set.Remove(existingService);
+                    service.Columns ??= await GetColumns(null, service) ?? [];
+                    bool success = set.Add(service);
+                    if (!success)
+                        throw new Exception("Error: Passed Service could not be added to ServiceList!");
+
+                    set = [.. set.OrderBy(s => s.Name)];
+                    Common.Services = new Services() { ServiceSet = set };
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+            //}
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpGet]
         public IActionResult Reset()
@@ -301,13 +392,6 @@ namespace SqlIntegrationUI.Controllers
             return genSuccess;
         }
 
-
-        // GET: ServicesController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         private async Task<bool> GenerateModel()
         {
             //obtaining ConnectionString from user secret
@@ -344,6 +428,11 @@ namespace SqlIntegrationUI.Controllers
             {
                 Console.WriteLine("SqlIntegrationServices project could not be built!");
                 return false;
+            }
+            if (AddedServices is null)
+            {
+                Console.WriteLine("Added Services are null. No update in model is performed for them");
+                return true;
             }
             foreach (KeyValuePair<string, JObject> item in AddedServices)
             {
@@ -502,107 +591,6 @@ namespace SqlIntegrationUI.Controllers
             };
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(string name, string colSearch)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return NotFound();
-            }
-
-            ServiceDetail service = Common.Services.ServiceSet.First(s => s.Name == name);
-
-            if (service == null)
-                return NotFound();
-
-            List<Column> lst;
-            if (service.Columns is null)
-            {
-                Common.Services.ServiceSet.Remove(service);
-                lst = await GetColumns(null, service) ?? [];
-                service.Columns ??= lst;
-                Common.Services.ServiceSet.Add(service);
-            }
-            else
-                lst = service.Columns;
-
-            lst = lst.OrderBy(c => c?.Name)?.ToList();
-
-            ViewData["ColumnList"] = new SelectList(lst, "Name", "Name");
-
-            if (!IsEmpty(colSearch))
-                lst = lst.Where(col => col.Name.Contains(colSearch, StrComp)).ToList();
-
-            ViewData["FiltrdColumnList"] = new SelectList(lst, "Name", "Name");
-
-            return View(service);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(string name, ServiceDetail service)
-        {
-            if (service is null)
-                return NotFound();
-            if (!name.Equals(service.Name))
-                return NotFound();
-
-            service.Name = service.Name?.Trim();
-            service.Endpoint = service.Endpoint?.Trim();
-            service.Table = service.Table?.Trim();
-            service.QueryString = service.QueryString?.Trim().Replace("?", Emp);
-
-            string qStr = service.QueryString;
-            string fltr = "cross-company=true";
-            service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : "&" + fltr;
-
-
-            //if (ModelState.IsValid)
-            //{
-            HashSet<ServiceDetail> set = (Common.Services.ServiceSet) ?? throw new ArgumentNullException("Error: Services are null!");
-            ServiceDetail? existingService = set.FirstOrDefault(s => s.Endpoint == service.Endpoint);
-            if (existingService != null)
-            {
-                try
-                {
-                    set.Remove(existingService);
-                    service.Columns ??= await GetColumns(null, service) ?? [];
-                    bool success = set.Add(service);
-                    if (!success)
-                        throw new Exception("Error: Passed Service could not be added to ServiceList!");
-
-                    set = [.. set.OrderBy(s => s.Name)];
-                    Common.Services = new Services() { ServiceSet = set };
-                }
-                catch (Exception ex)
-                {
-                    throw;
-                }
-            }
-            //}
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: ServicesController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ServicesController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                return View();
-            }
-        }
     }
 }
 

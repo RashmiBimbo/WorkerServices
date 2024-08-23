@@ -2,16 +2,32 @@ using CommonCode.Config;
 using Microsoft.Extensions.DependencyInjection;
 using SqlIntegrationServices;
 using System.Reflection;
+using System.Xml.Linq;
 
 class Program
 {
+    private static string LogFile;
+
+    static Program()
+    {
+        string crntFolder = Directory.GetCurrentDirectory();
+        LogFile = Path.Combine(crntFolder, "SqlIntegrationServices_Log.txt");
+    }
+
     static void Main(string[] args)
     {
-        var builder = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(AddServices);
+        try
+        {
+            var builder = Host.CreateDefaultBuilder(args)
+                .ConfigureServices(AddServices);
 
-        var host = builder.Build();
-        host.Run();
+            var host = builder.Build();
+            host.Run();
+        }
+        catch (Exception ex)
+        {
+            LogInfo(ex, LogFile, ["SqlIntegrationServices", "Common"]);
+        }
     }
 
     private static void AddServices(HostBuilderContext hostBuilderCntxt, IServiceCollection serviceCln)
@@ -26,16 +42,16 @@ class Program
 
         // Set of registered types to avoid duplicates
         HashSet<Type> registeredTypes = [];
-        string configFullPath = GetConfigFullPath();
-
-        if (!File.Exists(configFullPath))
+        Services services;
+        try
         {
-            Console.WriteLine("Config not found;");
-            return;
+            services = ReadConfig();
+            if (services is null) return;
         }
-
-        Services services = ReadConfig();
-        if (services is null) return;
+        catch (Exception)
+        {
+            throw;
+        }
 
         IEnumerable<Type> entityTypes = Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttributes<PrimaryKeyAttribute>().Any());

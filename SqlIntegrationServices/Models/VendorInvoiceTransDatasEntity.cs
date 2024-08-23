@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-[PrimaryKey("AccountNum", "DataAreaId", "RecId1")]
+[PrimaryKey("AccountNum", "dataAreaId", "RecId1")]
 public abstract partial class VendorInvoiceTransDatasEntityBase
 {
     [StringLength(2000)]
@@ -21,34 +21,30 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     public string AccountNum { get; set; } = null!;
 
     [Key]
-    [Column("dataAreaId")]
     [StringLength(255)]
-    public string DataAreaId { get; set; } = null!;
+    public string dataAreaId { get; set; } = null!;
 
     [Key]
     public long RecId1 { get; set; }
 
     public long? AdvanceApplicationId { get; set; }
 
-    [Column("AgreementLine_PSN")]
-    public long? AgreementLinePsn { get; set; }
+    public long? AgreementLine_PSN { get; set; }
 
-    [Column("AssessableValue_IN", TypeName = "decimal(28, 16)")]
-    public decimal? AssessableValueIn { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? AssessableValue_IN { get; set; }
 
-    [Column("CompanyLocation_IN")]
-    public long? CompanyLocationIn { get; set; }
+    public long? CompanyLocation_IN { get; set; }
 
     public DateTime? CreatedDateTime1 { get; set; }
 
-    [Column("CreditNoteDate_IN", TypeName = "datetime")]
-    public DateTime? CreditNoteDateIn { get; set; }
+    [Column(TypeName = "datetime")]
+    public DateTime? CreditNoteDate_IN { get; set; }
 
     [StringLength(2000)]
     public string? CurrencyCode { get; set; }
 
-    [Column("CustomsTariffCodeTable_IN")]
-    public long? CustomsTariffCodeTableIn { get; set; }
+    public long? CustomsTariffCodeTable_IN { get; set; }
 
     [StringLength(2000)]
     public string? DataAreaId1 { get; set; }
@@ -76,27 +72,22 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     [Column(TypeName = "decimal(28, 16)")]
     public decimal? DiscPercent { get; set; }
 
-    [Column("DSA_IN")]
     [StringLength(2000)]
-    public string? DsaIn { get; set; }
+    public string? DSA_IN { get; set; }
 
-    [Column("ExciseRecordType_IN")]
     [StringLength(2000)]
-    public string? ExciseRecordTypeIn { get; set; }
+    public string? ExciseRecordType_IN { get; set; }
 
-    [Column("ExciseTariffCodes_IN")]
-    public long? ExciseTariffCodesIn { get; set; }
+    public long? ExciseTariffCodes_IN { get; set; }
 
-    [Column("ExciseType_IN")]
     [StringLength(2000)]
-    public string? ExciseTypeIn { get; set; }
+    public string? ExciseType_IN { get; set; }
 
     [StringLength(2000)]
     public string? ExternalItemId { get; set; }
 
-    [Column("GTAServiceCategory_IN")]
     [StringLength(2000)]
-    public string? GtaserviceCategoryIn { get; set; }
+    public string? GTAServiceCategory_IN { get; set; }
 
     [StringLength(2000)]
     public string? InterCompanyInventTransId { get; set; }
@@ -148,11 +139,11 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     [Column(TypeName = "decimal(28, 16)")]
     public decimal? LineAmount { get; set; }
 
-    [Column("LineAmountMST", TypeName = "decimal(28, 16)")]
-    public decimal? LineAmountMst { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? LineAmountMST { get; set; }
 
-    [Column("LineAmountMST_W", TypeName = "decimal(28, 16)")]
-    public decimal? LineAmountMstW { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? LineAmountMST_W { get; set; }
 
     [Column(TypeName = "decimal(28, 16)")]
     public decimal? LineAmountTax { get; set; }
@@ -169,12 +160,11 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     [StringLength(2000)]
     public string? LineType { get; set; }
 
-    [Column("MarkupCode_RU")]
     [StringLength(2000)]
-    public string? MarkupCodeRu { get; set; }
+    public string? MarkupCode_RU { get; set; }
 
-    [Column("MaximumRetailPrice_IN", TypeName = "decimal(28, 16)")]
-    public decimal? MaximumRetailPriceIn { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? MaximumRetailPrice_IN { get; set; }
 
     public DateTime? ModifiedDateTime1 { get; set; }
 
@@ -187,12 +177,11 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     [StringLength(2000)]
     public string? Name { get; set; }
 
-    [Column("NonRecoverablePercent_IN", TypeName = "decimal(28, 16)")]
-    public decimal? NonRecoverablePercentIn { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? NonRecoverablePercent_IN { get; set; }
 
-    [Column("numberSequenceGroup")]
     [StringLength(2000)]
-    public string? NumberSequenceGroup { get; set; }
+    public string? numberSequenceGroup { get; set; }
 
     [StringLength(2000)]
     public string? OrigCountryRegionId { get; set; }
@@ -208,11 +197,11 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     [StringLength(2000)]
     public string? PartDelivery { get; set; }
 
-    [Column("PdsCWQty", TypeName = "decimal(28, 16)")]
-    public decimal? PdsCwqty { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? PdsCWQty { get; set; }
 
-    [Column("PdsCWQtyPhysical", TypeName = "decimal(28, 16)")]
-    public decimal? PdsCwqtyPhysical { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? PdsCWQtyPhysical { get; set; }
 
     [StringLength(2000)]
     public string? Port { get; set; }
@@ -222,16 +211,15 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
 
     public long? ProcurementCategory { get; set; }
 
-    [Column("PSAReleaseAmount", TypeName = "decimal(28, 16)")]
-    public decimal? PsareleaseAmount { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? PSAReleaseAmount { get; set; }
 
-    [Column("PSARetainageAmount", TypeName = "decimal(28, 16)")]
-    public decimal? PsaretainageAmount { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? PSARetainageAmount { get; set; }
 
     public long? PurchaseLineLineNumber { get; set; }
 
-    [Column("PurchCommitmentLine_PSN")]
-    public long? PurchCommitmentLinePsn { get; set; }
+    public long? PurchCommitmentLine_PSN { get; set; }
 
     [StringLength(2000)]
     public string? PurchId { get; set; }
@@ -251,29 +239,25 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     [Column(TypeName = "decimal(28, 16)")]
     public decimal? QtyPhysical { get; set; }
 
-    [Column("RBOPackageLineNum", TypeName = "decimal(28, 16)")]
-    public decimal? RbopackageLineNum { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? RBOPackageLineNum { get; set; }
 
     [StringLength(2000)]
     public string? ReadyForPayment { get; set; }
 
     public long? ReasonTableRef { get; set; }
 
-    [Column("RegistrationPostalAddress_IN")]
-    public long? RegistrationPostalAddressIn { get; set; }
+    public long? RegistrationPostalAddress_IN { get; set; }
 
     [StringLength(2000)]
     public string? RetailPackageId { get; set; }
 
-    [Column("ReverseCharge_W")]
     [StringLength(2000)]
-    public string? ReverseChargeW { get; set; }
+    public string? ReverseCharge_W { get; set; }
 
-    [Column("SalesTaxFormTypes_IN")]
-    public long? SalesTaxFormTypesIn { get; set; }
+    public long? SalesTaxFormTypes_IN { get; set; }
 
-    [Column("ServiceCodeTable_IN")]
-    public long? ServiceCodeTableIn { get; set; }
+    public long? ServiceCodeTable_IN { get; set; }
 
     [Column(TypeName = "decimal(28, 16)")]
     public decimal? SettleTax1099Amount { get; set; }
@@ -320,23 +304,20 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     [StringLength(2000)]
     public string? TaxItemGroup { get; set; }
 
-    [Column("TaxWithholdLineNum_IN", TypeName = "decimal(28, 16)")]
-    public decimal? TaxWithholdLineNumIn { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? TaxWithholdLineNum_IN { get; set; }
 
-    [Column("TaxWithholdVoucher_IN")]
     [StringLength(2000)]
-    public string? TaxWithholdVoucherIn { get; set; }
+    public string? TaxWithholdVoucher_IN { get; set; }
 
     [StringLength(2000)]
     public string? TaxWriteCode { get; set; }
 
-    [Column("TCSGroup_IN")]
     [StringLength(2000)]
-    public string? TcsgroupIn { get; set; }
+    public string? TCSGroup_IN { get; set; }
 
-    [Column("TDSGroup_IN")]
     [StringLength(2000)]
-    public string? TdsgroupIn { get; set; }
+    public string? TDSGroup_IN { get; set; }
 
     [StringLength(2000)]
     public string? TransactionCode { get; set; }
@@ -344,21 +325,19 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     [StringLength(2000)]
     public string? Transport { get; set; }
 
-    [Column("VATAmount_IN", TypeName = "decimal(28, 16)")]
-    public decimal? VatamountIn { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? VATAmount_IN { get; set; }
 
-    [Column("VATDeferred_IN", TypeName = "decimal(28, 16)")]
-    public decimal? VatdeferredIn { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? VATDeferred_IN { get; set; }
 
-    [Column("VATExpense_IN", TypeName = "decimal(28, 16)")]
-    public decimal? VatexpenseIn { get; set; }
+    [Column(TypeName = "decimal(28, 16)")]
+    public decimal? VATExpense_IN { get; set; }
 
-    [Column("VATGoodsType_IN")]
     [StringLength(2000)]
-    public string? VatgoodsTypeIn { get; set; }
+    public string? VATGoodsType_IN { get; set; }
 
-    [Column("VendorLocation_IN")]
-    public long? VendorLocationIn { get; set; }
+    public long? VendorLocation_IN { get; set; }
 
     [Column(TypeName = "decimal(28, 16)")]
     public decimal? Weight { get; set; }
