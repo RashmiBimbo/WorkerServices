@@ -121,7 +121,7 @@ namespace SqlIntegrationServices
                           + $"{Entr}{Now}: No. of times api executed : {i}"
                           + $"{Entr}{Now}: Task execution time: {elapsedTime}"
                           + $"{Entr}{Now}: Next iteration will start after {period} minutes at {Now.AddMinutes(period)}"
-                          + "{Entr}***********************************************************{Entr}");
+                          + $"{Entr}***********************************************************{Entr}");
                     await Task.Delay(TimeSpan.FromMinutes(period), stoppingToken);
                 }
                 while (await timer.WaitForNextTickAsync(stoppingToken));
