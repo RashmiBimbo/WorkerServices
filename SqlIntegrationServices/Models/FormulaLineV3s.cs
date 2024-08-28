@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-[PrimaryKey("BOMId", "dataAreaId", "LineCreationSequenceNumber")]
-public abstract partial class BillOfMaterialsLinesV2Base
+[PrimaryKey("dataAreaId", "FormulaId", "LineCreationSequenceNumber")]
+public abstract partial class FormulaLineV3sBase
 {
     [StringLength(2000)]
     [JsonProperty("@odata.etag")]
@@ -18,20 +18,17 @@ public abstract partial class BillOfMaterialsLinesV2Base
 
     [Key]
     [StringLength(255)]
-    public string BOMId { get; set; } = null!;
+    public string dataAreaId { get; set; } = null!;
 
     [Key]
     [StringLength(255)]
-    public string dataAreaId { get; set; } = null!;
+    public string FormulaId { get; set; } = null!;
 
     [Key]
     public int LineCreationSequenceNumber { get; set; }
 
     [Column(TypeName = "decimal(38, 16)")]
     public decimal? CatchWeightQuantity { get; set; }
-
-    [StringLength(2000)]
-    public string? ConfigurationGroupId { get; set; }
 
     [Column(TypeName = "decimal(38, 16)")]
     public decimal? ConstantScrapQuantity { get; set; }
@@ -54,10 +51,19 @@ public abstract partial class BillOfMaterialsLinesV2Base
     [StringLength(2000)]
     public string? FlushingPrinciple { get; set; }
 
+    [Column(TypeName = "decimal(38, 16)")]
+    public decimal? FormulaQuantityPercentage { get; set; }
+
     [StringLength(2000)]
     public string? IsConsumedAtOperationComplete { get; set; }
 
+    [StringLength(2000)]
+    public string? IsPercentageControlled { get; set; }
+
     public bool? IsResourceConsumptionUsed { get; set; }
+
+    [StringLength(2000)]
+    public string? IsScalable { get; set; }
 
     [StringLength(2000)]
     public string? ItemNumber { get; set; }
@@ -118,6 +124,11 @@ public abstract partial class BillOfMaterialsLinesV2Base
     [StringLength(2000)]
     public string? SubRouteId { get; set; }
 
+    [StringLength(2000)]
+    public string? SubstitutionGroupId { get; set; }
+
+    public int? SubstitutionPriority { get; set; }
+
     [Column(TypeName = "datetime")]
     public DateTime? ValidFromDate { get; set; }
 
@@ -138,8 +149,10 @@ public abstract partial class BillOfMaterialsLinesV2Base
 
     [StringLength(2000)]
     public string? WillManufacturedItemInheritShelfLifeDates { get; set; }
+
+    public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class BillOfMaterialsLinesV2Test : BillOfMaterialsLinesV2Base {}
+public partial class FormulaLineV3sTest : FormulaLineV3sBase {}
 
-public partial class BillOfMaterialsLinesV2 : BillOfMaterialsLinesV2Base {}
+public partial class FormulaLineV3s : FormulaLineV3sBase {}

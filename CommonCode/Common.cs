@@ -1,9 +1,12 @@
 ﻿using CommonCode.Config;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Xml.Linq;
 
 namespace CommonCode
 {
@@ -15,6 +18,7 @@ namespace CommonCode
         public static readonly StringComparison StrComp = StringComparison.InvariantCultureIgnoreCase;
         public static IMemoryCache memoryCache;
         public static readonly string Resource = "https://mfprod.operations.dynamics.com";
+        private static readonly object fileLock = new();
 
         static Common()
         {
@@ -98,6 +102,7 @@ namespace CommonCode
         {
             string solnPath = GetSolnFolder();
             string ConfigFullPath = Path.Combine(solnPath, "Config.json");
+            if (IsEmpty(ConfigFullPath)) throw new Exception("Config file full path not found!");
             //Console.WriteLine(ConfigFullPath);
             return ConfigFullPath;
         }
@@ -115,12 +120,24 @@ namespace CommonCode
             return solnPath;
         }
 
-        public static Services ReadConfig()
+        public static Services ReadConfig(bool throwIfUnAvlbl = false)
         {
             try
             {
+                string configFullPath = GetConfigFullPath();
+                if (!File.Exists(configFullPath))
+                {
+                    Console.WriteLine("Config not found;");
+                    if (throwIfUnAvlbl) throw new FileNotFoundException();
+                    else
+                        File.Create(configFullPath);
+                }
+                Services services;
                 string ConfigJson = File.ReadAllText(GetConfigFullPath());
-                Services services = JsonConvert.DeserializeObject<Services>(ConfigJson);
+                if (IsEmpty(ConfigJson))
+                    services = new();
+                else
+                    services = DeserializeJson<Services>.Deserialize(ConfigJson);
                 return services;
             }
             catch (Exception ex)
@@ -129,17 +146,93 @@ namespace CommonCode
             }
         }
 
+        public static Services ReadConfig()
+        {
+            try
+            {
+                string configFullPath = GetConfigFullPath();
+                using FileStream fs = new(configFullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using StreamReader reader = new(fs, Encoding.UTF8);
+                {
+                    string configJson = reader.ReadToEnd();
+                    Services services = DeserializeJson<Services>.Deserialize(configJson);
+                    return services;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public static async Task LockNWriteToConfig(string objectKey, string propertyKey, string newValue, string logFile)
+        {
+            lock (fileLock)
+            {
+                try
+                {
+                    string configPath = GetConfigFullPath();
+                    string tempFilePath = Path.GetTempFileName();
+                    using (FileStream fs = new(configPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (StreamReader reader = new(fs, Encoding.UTF8))
+                    using (StreamWriter writer = new(tempFilePath, false, Encoding.UTF8))
+                    {
+                        string line;
+                        bool inTargetObject = false;
+
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            if (line.Contains($"\"{objectKey}\""))
+                                inTargetObject = true;
+
+                            if (inTargetObject && line.Contains($"\"{propertyKey}\""))
+                            {
+                                // Replace the line with the updated value
+                                string updatedLine = $"  \"{propertyKey}\": \"{newValue}\",";
+                                writer.WriteLine(updatedLine);
+                            }
+                            else
+                                writer.WriteLine(line);
+
+
+                            if (inTargetObject && line.Trim().EndsWith("}"))
+                                inTargetObject = false;
+                        }
+                    }
+
+                    // Replace the original file with the modified one atomically
+                    File.Replace(tempFilePath, configPath, null);
+                }
+                catch (IOException ex)
+                {
+                    Console.WriteLine($"An I/O error occurred: {ex.Message}");
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+                    throw;
+                }
+            }
+        }
+
         public static async Task<JObject> GetServiceJObject(ServiceDetail service)
         {
             JObject jObjRslt = null;
-            string and = IsEmpty(service.QueryString) ? Emp : "&";
-            string url = $"{Resource}/data/{service.Endpoint}?{service.QueryString}{and}$top=1";
             string result = Emp;
-            for (int cnt = 1; cnt <= 2; cnt++)
+            try
             {
-                result = await GetJson(Resource, url);
-                if (!IsEmpty(result))
-                    break;
+                string and = IsEmpty(service.QueryString) ? Emp : "&";
+                string url = $"{Resource}/data/{service.Endpoint}?{service.QueryString}{and}$top=1";
+                for (int cnt = 1; cnt <= 2; cnt++)
+                {
+                    result = await GetJson(Resource, url);
+                    if (!IsEmpty(result))
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
             }
             if (IsEmpty(result)) return null;
             JObject obj = JObject.Parse(result);
@@ -149,6 +242,7 @@ namespace CommonCode
             {
                 try
                 {
+                    if (!(Items?.Count > 0)) return null;
                     jObjRslt = Items[0] as JObject;
                     break;
                 }
@@ -161,6 +255,11 @@ namespace CommonCode
             return jObjRslt;
         }
 
+        /// <summary>
+        /// checks if string is null, empty or just white space
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static bool IsEmpty(string input)
         {
             try
@@ -290,13 +389,23 @@ namespace CommonCode
             }
             catch (Exception ex)
             {
-                string msg = $"Error: {ex?.ToString()}";
-                Console.WriteLine(msg);
-                if (!IsEmpty(logFile))
-                    File.AppendAllText(logFile, "\r\n" + msg);
-                return null;
+                throw;
             }
         }
+
+        public static void LogInfo(Exception ex, string logFile, List<string> NameSpaces)
+        {
+            try
+            {
+                string msg = $"{Entr}{DateTime.Now}: Error: {ExceptionLogger.GetRelErrorMsg(ex, NameSpaces)}";
+                File.AppendAllText(logFile, msg);
+            }
+            catch (Exception ex1)
+            {
+                Console.WriteLine($"{DateTime.Now}: {ExceptionLogger.GetRelErrorMsg(ex1, NameSpaces)}");
+            }
+        }
+
     }
 
     public class TokenResponse

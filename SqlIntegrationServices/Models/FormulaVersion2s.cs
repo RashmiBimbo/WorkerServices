@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-[PrimaryKey("DataAreaId", "FormulaId", "IsActive", "ProductionSiteId")]
+[PrimaryKey("dataAreaId", "FormulaId", "IsActive", "ProductionSiteId")]
 public abstract partial class FormulaVersion2sBase
 {
     [StringLength(2000)]
@@ -17,9 +17,8 @@ public abstract partial class FormulaVersion2sBase
     public string? ParentReference { get; set; }
 
     [Key]
-    [Column("dataAreaId")]
     [StringLength(255)]
-    public string DataAreaId { get; set; } = null!;
+    public string dataAreaId { get; set; } = null!;
 
     [Key]
     [StringLength(255)]

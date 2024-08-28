@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-[PrimaryKey("dataAreaId", "FromDate", "InventSiteId", "Shift", "ToDate")]
-public abstract partial class ProdManpowerMastersBase
+[PrimaryKey("dataAreaId", "FromDate", "Shift", "ToDate")]
+public abstract partial class ProdManpowerMasterEntitiesBase
 {
     [StringLength(2000)]
     [JsonProperty("@odata.etag")]
@@ -26,17 +26,11 @@ public abstract partial class ProdManpowerMastersBase
 
     [Key]
     [StringLength(255)]
-    public string InventSiteId { get; set; } = null!;
-
-    [Key]
-    [StringLength(255)]
     public string Shift { get; set; } = null!;
 
     [Key]
     [Column(TypeName = "datetime")]
     public DateTime ToDate { get; set; }
-
-    public long? RuskLabour { get; set; }
 
     public int? SBunPlantLab { get; set; }
 
@@ -65,14 +59,8 @@ public abstract partial class ProdManpowerMastersBase
     public int? SSupervisorsBr { get; set; }
 
     public int? SSupervisorsBun { get; set; }
-
-    [Column(TypeName = "decimal(28, 16)")]
-    public decimal? CakePlant { get; set; }
-
-    [Column(TypeName = "decimal(28, 16)")]
-    public decimal? SBGLabour { get; set; }
 }
 
-public partial class ProdManpowerMastersTest : ProdManpowerMastersBase {}
+public partial class ProdManpowerMasterEntitiesTest : ProdManpowerMasterEntitiesBase {}
 
-public partial class ProdManpowerMasters : ProdManpowerMastersBase {}
+public partial class ProdManpowerMasterEntities : ProdManpowerMasterEntitiesBase {}
