@@ -9,9 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="publish\**" />
     <Compile Remove="Views\Home\**" />
+    <Content Remove="publish\**" />
     <Content Remove="Views\Home\**" />
+    <EmbeddedResource Remove="publish\**" />
     <EmbeddedResource Remove="Views\Home\**" />
+    <None Remove="publish\**" />
     <None Remove="Views\Home\**" />
   </ItemGroup>
 
@@ -36,6 +40,14 @@
     <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.rtl.css.map" />
     <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.rtl.min.css" />
     <Content Remove="wwwroot\lib\bootstrap\dist\css\bootstrap - Copy.rtl.min.css.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="buildcommand.bat" />
+    <None Remove="buildoutput.log" />
+    <None Remove="build_log.txt" />
+    <None Remove="command.bat" />
+    <None Remove="output.log" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,7 +85,14 @@
       <Static>True</Static>
     </Using>
     <Using Include="CommonCode.Config" />
+    <Using Include="CommonCode.ExceptionLogger">
+      <Static>True</Static>
+    </Using>
     <Using Include="Newtonsoft.Json" />
+    <Using Include="SqlIntegrationUI.UIUtilities" />
+    <Using Include="SqlIntegrationUI.UIUtilities.UICommonCode">
+      <Static>True</Static>
+    </Using>
   </ItemGroup>
 
   <ItemGroup>

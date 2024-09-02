@@ -1,19 +1,9 @@
 using CommonCode.Config;
-using Microsoft.Extensions.DependencyInjection;
 using SqlIntegrationServices;
 using System.Reflection;
-using System.Xml.Linq;
 
 class Program
 {
-    private static string LogFile;
-
-    static Program()
-    {
-        string crntFolder = Directory.GetCurrentDirectory();
-        LogFile = Path.Combine(crntFolder, "SqlIntegrationServices_Log.txt");
-    }
-
     static void Main(string[] args)
     {
         try
@@ -26,14 +16,14 @@ class Program
         }
         catch (Exception ex)
         {
-            LogInfo(ex, LogFile, ["SqlIntegrationServices", "Common"]);
+            LogInfo(ex, LogFile, NameSpacesUsed);
         }
     }
 
     private static void AddServices(HostBuilderContext hostBuilderCntxt, IServiceCollection serviceCln)
     {
         // Check if the type implements IHostedService
-        Type worker = typeof(SqlIntegrationServices.BaseWorker);
+        Type worker = typeof(BaseWorker);
         if (!typeof(IHostedService).IsAssignableFrom(worker))
         {
             Console.WriteLine($"The Worker '{worker.Name}' does not implement IHostedService.");
@@ -72,7 +62,7 @@ class Program
                         //string serviceName = "SqlIntegrationServices.AllProductsWorker";
                         // Attempt to get the type
 
-                        string serviceName = $"SqlIntegrationServices.{serviceDtl.Table}";
+                        string serviceName = $"{CrntProjName}.{serviceDtl.Table}";
                         var service = Type.GetType(serviceName, throwOnError: false, ignoreCase: true);
 
                         if (service != null && entityTypes.Contains(service) && registeredTypes.Add(service))
@@ -93,20 +83,15 @@ class Program
             }
         }
         // Register DbContext
-        if (string.IsNullOrEmpty(ConnectionString))
+        if (string.IsNullOrEmpty(ERP_SQL_ConnStr))
         {
-            throw new InvalidOperationException("Connection string 'DefaultConnection' not found or is empty.");
+            throw new InvalidOperationException("Connection string 'ERP_SQL_ConnStr' not found or is empty.");
         }
 
         serviceCln.AddDbContext<ServiceDbContext>(options =>
-            options.UseSqlServer(ConnectionString, sqlOptions =>
+            options.UseSqlServer(ERP_SQL_ConnStr, sqlOptions =>
                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
 
         serviceCln.AddLogging();
-
-        //foreach (ServiceDescriptor item in serviceCln)
-        //{
-        //    item.
-        //}
     }
 }

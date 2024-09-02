@@ -1,143 +1,91 @@
 ﻿using CommonCode.Config;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
-using System.Xml.Linq;
 
 namespace CommonCode
 {
     public static class Common
     {
+        private static string crntSolnFolder;
+        private static string configFullPath;
         public const string Emp = "";
         public static readonly string Entr = Environment.NewLine;
-        public static readonly string ConnectionString = "Name=ConnectionStrings:DefaultConnection";
+        public static readonly string MFELConnStr = "Name=MFELConnStr";
+        public static readonly string ERP_SQL_ConnStr = "Name=ERP_SQL_ConnStr";
         public static readonly StringComparison StrComp = StringComparison.InvariantCultureIgnoreCase;
-        public static IMemoryCache memoryCache;
         public static readonly string Resource = "https://mfprod.operations.dynamics.com";
         private static readonly object fileLock = new();
 
+        public static string CrntSolnFolder
+        {
+            get
+            {
+                crntSolnFolder = IsEmpty(crntSolnFolder) ? GetSolnFolder() : crntSolnFolder;
+                return crntSolnFolder;
+            }
+        }
+
+        public static string ConfigFullPath
+        {
+            get
+            {
+                configFullPath = IsEmpty(configFullPath) ? GetConfigFullPath(CrntSolnFolder) : configFullPath;
+                return configFullPath;
+            }
+        }
+
         static Common()
+        { }
+
+        private static string GetConfigFullPath(string solnFolder = null)
         {
-            memoryCache = new MemoryCache(new MemoryCacheOptions());
+            solnFolder = IsEmpty(solnFolder) ? GetSolnFolder() : solnFolder;
+            string configFullPath = Path.Combine(solnFolder, "Config.json");
+            if (IsEmpty(configFullPath)) throw new Exception("Config file full path not found!");
+            Console.WriteLine(configFullPath);
+            return configFullPath;
         }
 
-        public static Services? Services
+        private static string GetSolnFolder()
         {
-            get
-            {
-                try
-                {
-                    if (!memoryCache.TryGetValue("Services", out Services services))
-                    {
-                        services = ReadConfig();
-                        var cacheEntryOpns = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60));
-                        memoryCache.Set("Services", services, cacheEntryOpns);
-                    }
-                    return services;
-                }
-                catch (Exception Ex)
-                {
-                    throw;
-                }
-            }
-            set
-            {
-                if (value == null)
-                {
-                    memoryCache.Remove("Services");
-                }
-                else if (value is Services)
-                {
-                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60));
-                    memoryCache.Set("Services", value, cacheEntryOptions);
-                }
-                else
-                {
-                    throw new Exception("The passed object is not of Service type!");
-                }
-            }
+            string exeLocn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (IsEmpty(exeLocn)) throw new Exception("Executing assembly path was not found!");
+
+            int i = exeLocn.IndexOf("\\ERP SQL Integration\\", StrComp) + "ERP SQL Integration".Length;
+            string solnFolder = exeLocn[..(i + 1)];
+            Console.WriteLine(solnFolder);
+            return solnFolder;
         }
 
-        public static Dictionary<string, JObject>? AddedServices
+        public static Services ReadConfig(string configFullPath = "", bool throwIfUnAvlbl = false)
         {
-            get
-            {
-                try
-                {
-                    if (!memoryCache.TryGetValue("AddedServices", out Dictionary<string, JObject> AddedServices))
-                    {
-                        var cacheEntryOpns = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60));
-                        memoryCache.Set("AddedServices", AddedServices, cacheEntryOpns);
-                    }
-                    return AddedServices;
-                }
-                catch (Exception Ex)
-                {
-                    throw;
-                }
-            }
-            set
-            {
-                if (value == null)
-                {
-                    memoryCache.Remove("Services");
-                }
-                else if (value is Dictionary<string, JObject>)
-                {
-                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60));
-                    memoryCache.Set("AddedServices", value, cacheEntryOptions);
-                }
-                else
-                {
-                    throw new Exception("The passed object is not of Service type!");
-                }
-            }
-        }
-
-        public static string GetConfigFullPath()
-        {
-            string solnPath = GetSolnFolder();
-            string ConfigFullPath = Path.Combine(solnPath, "Config.json");
-            if (IsEmpty(ConfigFullPath)) throw new Exception("Config file full path not found!");
-            //Console.WriteLine(ConfigFullPath);
-            return ConfigFullPath;
-        }
-
-        public static string GetSolnFolder()
-        {
-            string solnPath = Directory.GetCurrentDirectory();
-            //Console.WriteLine(solnPath);
-            string debugStr = @"\bin\Debug\net8.0";
-            string rlzStr = @"\bin\Release\net8.0";
-            solnPath = solnPath.Replace(debugStr, Emp, StrComp).Replace(rlzStr, Emp, StrComp);
-            //Console.WriteLine(solnPath);
-            solnPath = Directory.GetParent(solnPath).FullName;
-            //Console.WriteLine(solnPath);
-            return solnPath;
-        }
-
-        public static Services ReadConfig(bool throwIfUnAvlbl = false)
-        {
+            Services services;
             try
             {
-                string configFullPath = GetConfigFullPath();
-                if (!File.Exists(configFullPath))
+                try
+                {
+                    configFullPath = IsEmpty(configFullPath) ? GetConfigFullPath() : configFullPath;
+                }
+                catch (Exception ex)
+                {
+                    configFullPath = null;
+                }
+                if (IsEmpty(configFullPath) || !File.Exists(configFullPath))
                 {
                     Console.WriteLine("Config not found;");
                     if (throwIfUnAvlbl) throw new FileNotFoundException();
-                    else
-                        File.Create(configFullPath);
+
+                    File.Create(configFullPath);
                 }
-                Services services;
-                string ConfigJson = File.ReadAllText(GetConfigFullPath());
-                if (IsEmpty(ConfigJson))
+                string configJson = File.ReadAllText(configFullPath);
+                if (IsEmpty(configJson))
                     services = new();
                 else
-                    services = DeserializeJson<Services>.Deserialize(ConfigJson);
+                    services = DeserializeJson<Services>.Deserialize(configJson);
                 return services;
             }
             catch (Exception ex)
@@ -146,11 +94,11 @@ namespace CommonCode
             }
         }
 
-        public static Services ReadConfig()
+        public static Services ReadConfigLockd()
         {
             try
             {
-                string configFullPath = GetConfigFullPath();
+                string configFullPath = ConfigFullPath;
                 using FileStream fs = new(configFullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 using StreamReader reader = new(fs, Encoding.UTF8);
                 {
@@ -231,9 +179,8 @@ namespace CommonCode
                         break;
                 }
             }
-            catch (Exception ex)
-            {
-            }
+            catch (Exception ex) { }
+
             if (IsEmpty(result)) return null;
             JObject obj = JObject.Parse(result);
             JArray Items = (JArray)obj["value"];

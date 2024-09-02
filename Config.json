@@ -12676,6 +12676,88 @@
           "Include": true
         }
       ]
+    },
+    {
+      "Enable": true,
+      "Name": "DemandStagings",
+      "Endpoint": "DemandStagings",
+      "QueryString": "cross-company=true",
+      "Period": 30,
+      "Table": "DemandStagingsTest",
+      "Altered": false,
+      "Status": null,
+      "LastRun": null,
+      "TotalRecordsTracked": 0,
+      "TotalRecordsAdded": 0,
+      "TotalRecordsUpdated": 0,
+      "TimeTaken": 0,
+      "NextRun": null,
+      "Columns": [
+        {
+          "Name": "Etag",
+          "Include": true
+        },
+        {
+          "Name": "CreatedBy1",
+          "Include": true
+        },
+        {
+          "Name": "OrderId",
+          "Include": true
+        },
+        {
+          "Name": "HeaderCreated",
+          "Include": true
+        },
+        {
+          "Name": "ItemGroupId",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedBy1",
+          "Include": true
+        },
+        {
+          "Name": "dataAreaId",
+          "Include": true
+        },
+        {
+          "Name": "RouteId",
+          "Include": true
+        },
+        {
+          "Name": "SalespersonCode",
+          "Include": true
+        },
+        {
+          "Name": "CreatedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "SupervisorCode",
+          "Include": true
+        },
+        {
+          "Name": "ModifiedDateTime1",
+          "Include": true
+        },
+        {
+          "Name": "CustAccount",
+          "Include": true
+        },
+        {
+          "Name": "ItemId",
+          "Include": true
+        },
+        {
+          "Name": "OrderDate",
+          "Include": true
+        },
+        {
+          "Name": "Qty",
+          "Include": true
+        }
+      ]
     }
   ]
 }
