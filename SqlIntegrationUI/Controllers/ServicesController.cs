@@ -202,7 +202,7 @@ namespace SqlIntegrationUI.Controllers
 
         public async Task<IActionResult> Submit(bool Redirect = true)
         {
-            var services = UIUtilities.UICommonCode.ConfigServices;
+            var services = ConfigServices;
             if (services == null)
             {
                 return Problem("ConfigServices could not be loaded!");
@@ -211,7 +211,7 @@ namespace SqlIntegrationUI.Controllers
             {
                 string servicesJson = JsonConvert.SerializeObject(services, Formatting.Indented);
                 SysFile.WriteAllText(ConfigFullPath, servicesJson);
-                UIUtilities.UICommonCode.ConfigServices = null;
+                ConfigServices = null;
                 bool restartServices = false;
 
                 for (int i = 0; i < 2; i++)

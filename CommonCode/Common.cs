@@ -46,7 +46,7 @@ namespace CommonCode
             solnFolder = IsEmpty(solnFolder) ? GetSolnFolder() : solnFolder;
             string configFullPath = Path.Combine(solnFolder, "Config.json");
             if (IsEmpty(configFullPath)) throw new Exception("Config file full path not found!");
-            Console.WriteLine(configFullPath);
+            //Console.WriteLine(configFullPath);
             return configFullPath;
         }
 
@@ -57,7 +57,7 @@ namespace CommonCode
 
             int i = exeLocn.IndexOf("\\ERP SQL Integration\\", StrComp) + "ERP SQL Integration".Length;
             string solnFolder = exeLocn[..(i + 1)];
-            Console.WriteLine(solnFolder);
+            //Console.WriteLine(solnFolder);
             return solnFolder;
         }
 

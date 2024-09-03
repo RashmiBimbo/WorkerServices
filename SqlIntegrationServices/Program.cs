@@ -1,4 +1,5 @@
 using CommonCode.Config;
+using Microsoft.Extensions.Configuration;
 using SqlIntegrationServices;
 using System.Reflection;
 
@@ -9,6 +10,11 @@ class Program
         try
         {
             var builder = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                    {
+                        // Ensure that user secrets are added to the configuration
+                        config.AddUserSecrets<Program>();
+                    })
                 .ConfigureServices(AddServices);
 
             var host = builder.Build();
@@ -82,14 +88,16 @@ class Program
                 }
             }
         }
+        // Get the connection string from configuration
+        string erp_SQL_ConnStr = hostBuilderCntxt.Configuration.GetValue("ERP_SQL_ConnStr", Emp);
         // Register DbContext
-        if (string.IsNullOrEmpty(ERP_SQL_ConnStr))
+        if (string.IsNullOrEmpty(erp_SQL_ConnStr))
         {
             throw new InvalidOperationException("Connection string 'ERP_SQL_ConnStr' not found or is empty.");
         }
 
         serviceCln.AddDbContext<ServiceDbContext>(options =>
-            options.UseSqlServer(ERP_SQL_ConnStr, sqlOptions =>
+            options.UseSqlServer(erp_SQL_ConnStr, sqlOptions =>
                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
 
         serviceCln.AddLogging();

@@ -98,7 +98,7 @@ namespace SqlIntegrationServices
                     int count = Interlocked.Increment(ref ExecutionCount);
                     string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
 
-                    string msg = $"{Entr}{Now}: {ServiceName} Service is running; Count: {count}";
+                    string msg = $"{Now}: {ServiceName} Service is running; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = Now;
@@ -234,7 +234,7 @@ namespace SqlIntegrationServices
                 msg = $"{Entr}{Now}: Success: Saved data successfully." +
                       $"{Entr}{Now}: Total no. of records tracked:{i}" +
                       $"{Entr}{Now}: Total no. of records added: {addCnt}" +
-                      $"{Entr}{Now}: Total no. of records updated: {updtCnt}{Entr}";
+                      $"{Entr}{Now}: Total no. of records updated: {updtCnt}";
 
                 LogInfo(msg);
             }
