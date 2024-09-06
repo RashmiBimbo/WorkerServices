@@ -378,3 +378,5 @@ FodyWeavers.xsd
 /SqlIntegrationUI/command.bat
 /SqlIntegrationUI/buildcommand.bat
 /SqlIntegrationUI/SqlIntegrationUI.generated.sln
+/SqlIntegrationServices/SqlIntegrationServices_Log.txt
+/SqlIntegrationUI/SqlIntegrationUI_Log.txt

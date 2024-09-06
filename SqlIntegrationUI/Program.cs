@@ -1,36 +1,45 @@
 
+using static SqlIntegrationUI.UIUtilities.UICommonCode;
+
 public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-        builder.Services.AddControllersWithViews();
-        builder.Services.AddMemoryCache();
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
+        try
         {
-            app.UseExceptionHandler("/Shared/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Add services to the container.
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddMemoryCache();
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Shared/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+            if (app.Environment.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            app.UseRouting();
+            //app.UseResponseCaching();
+            app.UseAuthorization();
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Services}/{action=Index}/{searchString?}");
+
+            app.Run();
+
         }
-        if (app.Environment.IsDevelopment())
-            app.UseDeveloperExceptionPage();
-
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-
-        app.UseRouting();
-        //app.UseResponseCaching();
-        app.UseAuthorization();
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Services}/{action=Index}/{searchString?}");
-
-        app.Run();
-
+        catch (Exception ex)
+        {
+            LogInfo(ex, LogFile, NameSpacesUsed);
+        }
     }
 }

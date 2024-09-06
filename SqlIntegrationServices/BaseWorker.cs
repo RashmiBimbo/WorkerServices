@@ -24,7 +24,6 @@ namespace SqlIntegrationServices
         private readonly ServiceDetail CrntService;
         private readonly Services Services;
         private readonly string logFile, ServiceName, ServiceEndpoint, ServiceTbl, QueryString;
-        private readonly List<string> NameSpaces = ["SqlIntegrationServices", "CommonCode"];
         //private ExceptionLogger ErrMsgFltr;
 
         public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDetail service)
@@ -34,18 +33,19 @@ namespace SqlIntegrationServices
             CrntService = service;
             ServiceTbl = CrntService.Table;
             logFile = AppDomain.CurrentDomain.BaseDirectory + $"{CrntService.Endpoint}Service_Log.txt";
-            ServiceEndpoint = CrntService.Endpoint ;
+            ServiceEndpoint = CrntService.Endpoint;
             ServiceName = CrntService.Name;
             period = CrntService.Period;
             try
             {
-                if (!File.Exists(logFile)) 
+                if (!File.Exists(logFile))
                     File.Create(logFile);
                 Services = ReadConfig();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{Now}: {GetRelErrorMsg(ex, NameSpaces)}");
+                Console.WriteLine($"{Now}: {GetRelErrorMsg(ex, NameSpacesUsed)}");
+                Common.LogInfo(ex, LogFile, NameSpacesUsed);
             }
         }
 
@@ -58,7 +58,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{Now}: {GetRelErrorMsg(ex, NameSpaces)}");
+                Console.WriteLine($"{Now}: {GetRelErrorMsg(ex, NameSpacesUsed)}");
             }
         }
 
@@ -74,7 +74,7 @@ namespace SqlIntegrationServices
                 }
                 catch (Exception ex)
                 {
-                    string msg = GetRelErrorMsg(ex, NameSpaces);
+                    string msg = GetRelErrorMsg(ex, NameSpacesUsed);
                     LogInfo($"{Entr}{Now}: An error occurred in the background service.{Entr}{msg}");
                 }
             })
@@ -98,7 +98,7 @@ namespace SqlIntegrationServices
                     int count = Interlocked.Increment(ref ExecutionCount);
                     string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
 
-                    string msg = $"{Entr}{Now}: {ServiceName} Service is running; Count: {count}";
+                    string msg = $"{Now}: {ServiceName} Service is running; Count: {count}";
                     LogInfo(msg);
 
                     var startTime = Now;
@@ -128,7 +128,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                LogInfo($"{Now}: Error: {GetRelErrorMsg(ex, NameSpaces)}");
+                LogInfo($"{Now}: Error: {GetRelErrorMsg(ex, NameSpacesUsed)}");
             }
             finally
             {
@@ -188,7 +188,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                string msg = GetRelErrorMsg(ex, NameSpaces);
+                string msg = GetRelErrorMsg(ex, NameSpacesUsed);
                 LogInfo($"{Now} : Error: {msg}");
             }
         }
@@ -216,7 +216,7 @@ namespace SqlIntegrationServices
                         }
                         catch (Exception ex)
                         {
-                            string msg = GetRelErrorMsg(ex, NameSpaces);
+                            string msg = GetRelErrorMsg(ex, NameSpacesUsed);
                             LogInfo($"{Now}: Error: {msg}");
                             if (cnt < 2)
                             {
@@ -234,13 +234,13 @@ namespace SqlIntegrationServices
                 msg = $"{Entr}{Now}: Success: Saved data successfully." +
                       $"{Entr}{Now}: Total no. of records tracked:{i}" +
                       $"{Entr}{Now}: Total no. of records added: {addCnt}" +
-                      $"{Entr}{Now}: Total no. of records updated: {updtCnt}{Entr}";
+                      $"{Entr}{Now}: Total no. of records updated: {updtCnt}";
 
                 LogInfo(msg);
             }
             catch (Exception ex)
             {
-                string msg = GetRelErrorMsg(ex, NameSpaces);
+                string msg = GetRelErrorMsg(ex, NameSpacesUsed);
                 LogInfo($"{Now}: Error: {msg}");
             }
         }
@@ -335,7 +335,7 @@ namespace SqlIntegrationServices
                         }
                         catch (Exception ex)
                         {
-                            string msg = GetRelErrorMsg(ex, NameSpaces);
+                            string msg = GetRelErrorMsg(ex, NameSpacesUsed);
                             LogInfo($"{Now}: Error: {msg}");
                             if (cnt < 2)
                                 LogInfo($"{Now}: Saving entity failed. Retrying...");
@@ -383,7 +383,7 @@ namespace SqlIntegrationServices
                 }
                 catch (Exception ex)
                 {
-                    string msg = $"{Now}: Error checking if table exists: {GetRelErrorMsg(ex, NameSpaces)}";
+                    string msg = $"{Now}: Error checking if table exists: {GetRelErrorMsg(ex, NameSpacesUsed)}";
                     // Log the error if necessary
                     if (i == 2)
                     {
@@ -467,7 +467,7 @@ namespace SqlIntegrationServices
             }
             catch (Exception ex)
             {
-                LogInfo($"{Now}: Error: {GetRelErrorMsg(ex, NameSpaces)}");
+                LogInfo($"{Now}: Error: {GetRelErrorMsg(ex, NameSpacesUsed)}");
                 return default;
             }
         }
@@ -608,7 +608,7 @@ namespace SqlIntegrationServices
             }
         }
 
-        // Utility method to check if a property is an identity column
+        // ServiceUtilities method to check if a property is an identity column
         private static bool IsKeyIdentity(IProperty property)
         {
             try
@@ -623,7 +623,7 @@ namespace SqlIntegrationServices
             }
         }
 
-        // Utility method to get additional constraints for a property
+        // ServiceUtilities method to get additional constraints for a property
         private static string GetConstraints(ServiceDbContext context, IProperty property, IEntityType entityType)
         {
             try
@@ -775,7 +775,7 @@ namespace SqlIntegrationServices
             //}
             //catch (Exception ex)
             //{
-            //    LogInfo($"{Now}: {GetRelErrorMsg(ex, NameSpaces)}");
+            //    LogInfo($"{Now}: {GetRelErrorMsg(ex, NameSpacesUsed)}");
             //}
         }
     }
