@@ -1,12 +1,9 @@
 ﻿using static CommonCode.Common;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CommonCode.Config
 {
-    public partial class Services
+    public partial class Services 
     {
         [JsonProperty("Services")]
         public HashSet<ServiceDetail> ServiceSet { get; set; } = [];
@@ -28,7 +25,7 @@ namespace CommonCode.Config
             get => ServiceName;
             set
             {
-                ServiceName = IsEmpty(value) ? Endpoint.Trim() : value.Trim();
+                ServiceName = IsEmpty(value) ? Endpoint : value.Trim();
             }
         }
 
@@ -57,7 +54,7 @@ namespace CommonCode.Config
             get => ServiceTable;
             set
             {
-                ServiceTable = IsEmpty(value) ? Endpoint.Trim() + "Test" : value.Trim();
+                ServiceTable = IsEmpty(value) ? Endpoint + "Test" : value.Trim();
             }
         }
 

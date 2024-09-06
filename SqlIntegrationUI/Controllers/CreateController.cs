@@ -3,9 +3,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json.Linq;
-using NuGet.ProjectModel;
 using static SqlIntegrationUI.UIUtilities.UICommonCode;
-
 
 namespace SqlIntegrationUI.Controllers
 {
@@ -79,12 +77,14 @@ namespace SqlIntegrationUI.Controllers
                 string fltr = "cross-company=true";
                 service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : "&" + fltr;
                 JObject jObj = await GetServiceJObject(service);
+
                 AddedServices ??= [];
                 AddedServices.TryAdd(service.Table, jObj);
-                if (!UIUtilities.UICommonCode.ConfigServices.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)))
+
+                if (!ConfigServices.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)))
                 {
                     service.Columns = await GetColumns(jObj);
-                    UIUtilities.UICommonCode.ConfigServices.ServiceSet.Add(service);
+                    ConfigServices.ServiceSet.Add(service);
                 }
                 return RedirectToAction(nameof(Create));
             }
@@ -122,7 +122,7 @@ namespace SqlIntegrationUI.Controllers
                     if (service is null || IsEmpty(service.Endpoint))
                         continue;
 
-                    if (!UIUtilities.UICommonCode.ConfigServices.ServiceSet.Any(s => s.Endpoint.Equals(service.Endpoint, StrComp)))
+                    if (!ConfigServices.ServiceSet.Any(s => s.Endpoint.Equals(service.Endpoint, StrComp)))
                     {
                         JObject jObj = await GetServiceJObject(service);
                         service.Columns = await GetColumns(jObj, service);
@@ -133,7 +133,7 @@ namespace SqlIntegrationUI.Controllers
                             _ = service.QueryString.Replace("?", Emp);
                             service.QueryString += service.QueryString.Contains("cross-company=true") ? Emp : "cross-company = true";
                         }
-                        UIUtilities.UICommonCode.ConfigServices.ServiceSet.Add(service);
+                        ConfigServices.ServiceSet.Add(service);
                         AddedServices ??= [];
                         AddedServices.TryAdd(service.Endpoint, jObj);
                     }
@@ -153,10 +153,13 @@ namespace SqlIntegrationUI.Controllers
 
         // Post: CreateController/Upload
         [HttpPost]
-        public IActionResult Upload(IFormFile excelFile)
+        public async Task<IActionResult> Upload(IFormFile xlFile)
         {
-            //IActionResult rslt =  Validate(excelFile);
-            //if (rslt != null) return rslt;
+            IActionResult rslt = await Validate(xlFile);
+            if (rslt != null) return rslt;
+
+            // Set a success message
+            ViewData["SuccessMessage"] = $"File '{xlFile.FileName}' uploaded successfully!";
 
             ProposedServices = null;
             var serviceList = new List<ServiceDetail>();
@@ -165,7 +168,7 @@ namespace SqlIntegrationUI.Controllers
             using var stream = new MemoryStream();
             try
             {
-                excelFile.CopyToAsync(stream);
+                xlFile.CopyToAsync(stream);
                 stream.Position = 0;
 
                 using SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false);
@@ -218,8 +221,6 @@ namespace SqlIntegrationUI.Controllers
                     serviceList.Add(service);
                 }
                 ProposedServices = serviceList;
-                // Set a success message
-                //ViewData["SuccessMessage"] = $"File '{XlFile.FileName}' uploaded successfully!";
 
                 return View("CreateFromExcel", ProposedServices);
             }

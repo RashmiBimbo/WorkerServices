@@ -35,8 +35,9 @@ namespace SqlIntegrationUI.UIUtilities
                     }
                     return services;
                 }
-                catch (Exception Ex)
+                catch (Exception ex)
                 {
+                    LogInfo(ex, LogFile, NameSpacesUsed);
                     throw;
                 }
             }
@@ -53,7 +54,9 @@ namespace SqlIntegrationUI.UIUtilities
                 }
                 else
                 {
-                    throw new Exception("The passed object is not of Service type!");
+                    Exception ex = new("The passed object is not of Service type!");
+                    LogInfo(ex, LogFile, NameSpacesUsed);
+                    throw ex;
                 }
             }
         }
@@ -71,8 +74,9 @@ namespace SqlIntegrationUI.UIUtilities
                     }
                     return AddedServices;
                 }
-                catch (Exception Ex)
+                catch (Exception ex)
                 {
+                    LogInfo(ex, LogFile, NameSpacesUsed);
                     throw;
                 }
             }
@@ -80,7 +84,7 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 if (value == null)
                 {
-                    memoryCache.Remove("ConfigServices");
+                    memoryCache.Remove("AddedServices");
                 }
                 else if (value is Dictionary<string, JObject>)
                 {
@@ -89,9 +93,55 @@ namespace SqlIntegrationUI.UIUtilities
                 }
                 else
                 {
-                    throw new Exception("The passed object is not of Service type!");
+                    Exception ex = new("The passed object is not of Dictionary<string, JObject> type!");
+                    LogInfo(ex, LogFile, NameSpacesUsed);
+                    throw ex;
                 }
             }
+        }
+        
+        public static HashSet<ServiceDetail> DeletedServices
+        {
+            get
+            {
+                try
+                {
+                    if (!memoryCache.TryGetValue("DeletedServices", out HashSet<ServiceDetail> DeletedServices))
+                    {
+                        var cacheEntryOpns = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60));
+                        memoryCache.Set("DeletedServices", DeletedServices, cacheEntryOpns);
+                    }
+                    return DeletedServices;
+                }
+                catch (Exception ex)
+                {
+                    LogInfo(ex, LogFile, NameSpacesUsed);
+                    throw;
+                }
+            }
+            set
+            {
+                if (value == null)
+                {
+                    memoryCache.Remove("DeletedServices");
+                }
+                else if (value is HashSet<ServiceDetail>)
+                {
+                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60));
+                    memoryCache.Set("DeletedServices", value, cacheEntryOptions);
+                }
+                else
+                {
+                    Exception ex = new ("The passed object is not of HashSet<ServiceDetail> type!");
+                    LogInfo(ex, LogFile, NameSpacesUsed);
+                    throw ex;
+                }
+            }
+        }
+
+        public static void Log(string msg, bool writeConsole = true)
+        {
+            LogMsg(LogFile, $"{Entr}{DateTime.Now}:{msg}", writeConsole);
         }
     }
 }

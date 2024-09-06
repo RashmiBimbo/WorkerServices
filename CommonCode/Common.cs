@@ -10,14 +10,15 @@ namespace CommonCode
 {
     public static class Common
     {
-        private static string crntSolnFolder;
-        private static string configFullPath;
-        public const string Emp = "";
+        private static string crntSolnFolder, configFullPath;
+        public const string SqlIntegrationUI = nameof(SqlIntegrationUI);
+        public const string SqlIntegrationServices = nameof(SqlIntegrationServices);
+        public static readonly string Emp = string.Empty;
         public static readonly string Entr = Environment.NewLine;
         public static readonly string MFELConnStr = "Name=MFELConnStr";
         public static readonly string ERP_SQL_ConnStr = "Name=ERP_SQL_ConnStr";
-        public static readonly StringComparison StrComp = StringComparison.InvariantCultureIgnoreCase;
         public static readonly string Resource = "https://mfprod.operations.dynamics.com";
+        public static readonly StringComparison StrComp = StringComparison.InvariantCultureIgnoreCase;
         private static readonly object fileLock = new();
 
         public static string CrntSolnFolder
@@ -54,10 +55,12 @@ namespace CommonCode
         {
             string exeLocn = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (IsEmpty(exeLocn)) throw new Exception("Executing assembly path was not found!");
-
-            int i = exeLocn.IndexOf("\\ERP SQL Integration\\", StrComp) + "ERP SQL Integration".Length;
-            string solnFolder = exeLocn[..(i + 1)];
-            //Console.WriteLine(solnFolder);
+            string rlzStr = @"\bin\Release\net8.0";
+            string dbgStr = @"\bin\Debug\net8.0";
+            string solnFolder = exeLocn.Replace(rlzStr, Emp, StrComp).Replace(dbgStr, Emp, StrComp).Replace($"publish-{SqlIntegrationServices}", Emp, StrComp).Replace($"publish-{SqlIntegrationUI}", Emp, StrComp).Replace(SqlIntegrationServices, Emp, StrComp).Replace(SqlIntegrationUI, Emp, StrComp);
+            //int i = exeLocn.IndexOf("\\ERP_SQL_Integration\\", StrComp) + "ERP_SQL_Integration".Length;
+            //string solnFolder = exeLocn[..(i + 1)];
+            Console.WriteLine(solnFolder);
             return solnFolder;
         }
 
@@ -340,16 +343,32 @@ namespace CommonCode
             }
         }
 
-        public static void LogInfo(Exception ex, string logFile, List<string> NameSpaces)
+        public static void LogInfo(Exception ex, string logFile, List<string> NameSpaces, string customMsg = "", bool writeConsole = false)
         {
             try
             {
-                string msg = $"{Entr}{DateTime.Now}: Error: {ExceptionLogger.GetRelErrorMsg(ex, NameSpaces)}";
-                File.AppendAllText(logFile, msg);
+                string msg = $"{Entr}{customMsg}{Entr}{DateTime.Now}: Error: {ExceptionLogger.GetRelErrorMsg(ex, NameSpaces)}";
+                LogMsg(logFile, msg, writeConsole);
             }
             catch (Exception ex1)
             {
-                Console.WriteLine($"{DateTime.Now}: {ExceptionLogger.GetRelErrorMsg(ex1, NameSpaces)}");
+                Console.WriteLine($"{Entr}{DateTime.Now}: {ex.Message}{Entr}{ExceptionLogger.GetRelErrorMsg(ex, NameSpaces)}");
+                Console.WriteLine($"{Entr}{DateTime.Now}: {ex1.Message}{Entr}{ExceptionLogger.GetRelErrorMsg(ex1, NameSpaces)}");
+            }
+        }
+
+        public static void LogMsg(string logFile, string msg, bool writeConsole = true)
+        {
+            try
+            {
+                File.AppendAllText(logFile, msg);
+                if (writeConsole)
+                    Console.WriteLine(msg + Environment.NewLine);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{DateTime.Now}: {msg}");
+                Console.WriteLine($"{DateTime.Now}: {ExceptionLogger.GetRelErrorMsg(ex, [nameof(CommonCode)])}");
             }
         }
 
