@@ -7,15 +7,15 @@ namespace SqlIntegrationServices.ServiceUtilities
     {
         public static readonly string LogFile;
         public static readonly string CrntProjName = nameof(SqlIntegrationServices);
-        public static readonly string CrntProjFolder;
-        public static readonly string CrntProjPathFullPath;
-        public static readonly List<string> NameSpacesUsed;       
+        public static readonly string CrntProjFolder, LogFolder, CrntProjPathFullPath;
+        public static readonly List<string> NameSpacesUsed;
 
         static ServiceCommonCode()
         {
             CrntProjFolder = Path.Combine(CrntSolnFolder, CrntProjName);
+            LogFolder = Path.Combine(CrntSolnFolder, "Logs");
             CrntProjPathFullPath = Path.Combine(CrntProjFolder, $"{CrntProjName}.csproj");
-            LogFile = Path.Combine(CrntProjFolder, $"{CrntProjName}_Log.txt");
+            LogFile = Path.Combine(LogFolder, $"{CrntProjName}_Log.txt");
             NameSpacesUsed = [CrntProjName, nameof(CommonCode)];
         }
     }

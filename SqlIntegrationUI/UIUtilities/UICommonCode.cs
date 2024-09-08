@@ -6,7 +6,7 @@ namespace SqlIntegrationUI.UIUtilities
     internal static class UICommonCode
     {
         public static IMemoryCache memoryCache;
-        public static readonly string LogFile, CrntProjFolder, CrntProjPathFullPath;
+        public static readonly string LogFile, CrntProjFolder, CrntProjPathFullPath, LogFolder;
         public static readonly List<string> NameSpacesUsed;
         public static readonly string CrntProjName = nameof(SqlIntegrationUI);
 
@@ -15,8 +15,9 @@ namespace SqlIntegrationUI.UIUtilities
             memoryCache = new MemoryCache(new MemoryCacheOptions());
 
             CrntProjFolder = Path.Combine(CrntSolnFolder, CrntProjName);
+            LogFolder = Path.Combine(CrntSolnFolder, "Logs");
             CrntProjPathFullPath = Path.Combine(CrntProjFolder, $"{CrntProjName}.csproj");
-            LogFile = Path.Combine(CrntProjFolder, $"{CrntProjName}_Log.txt");
+            LogFile = Path.Combine(LogFolder, $"{CrntProjName}_Log.txt");
 
             NameSpacesUsed = [CrntProjName, nameof(CommonCode)];
         }

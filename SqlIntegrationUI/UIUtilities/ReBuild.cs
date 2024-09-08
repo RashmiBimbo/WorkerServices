@@ -344,7 +344,7 @@ namespace SqlIntegrationUI.UIUtilities
         {
             try
             {
-                string batchFilePath = "command.bat", logFilePath = "output.log";
+                string batchFilePath = "command.bat", logFilePath = Path.Combine(LogFolder, "output.log");
                 bool genSuccess = true;
 
                 File.WriteAllLines(batchFilePath,

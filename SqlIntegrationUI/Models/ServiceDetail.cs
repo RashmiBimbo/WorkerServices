@@ -1,20 +1,23 @@
-﻿using static CommonCode.Common;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
-namespace CommonCode.Config
+namespace SqlIntegrationUI.Models
 {
-    public partial class Services
+    public partial class DBServices
     {
         [JsonProperty("Services")]
         public HashSet<ServiceDetail> ServiceSet { get; set; } = [];
     }
 
-
-    public partial class ServiceDetail
+    [PrimaryKey(nameof(RecId))]
+    public partial class DBServiceDetail
     {
         private string ServiceName;
         private string ServiceTable;
         private string ServiceEndpoint;
+
+        [Key]
+        public long RecId { get; }
 
         [JsonProperty("Enable")]
         public bool Enable { get; set; } = true;
@@ -63,26 +66,40 @@ namespace CommonCode.Config
         [JsonProperty("Altered")]
         public bool Altered { get; set; } = false;
 
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
-        public string LastRun { get; set; }
+        public string? LastRun { get; set; }
 
-        public int TotalRecordsTracked { get; set; }
+        public long? TotalRecordsTracked { get; set; }
 
-        public int TotalRecordsAdded { get; set; }
+        public long? TotalRecordsAdded { get; set; }
 
-        public int TotalRecordsUpdated { get; set; }
+        public long? TotalRecordsUpdated { get; set; }
 
-        public int TimeTaken { get; set; }
+        public int? TimeTaken { get; set; }
+
+        public string? NextRun { get; set; }
+
+        [Required]
+        [MaxLength]
+        [JsonProperty("Columns")]
+        public string Columns { get; set; }
+
+        [Required]
+        public readonly DateTime CreatedDate = DateTime.Now;
+
+        [Required]
+        [StringLength(255)]
+        public string CreatedBy;
+
+        public DateTime? ModifiedDate;
 
         [StringLength(255)]
-        public string NextRun { get; set; }
-
-        [JsonProperty("Columns")]
-        public List<Column> Columns { get; set; }
+        public string? ModifiedBy;
     }
 
-    public partial class Column
+    [Keyless]
+    public partial class DBColumn
     {
         [JsonProperty("Name")]
         public string Name { get; set; }
