@@ -60,7 +60,7 @@ namespace CommonCode
             string solnFolder = exeLocn.Replace(rlzStr, Emp, StrComp).Replace(dbgStr, Emp, StrComp).Replace($"publish-{SqlIntegrationServices}", Emp, StrComp).Replace($"publish-{SqlIntegrationUI}", Emp, StrComp).Replace(SqlIntegrationServices, Emp, StrComp).Replace(SqlIntegrationUI, Emp, StrComp);
             //int i = exeLocn.IndexOf("\\ERP_SQL_Integration\\", StrComp) + "ERP_SQL_Integration".Length;
             //string solnFolder = exeLocn[..(i + 1)];
-            Console.WriteLine(solnFolder);
+            //Console.WriteLine(solnFolder);
             return solnFolder;
         }
 
