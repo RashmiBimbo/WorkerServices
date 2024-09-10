@@ -506,12 +506,12 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 foreach (ServiceDetail service in DeletedServices)
                 {
-                    string filePath = Path.Combine(CrntSolnFolder, $@"{SqlIntegrationServices}\Models\{service.Endpoint}.cs");
-                    if (File.Exists(filePath)) File.Delete(filePath);
+                    //string filePath = Path.Combine(CrntSolnFolder, $@"{SqlIntegrationServices}\Models\{service.Endpoint}.cs");
+                    //if (File.Exists(filePath)) File.Delete(filePath);
                     DeletedServices.Remove(service);
                 }
-                if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
-                    Log($"{SqlIntegrationServices} project could not be built after deleting services!");
+                //if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
+                //    Log($"{SqlIntegrationServices} project could not be built after deleting services!");
             }
             catch (Exception ex)
             {

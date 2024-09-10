@@ -22,7 +22,7 @@ public abstract partial class ProdCratessBase
     [StringLength(255)]
     public string dataAreaId { get; set; } = null!;
 
-    public DateOnly TransDate { get; set; }
+    public DateTime TransDate { get; set; }
 
     [Column(TypeName = "decimal(28, 16)")]
     public decimal? CrateIn { get; set; }
