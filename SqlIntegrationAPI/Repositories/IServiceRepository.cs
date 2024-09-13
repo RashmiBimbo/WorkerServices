@@ -10,8 +10,8 @@ namespace SqlIntegrationAPI.Repositories
 
         public Task<int> CreateAsync(DbService service);
 
-        public Task<DbService> UpdateAsync(string EndPoint, DbService service, long recId = 0);
+        public Task<int> UpdateAsync(string EndPoint, DbService service);
 
-        public Task<DbService> DeleteAsync(string EndPoint, long recId = 0);
+        public Task<int> DeleteAsync(string EndPoint);
     }
 }

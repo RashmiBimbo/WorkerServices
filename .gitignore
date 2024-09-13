@@ -593,3 +593,15 @@ FodyWeavers.xsd
 /publish-SqlIntegrationUI/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js
 /publish-SqlIntegrationUI/wwwroot/lib/jquery-validation-unobtrusive/LICENSE.txt
 /publish-SqlIntegrationUI/wwwroot/sqlintegrationui.styles.css
+/SqlIntegrationServices-InventTransV2/appsettings.Development.json
+/SqlIntegrationServices-InventTransV2/appsettings.json
+/SqlIntegrationServices-InventTransV2/BaseWorker.cs
+/SqlIntegrationServices-InventTransV2/CodeTemplates/EFCore/DbContext.t4
+/SqlIntegrationServices-InventTransV2/CodeTemplates/EFCore/EntityType.t4
+/SqlIntegrationServices-InventTransV2/Models/InventTransV2.cs
+/SqlIntegrationServices-InventTransV2/Program.cs
+/SqlIntegrationServices-InventTransV2/Properties/launchSettings.json
+/SqlIntegrationServices-InventTransV2/ServiceDbContext.cs
+/SqlIntegrationServices-InventTransV2/ServiceUtilities/ServiceCommonCode.cs
+/SqlIntegrationServices-InventTransV2/SqlIntegrationServices-InventTransV2.csproj
+/SqlIntegrationServices-InventTransV2/SqlIntegrationServices_Log.txt
