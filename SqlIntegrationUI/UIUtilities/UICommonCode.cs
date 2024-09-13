@@ -6,7 +6,7 @@ namespace SqlIntegrationUI.UIUtilities
     internal static class UICommonCode
     {
         public static IMemoryCache memoryCache;
-        public static string crntProjLogFolder, logFile;
+        private static string crntProjLogFolder, logFile;
         public static readonly string CrntProjFolder, CrntProjPathFullPath;
         internal static readonly List<string> NameSpacesUsed;
         public static readonly string CrntProjName = nameof(SqlIntegrationUI);
@@ -176,9 +176,10 @@ namespace SqlIntegrationUI.UIUtilities
             }
         }
 
-        public static void Log(string msg, bool writeConsole = true)
+        public static void Log(string msg, bool writeConsole = true, string logFile = null)
         {
-            LogMsg(LogFile, $"{Entr}{DateTime.Now}:{msg}", writeConsole);
+            logFile ??= LogFile;
+            LogMsg(logFile, $"{Entr}{DateTime.Now}:{msg}", writeConsole);
         }
     }
 }

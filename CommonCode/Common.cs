@@ -23,6 +23,9 @@ namespace CommonCode
 
         public static Func<string, string, string> Comb => Path.Combine;
 
+        static Common()
+        { }
+
         public static string CrntSolnFolder
         {
             get
@@ -78,9 +81,6 @@ namespace CommonCode
             }
         }
 
-        static Common()
-        { }
-
         private static string GetConfigFullPath(string solnFolder = null)
         {
             //solnFolder = IsEmpty(solnFolder) ? GetSolnFolder() : solnFolder;
@@ -96,7 +96,7 @@ namespace CommonCode
             if (IsEmpty(exeLocn)) throw new Exception("Executing assembly path was not found!");
             string rlzStr = @"\bin\Release\net8.0";
             string dbgStr = @"\bin\Debug\net8.0";
-            string solnFolder = exeLocn.Replace(rlzStr, Emp, StrComp).Replace(dbgStr, Emp, StrComp).Replace($"publish-{SqlIntegrationServices}", Emp, StrComp).Replace($"publish-{SqlIntegrationUI}", Emp, StrComp).Replace(SqlIntegrationServices, Emp, StrComp).Replace(SqlIntegrationUI, Emp, StrComp);
+            string solnFolder = exeLocn.Replace(rlzStr, Emp, StrComp).Replace(dbgStr, Emp, StrComp).Replace($"publish-{SqlIntegrationServices}", Emp, StrComp).Replace($"publish-{SqlIntegrationUI}", Emp, StrComp).Replace(SqlIntegrationServices, Emp, StrComp).Replace(SqlIntegrationUI, Emp, StrComp).Replace("SqlIntegrationServices-InventTransV2", Emp, StrComp);
             //int i = exeLocn.IndexOf("\\ERP_SQL_Integration\\", StrComp) + "ERP_SQL_Integration".Length;
             //string solnFolder = exeLocn[..(i + 1)];
             //Console.WriteLine(solnFolder);

@@ -30,7 +30,8 @@ namespace SqlIntegrationUI.Controllers
             }
         }
 
-        public IActionResult Index(string searchString)
+        [HttpGet]
+        public IActionResult Index(string? searchString)
         {
             try
             {
@@ -224,17 +225,20 @@ namespace SqlIntegrationUI.Controllers
 
         public async Task<IActionResult> Submit(bool Redirect = true)
         {
-            var services = ConfigServices;
+            if (!(ConfigServices?.ServiceSet.Count > 0))
+            {
+                string msg = "Services are null or empty!";
+                Log(msg);
+                ViewData["ErrorMessage"] = msg;
+                return RedirectToAction(nameof(Index));
+            }
             try
             {
-                if (services == null)
-                    Log("ConfigServices could not be loaded!");
-                else
-                {
-                    string servicesJson = JsonConvert.SerializeObject(services, Formatting.Indented);
-                    SysFile.WriteAllText(ConfigFullPath, servicesJson);
-                    ConfigServices = null;
-                }
+                ConfigServices.ServiceSet = [.. ConfigServices.ServiceSet.OrderBy(s => s.Endpoint)];
+                string servicesJson = JsonConvert.SerializeObject(ConfigServices, Formatting.Indented);
+                SysFile.WriteAllText(ConfigFullPath, servicesJson);
+                ConfigServices = null;
+
                 bool restartServices = false;
 
                 for (int i = 0; i < 2; i++)
@@ -242,7 +246,13 @@ namespace SqlIntegrationUI.Controllers
                     restartServices = await ReBuild.RestartServices();
                     if (restartServices) break;
                 }
-                if (!restartServices) return Problem("Background ConfigServices could not be started");
+                if (!restartServices)
+                {
+                    string msg = "Background Services could not be started!";
+                    Log(msg);
+                    ViewData["ErrorMessage"] = msg;
+                    return RedirectToAction(nameof(Index));
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

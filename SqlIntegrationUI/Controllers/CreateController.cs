@@ -86,7 +86,7 @@ namespace SqlIntegrationUI.Controllers
                     service.Columns = await GetColumns(jObj);
                     ConfigServices.ServiceSet.Add(service);
                 }
-                return RedirectToAction(nameof(Create));
+                return RedirectToAction(nameof(ServicesController.Index), nameof(ServicesController).Replace("Controller", Emp));
             }
             catch (Exception ex)
             {
@@ -139,7 +139,7 @@ namespace SqlIntegrationUI.Controllers
                     }
                 }
                 ProposedServices = null;
-                return RedirectToAction(nameof(ServicesController.Index), "ConfigServices");
+                return RedirectToAction(nameof(ServicesController.Index), "Services");
             }
             catch (Exception ex)
             {

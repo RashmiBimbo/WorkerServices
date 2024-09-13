@@ -24,10 +24,13 @@ namespace SqlIntegrationServices
         private readonly ServiceDetail CrntService;
         private readonly Services Services;
         private readonly string logFile, ServiceName, ServiceEndpoint, ServiceTbl, QueryString;
+        private static long? TrkCnt, AddCnt, UpdtCnt;
+        //private readonly List<long> msngRecIds = [5702217655, 5702217684, 5702206797, 5702206804, 5702217735, 5702217653, 5702217651, 5702206800, 5702219121];
         //private ExceptionLogger ErrMsgFltr;
 
         public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDetail service)
         {
+            TrkCnt = 0; AddCnt = 0; UpdtCnt = 0;
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             CrntService = service;
@@ -95,7 +98,14 @@ namespace SqlIntegrationServices
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
                 do
                 {
+                    //string deflFltr = "&cross-company=true";
+                    //string s = " and ";
+                    //msngRecIds.ForEach(action: r => s += $"RecId1 eq {r} or ");
+                    //s = s.Remove(s.LastIndexOf("or"));
+                    //CrntService.QueryString += CrntService.QueryString.Replace(deflFltr, Emp) + s + deflFltr;
+
                     int count = Interlocked.Increment(ref ExecutionCount);
+                    
                     string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
 
                     string msg = $"{Now}: {ServiceName} Service is running; Count: {count}";
@@ -111,17 +121,22 @@ namespace SqlIntegrationServices
                     int i = 0;
                     while (!IsEmpty(url))
                     {
-                        LogInfo($"{Entr}{Now}: API iteration no. {++i}");
+                        LogInfo($"{Entr}{Now}: Page no. {++i}");
                         url = await DoWork(resource, url);
                     }
                     var endTime = Now;
                     var elapsedTime = endTime - startTime;
 
                     LogInfo($"{Entr}{Now}: Data migration completed."
-                          + $"{Entr}{Now}: No. of times api executed : {i}"
+                          + $"{Entr}{Now}: Total pages read : {i}"
+                          + $"{Entr}{Now}: Total no. of records tracked:{TrkCnt}"
+                          + $"{Entr}{Now}: Total no. of records added: {AddCnt}"
+                          + $"{Entr}{Now}: Total no. of records updated: {UpdtCnt}"
                           + $"{Entr}{Now}: Task execution time: {elapsedTime}"
                           + $"{Entr}{Now}: Next iteration will start after {period} minutes at {Now.AddMinutes(period)}"
                           + $"{Entr}***********************************************************{Entr}");
+
+                    TrkCnt = 0; AddCnt = 0; UpdtCnt = 0;
                     await Task.Delay(TimeSpan.FromMinutes(period), stoppingToken);
                 }
                 while (await timer.WaitForNextTickAsync(stoppingToken));
@@ -200,7 +215,7 @@ namespace SqlIntegrationServices
                 JObject obj = JObject.Parse(result);
                 JArray Items = (JArray)obj?["value"];
 
-                int? i = Items?.Count;
+                long? i = Items?.Count;
                 List<long> cnts = await CallUpdateCntxt(context, Items, CrntService.Table);
                 long updtCnt = cnts[1], addCnt = cnts[0];
 
@@ -232,10 +247,10 @@ namespace SqlIntegrationServices
                     }
                 }
                 msg = $"{Entr}{Now}: Success: Saved data successfully." +
-                      $"{Entr}{Now}: Total no. of records tracked:{i}" +
-                      $"{Entr}{Now}: Total no. of records added: {addCnt}" +
-                      $"{Entr}{Now}: Total no. of records updated: {updtCnt}";
-
+                      $"{Entr}{Now}: No. of records tracked:{i}" +
+                      $"{Entr}{Now}: No. of records added: {addCnt}" +
+                      $"{Entr}{Now}: No. of records updated: {updtCnt}";
+                AddCnt += addCnt; UpdtCnt += updtCnt; TrkCnt += i;
                 LogInfo(msg);
             }
             catch (Exception ex)
@@ -294,6 +309,7 @@ namespace SqlIntegrationServices
                             T poco = DeserializeJson<T>.Deserialize(itmJsn);
 
                             if (poco is null) continue;
+
                             foreach (var pkProp in primaryKeyProperties)
                             {
                                 var value = pkProp.GetValue(poco);
@@ -315,7 +331,8 @@ namespace SqlIntegrationServices
                             {
                                 ent = PrepareEntity(poco);
                                 if (ent is null) continue;
-
+                                //if (msngRecIds.Contains((poco as dynamic).RecId1))
+                                //    LogInfo($"{(poco as dynamic).RecId1} found in Missing RecIds!");
                                 if (existingEntity is null) // Add the new entity
                                 {
                                     dbSet.Add(ent);

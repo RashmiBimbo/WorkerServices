@@ -21,7 +21,7 @@ namespace SqlIntegrationUI.UIUtilities
 
         public static async Task<bool> RestartServices()
         {
-            string ProcessExecutable = Path.Combine(RlzFolder, $"{SqlIntegrationServices}.exe");
+            string ProcessExecutable = Comb(RlzFolder, $"{SqlIntegrationServices}.exe");
             try
             {
                 Process[] processes = Process.GetProcessesByName(SqlIntegrationServices);
@@ -110,7 +110,7 @@ namespace SqlIntegrationUI.UIUtilities
 
         public static async Task<bool> RebuildSqlIntegrationServices(string projPath)
         {
-            string logFilePath = "build_log.txt";
+            string logFilePath = Comb(CrntProjLogFolder, "build_log.txt");
             await CleanProject(projPath, "Debug", logFilePath);
 
             bool debugBuildSuccess = await BuildProject(projPath, "Debug", logFilePath);
@@ -209,15 +209,15 @@ namespace SqlIntegrationUI.UIUtilities
                 if (!IsEmpty(output))
                 {
                     string msg = $"{config} Clean Output:{output}";
-                    File.AppendAllText(logFilePath, msg);
-                    Log(msg);
+                    //File.AppendAllText(logFilePath, msg);
+                    Log(msg, true, logFilePath);
                 }
 
                 if (!IsEmpty(error))
                 {
                     string errMsg = $"{config} Clean Errors:{error}";
-                    File.AppendAllText(logFilePath, errMsg);
-                    Log(errMsg);
+                    //File.AppendAllText(logFilePath, errMsg);
+                    Log(errMsg, true, logFilePath);
                 }
             }
             catch (Exception ex)
@@ -230,7 +230,7 @@ namespace SqlIntegrationUI.UIUtilities
         {
             try
             {
-                string batchFilePath = "buildcommand.bat", logFile = "buildoutput.log";
+                string batchFilePath = Comb(CrntProjLogFolder, "TryInDfrntWindow_buildcommand.bat"), logFile = Comb(CrntProjLogFolder, "TryInDfrntWindow_buildoutput.log");
                 bool genSuccess = true;
 
                 File.WriteAllLines(batchFilePath,
@@ -268,14 +268,15 @@ namespace SqlIntegrationUI.UIUtilities
                 }
                 catch (Exception ex)
                 {
-                    Log($"Error killing process: {ex.Message}");
+                    //Log($"Error killing process: {ex.Message}");
+                    LogInfo(ex, LogFile, NameSpacesUsed);
                     return false;
                 }
 
                 // Read and display the output from the log file
                 string output = File.ReadAllText(logFile);
 
-                Log($"Output:{output}");
+                Log($"TryInDfrntWindow Output:{output}");
                 // Clean up
                 if (!File.Exists(batchFilePath))
                     File.Delete(batchFilePath);
@@ -344,7 +345,7 @@ namespace SqlIntegrationUI.UIUtilities
         {
             try
             {
-                string batchFilePath = Comb(LogFolder, "command.bat"), logFilePath = Comb(LogFolder, "output.log");
+                string batchFilePath = Comb(CrntProjLogFolder, "EFDBFirstCmd.bat"), logFilePath = Comb(CrntProjLogFolder, "EFDBFirstCmdoutput.log");
                 bool genSuccess = true;
 
                 File.WriteAllLines(batchFilePath,
@@ -389,11 +390,11 @@ namespace SqlIntegrationUI.UIUtilities
                 // Read and display the output from the log file
                 string output = File.ReadAllText(logFilePath);
 
-                Log($"Output:{output}");
+                Log($"GenerateModel Output:{output}");
                 // Clean up
-                if (!File.Exists(batchFilePath))
+                if (File.Exists(batchFilePath))
                     File.Delete(batchFilePath);
-                if (!File.Exists(logFilePath))
+                if (File.Exists(logFilePath))
                     File.Delete(logFilePath);
 
                 return genSuccess;
