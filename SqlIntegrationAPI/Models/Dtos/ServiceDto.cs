@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SqlIntegrationAPI.Models.Dtos
 {
-    public class ServiceResponseDto
+    public class ServiceDto
     {
-        public long RecId { get; }
-
         public bool Enable { get; set; } = true;
 
         public string Name { get; set; }
@@ -19,7 +17,7 @@ namespace SqlIntegrationAPI.Models.Dtos
 
         public string Table { get; set; }
 
-        public bool Altered { get; set; }
+        public bool? TableAltered { get; set; }
 
         public string? Status { get; set; }
 

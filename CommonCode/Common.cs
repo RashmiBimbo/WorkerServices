@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text;
 
 namespace CommonCode
@@ -13,7 +14,7 @@ namespace CommonCode
         private static string crntSolnFolder, configFullPath, appFolder, logFolder;
         public const string SqlIntegrationUI = nameof(SqlIntegrationUI);
         public const string SqlIntegrationServices = nameof(SqlIntegrationServices);
-        public static readonly string Emp = string.Empty;
+        public const string Emp = "";
         public static readonly string Entr = Environment.NewLine;
         public static readonly string MFELConnStr = "Name=MFELConnStr";
         public static readonly string ERP_SQL_ConnStr = "Name=ERP_SQL_ConnStr";
@@ -23,8 +24,7 @@ namespace CommonCode
 
         public static Func<string, string, string> Comb => Path.Combine;
 
-        static Common()
-        { }
+        static Common() { }
 
         public static string CrntSolnFolder
         {
@@ -42,7 +42,7 @@ namespace CommonCode
                 if (IsEmpty(appFolder) || !Directory.Exists(appFolder))
                 {
                     string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                    appFolder = Path.Combine(programFilesPath, "ErpSqlIntegration");
+                    appFolder = Comb(programFilesPath, "ErpSqlIntegration");
 
                     if (!Directory.Exists(appFolder))
                     {
@@ -60,7 +60,7 @@ namespace CommonCode
             {
                 if (IsEmpty(logFolder) || !Directory.Exists(logFolder))
                 {
-                    logFolder = Path.Combine(ProgramDataAppFolder, "Logs");
+                    logFolder = Comb(ProgramDataAppFolder, "Logs");
 
                     if (!Directory.Exists(logFolder))
                     {
@@ -84,7 +84,7 @@ namespace CommonCode
         private static string GetConfigFullPath(string solnFolder = null)
         {
             //solnFolder = IsEmpty(solnFolder) ? GetSolnFolder() : solnFolder;
-            string configFullPath = Path.Combine(ProgramDataAppFolder, "Config.json");
+            string configFullPath = Comb(ProgramDataAppFolder, "Config.json");
             if (IsEmpty(configFullPath)) throw new Exception("Config file full path not found!");
             //Console.WriteLine(configFullPath);
             return configFullPath;

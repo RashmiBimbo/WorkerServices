@@ -387,10 +387,10 @@ namespace SqlIntegrationServices
 
                     if (success)
                     {
-                        if (CrntService.Altered)
+                        if (CrntService.TableAltered)
                         {
                             success = await AlterTable(context, entityType);
-                            CrntService.Altered = !success;
+                            CrntService.TableAltered = !success;
                             string jsn = JsonConvert.SerializeObject(CrntService);
                         }
                         return success;

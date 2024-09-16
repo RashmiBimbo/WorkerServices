@@ -2,7 +2,7 @@
 {
     public class GetDiagnosResponseDto
     {
-        public long RecId { get; }
+        public string Name { get; set; }
 
         public string Endpoint { get; set; }
 

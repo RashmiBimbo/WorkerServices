@@ -2,8 +2,6 @@
 {
     public class EditDiagnosResponseDto
     {
-        public long RecId { get; }
-
         public string Endpoint { get; set; }
 
         public string? Status { get; set; }

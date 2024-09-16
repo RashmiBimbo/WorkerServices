@@ -15,8 +15,8 @@ namespace SqlIntegrationUI.UIUtilities
         {
             memoryCache = new MemoryCache(new MemoryCacheOptions());
 
-            CrntProjFolder = Path.Combine(CrntSolnFolder, CrntProjName);
-            CrntProjPathFullPath = Path.Combine(CrntProjFolder, $"{CrntProjName}.csproj");
+            CrntProjFolder = Comb(CrntSolnFolder, CrntProjName);
+            CrntProjPathFullPath = Comb(CrntProjFolder, $"{CrntProjName}.csproj");
 
             NameSpacesUsed = [CrntProjName, nameof(CommonCode)];
         }
@@ -27,7 +27,7 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 if (IsEmpty(crntProjLogFolder) || !Directory.Exists(crntProjLogFolder))
                 {
-                    crntProjLogFolder = Path.Combine(LogFolder, $"{nameof(SqlIntegrationUI)}");
+                    crntProjLogFolder = Comb(LogFolder, $"{nameof(SqlIntegrationUI)}");
 
                     if (!Directory.Exists(crntProjLogFolder))
                     {
@@ -45,7 +45,7 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 if (IsEmpty(logFile) || !File.Exists(logFile))
                 {
-                    logFile = Path.Combine(CrntProjLogFolder, $"{CrntProjName}_Log.txt");
+                    logFile = Comb(CrntProjLogFolder, $"{CrntProjName}_Log.txt");
 
                     if (!File.Exists(logFile))
                     {

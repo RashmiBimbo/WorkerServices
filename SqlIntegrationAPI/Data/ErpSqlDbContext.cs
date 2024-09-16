@@ -1,16 +1,19 @@
 ﻿
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SqlIntegrationAPI.Models.Domains;
 using System.Reflection;
+using CommonCode.Identity;
 
 namespace SqlIntegrationAPI.Data
 {
-    public class ErpSqlDbContext(DbContextOptions<ErpSqlDbContext> options) : DbContext(options)
+    public class ErpSqlDbContext(DbContextOptions<ErpSqlDbContext> options) : IdentityDbContext(options)
     {
         public DbSet<DbService> Services { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             SetDefaults(modelBuilder);
             IEnumerable<Type> entityTypes = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttributes<PrimaryKeyAttribute>().Any());
@@ -76,9 +79,9 @@ namespace SqlIntegrationAPI.Data
                 entity.Property(e => e.Table)
                     .IsRequired();  // Required property
 
-                entity.Property(e => e.Altered)
+                entity.Property(e => e.TableAltered)
                     .IsRequired()
-                    .HasDefaultValue(false);  // Required and default value for Altered
+                    .HasDefaultValue(false);  // Required and default value for TableAltered
 
                 entity.Property(e => e.Status)
                     .HasMaxLength(255)

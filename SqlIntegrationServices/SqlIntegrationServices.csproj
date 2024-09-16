@@ -4,7 +4,8 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>dotnet-SubledgerVoucherGeneralJournalEntryEntitiesService-4e9d9a0a-f3bb-42d0-a768-ca67d36961fb</UserSecretsId>
+		<UserSecretsId>f3963917-aa7b-4d5c-a0bb-7628ac5bf843</UserSecretsId>
+		<!--<UserSecretsId>dotnet-SubledgerVoucherGeneralJournalEntryEntitiesService-4e9d9a0a-f3bb-42d0-a768-ca67d36961fb</UserSecretsId>-->
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -48,7 +49,11 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.64.0" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.64.1" />
+		<PackageReference Include="Serilog" Version="4.0.1" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="System.ClientModel" Version="1.0.0" />
 		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
 		<PackageReference Include="System.Text.Json" Version="8.0.4" />

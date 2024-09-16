@@ -12,8 +12,8 @@ namespace SqlIntegrationUI.UIUtilities
 
         static ReBuild()
         {
-            ServiceProjFoldr = Path.Combine(CrntSolnFolder, SqlIntegrationServices);
-            ServiceProjFullPath = Path.Combine(ServiceProjFoldr, $"{SqlIntegrationServices}.csproj");
+            ServiceProjFoldr = Comb(CrntSolnFolder, SqlIntegrationServices);
+            ServiceProjFullPath = Comb(ServiceProjFoldr, $"{SqlIntegrationServices}.csproj");
 
             DebugFolder = @$"{ServiceProjFoldr}\bin\Debug\net8.0\";
             RlzFolder = @$"{ServiceProjFoldr}\bin\Release\net8.0\";
@@ -38,16 +38,16 @@ namespace SqlIntegrationUI.UIUtilities
 
                 await DeleteServices();
 
-                bool buildSuccess = await GenerateModel();
+                //bool buildSuccess = await GenerateModel();
                 await UpdateModels();
 
-                if (!buildSuccess)
-                {
-                    Log($"{SqlIntegrationServices} project could not be built after adding services!");
+                //if (!buildSuccess)
+                //{
+                //    Log($"{SqlIntegrationServices} project could not be built after adding services!");
 
-                    if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
-                        Log($"{SqlIntegrationServices} project could not be re-built !");
-                }
+                //    if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
+                //        Log($"{SqlIntegrationServices} project could not be re-built !");
+                //}
                 // Start the process again
                 Log($"Starting the process {SqlIntegrationServices}...");
 
@@ -102,7 +102,7 @@ namespace SqlIntegrationUI.UIUtilities
                         Log($"{SqlIntegrationServices} project could not be re-built!");
                         return false;
                     }
-                    ConfigServices.ServiceSet.First(s => s.Table.Equals(item.Table, StrComp)).Altered = true;
+                    ConfigServices.ServiceSet.First(s => s.Table.Equals(item.Table, StrComp)).TableAltered = true;
                 }
             }
             return true;
@@ -450,8 +450,8 @@ namespace SqlIntegrationUI.UIUtilities
         {
             try
             {
-                string debugDll = Path.Combine(DebugFolder, $"{SqlIntegrationServices}.dll");
-                string rlzDll = Path.Combine(RlzFolder, $"{SqlIntegrationServices}.dll");
+                string debugDll = Comb(DebugFolder, $"{SqlIntegrationServices}.dll");
+                string rlzDll = Comb(RlzFolder, $"{SqlIntegrationServices}.dll");
 
                 Assembly asmbly = Assembly.LoadFrom(rlzDll);
                 asmbly ??= Assembly.LoadFrom(debugDll);
@@ -507,7 +507,7 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 foreach (ServiceDetail service in DeletedServices)
                 {
-                    //string filePath = Path.Combine(CrntSolnFolder, $@"{SqlIntegrationServices}\Models\{service.Endpoint}.cs");
+                    //string filePath = Comb(CrntSolnFolder, $@"{SqlIntegrationServices}\Models\{service.Endpoint}.cs");
                     //if (File.Exists(filePath)) File.Delete(filePath);
                     DeletedServices.Remove(service);
                 }

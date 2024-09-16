@@ -12,13 +12,15 @@ namespace SqlIntegrationAPI.Models.Domains
         private string ServiceEndpoint;
 
         [Key]
-        public long RecId { get; }
+        public long RecId { get; set; }
 
         [JsonProperty("Enable")]
         public bool Enable { get; set; } = true;
 
         [Required]
-        [StringLength(255)]
+        [StringLength(255, ErrorMessage = "The service name has to be maximum of 255 characters")]
+        [MinLength(3, ErrorMessage = "The service name has to be minimum of 3 characters")]
+        [RegularExpression("^[a-zA-Z0-9]*$")]
         [JsonProperty("Name")]
         public string Name
         {
@@ -30,8 +32,11 @@ namespace SqlIntegrationAPI.Models.Domains
         }
 
         [Required]
-        [StringLength(255)]
+        [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
+        [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
+        [RegularExpression("^[a-zA-Z0-9]*$")]
         [JsonProperty("Endpoint")]
+        [Key]
         public string Endpoint
         {
             get => ServiceEndpoint;
@@ -42,7 +47,9 @@ namespace SqlIntegrationAPI.Models.Domains
         }
 
         [Required]
-        [StringLength(255)]
+        [StringLength(255, ErrorMessage = "The table name has to be maximum of 255 characters")]
+        [MinLength(3, ErrorMessage = "The table name has to be minimum of 3 characters")]
+        [RegularExpression("^[a-zA-Z0-9]*$")]
         [JsonProperty("Table")]
         public string Table
         {
@@ -62,8 +69,8 @@ namespace SqlIntegrationAPI.Models.Domains
         public string? QueryString { get; set; } = "cross-company=true";
 
         [Required]
-        [JsonProperty("Altered")]
-        public bool Altered { get; set; } = false;
+        [JsonProperty("TableAltered")]
+        public bool TableAltered { get; set; } = false;
 
         [StringLength(255)]
         public string? Status { get; set; }
@@ -89,12 +96,14 @@ namespace SqlIntegrationAPI.Models.Domains
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [Required]
-        [StringLength(255)]
+        [StringLength(255, ErrorMessage = "The Created By field has to be maximum of 255 characters")]
+        [RegularExpression("^[a-zA-Z0-9]*$")]
         public string CreatedBy { get; set; }
 
         public DateTime? ModifiedDate { get; set; }
 
-        [StringLength(255)]
+        [StringLength(255, ErrorMessage = "The Modified By field has to be maximum of 255 characters")]
+        [RegularExpression("^[a-zA-Z0-9]*$")]
         public string? ModifiedBy { get; set; }
 
         public bool Active { get; set; } = true;

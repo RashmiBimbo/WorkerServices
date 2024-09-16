@@ -1,16 +1,19 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using SqlIntegrationUI.Models;
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
 
 namespace SqlIntegrationUI
 {
-    public class ErpSqlDbContext(DbContextOptions<ErpSqlDbContext> options) : DbContext(options)
+    public class ErpSqlDbContext(DbContextOptions<ErpSqlDbContext> options) : IdentityDbContext<IdentityUser>(options)
     {
         public DbSet<DBServiceDetail> DBServiceDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<DBServiceDetail>(entity =>
             {
                 // Primary Key
@@ -40,9 +43,9 @@ namespace SqlIntegrationUI
                 entity.Property(e => e.Table)
                     .IsRequired();  // Required property
 
-                entity.Property(e => e.Altered)
+                entity.Property(e => e.TableAltered)
                     .IsRequired()
-                    .HasDefaultValue(false);  // Required and default value for Altered
+                    .HasDefaultValue(false);  // Required and default value for TableAltered
 
                 entity.Property(e => e.Status)
                     .HasMaxLength(255)

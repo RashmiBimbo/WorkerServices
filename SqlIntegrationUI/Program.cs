@@ -1,8 +1,9 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using SqlIntegrationUI;
-using static SqlIntegrationUI.UIUtilities.UICommonCode;
+using Microsoft.AspNetCore.Identity;
 
 public class Program
 {
@@ -23,6 +24,7 @@ public class Program
             if (string.IsNullOrEmpty(erp_SQL_ConnStr))
                 throw new InvalidOperationException("Connection string 'ERP_SQL_ConnStr' not found or is empty.");
 
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ErpSqlDbContext>();
             builder.Services.AddDbContext<ErpSqlDbContext>(options => options.UseSqlServer(erp_SQL_ConnStr, sqlOptions =>
                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
 

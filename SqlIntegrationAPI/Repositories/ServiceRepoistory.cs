@@ -1,6 +1,7 @@
 ﻿using SqlIntegrationAPI.Models.Domains;
 using Microsoft.EntityFrameworkCore;
 using SqlIntegrationAPI.Data;
+using SqlIntegrationAPI.Models.Dtos;
 
 namespace SqlIntegrationAPI.Repositories
 {
@@ -17,92 +18,114 @@ namespace SqlIntegrationAPI.Repositories
         /// <summary>
         /// Retrieves all DbService entities from the database.
         /// </summary>
-        public async Task<List<DbService>> GetAllAsync()
+        public async Task<List<DbService>> GetAllAsync(string? sortBy = Emp, string? filterOn = Emp, string? filterQuery = Emp, bool ascending = true, int pageNo = 1, int pageSize = 100 )
         {
-            return await _context.Services.AsNoTracking().ToListAsync();
+            //throw new Exception("Hi");
+            var services = await _context.Services.AsNoTracking().ToListAsync();
+            if (!IsEmpty(filterOn) && !IsEmpty(filterQuery))
+            {
+                services = services.Where(x => x.Name.Contains(filterQuery)).ToList();
+            }
+            services = ascending ? [.. services.OrderBy(s => s.Name)] : [.. services.OrderByDescending(s => s.Name)];
+
+            int skipRows = (pageNo - 1) * pageSize;
+            services = [.. services.Skip(skipRows)];
+            return services;
         }
 
         /// <summary>
         /// Retrieves DbService entities that match the specified filter.
         /// </summary>
-        public async Task<List<DbService>> GetFileteredAsync(string filter)
+        public async Task<List<DbService>> GetByEndpointAsync(string endpoint)
         {
-            if (string.IsNullOrWhiteSpace(filter))
+            if (IsEmpty(endpoint))
                 return await GetAllAsync();
 
             // Use Contains for filter matching (case-insensitive if required)
-            return await _context.Services
-                .AsNoTracking()
-                .Where(s => s.Name.Contains(filter, StrComp))
-                .ToListAsync();
+            return await _context.Services.AsNoTracking().Where(s => s.Endpoint.Equals(endpoint)).ToListAsync();
         }
 
         /// <summary>
         /// Creates a new DbService entity in the database.
         /// </summary>
-        public async Task<int> CreateAsync(DbService service)
+        public async Task<DbService?> CreateAsync(DbService service)
         {
+            DbService result = null;
             if (service == null)
                 throw new ArgumentNullException(nameof(service), "Service cannot be null.");
 
-            if (string.IsNullOrWhiteSpace(service.Endpoint))
+            if (IsEmpty(service.Endpoint))
                 throw new ArgumentException("Service's Endpoint is required!");
 
             // Ensure the service is not already in the local context (check against Endpoint)
             if (!_context.Services.Local.Any(s => s.Endpoint == service.Endpoint))
             {
-                await _context.Services.AddAsync(service);
+                var entityCln = await _context.Services.AddAsync(service);
+                result = entityCln.Entity;
             }
-
+            await _context.SaveChangesAsync();
             // Save changes and return the result
-            return await _context.SaveChangesAsync();
+            return result;
         }
 
         /// <summary>
         /// Updates an existing DbService entity based on the provided endpoint.
         /// </summary>
-        public async Task<int> UpdateAsync(string endPoint, DbService service)
+        public async Task<DbService?> UpdateAsync(string endPoint, DbService service)
         {
-            if (IsEmpty(endPoint))
-                throw new ArgumentException("Endpoint is required!");
+            if (IsEmpty(endPoint)) throw new ArgumentException("Endpoint is required!");
 
-            if (service == null)
-                throw new ArgumentException("Service is required!");
+            if (service == null) throw new ArgumentException("Service is required!");
 
             // Find the existing entity by endpoint
-            var existingEntity = await _context.Services
-                .FirstOrDefaultAsync(s => s.Endpoint.Equals(endPoint, StrComp));
+            var existingEntity = await _context.Services.FirstOrDefaultAsync(s => s.Endpoint.Equals(endPoint));
+            if (existingEntity == null) return null;
 
-            if (existingEntity == null)
-                return 0;
+            foreach (var property in typeof(DbService).GetProperties())
+            {
+                var newValue = property.GetValue(service);
+                if (newValue != null && !property.Name.Equals(nameof(DbService.RecId), StrComp) && !property.Name.Equals(nameof(DbService.Endpoint), StrComp)) // Exclude key properties like RecId
+                {
+                    // Update the value of the property in the existing entity
+                    property.SetValue(existingEntity, newValue);
+                    _context.Entry(existingEntity).Property(property.Name).IsModified = true;
+                }
+            }
 
-            // Update the existing entity with new values
-            _context.Entry(existingEntity).CurrentValues.SetValues(service);
+            // Save changes and return the updated entity
+            await _context.SaveChangesAsync();
 
-            // Save changes and return the result
-            return await _context.SaveChangesAsync();
+            return existingEntity;
         }
 
         /// <summary>
         /// Deletes a DbService entity based on the provided endpoint.
         /// </summary>
-        public async Task<int> DeleteAsync(string endPoint)
+        public async Task<DbService?> DeleteAsync(string endPoint)
         {
-            if (string.IsNullOrWhiteSpace(endPoint))
+            if (IsEmpty(endPoint))
                 throw new ArgumentException("Endpoint is required!");
 
             // Find the existing entity by endpoint
             var existingEntity = await _context.Services
-                .FirstOrDefaultAsync(s => s.Endpoint.Equals(endPoint, StrComp));
+                .FirstOrDefaultAsync(s => s.Endpoint.Equals(endPoint));
 
-            if (existingEntity == null)
-                return 0;
+            if (existingEntity is null)
+                return null;
 
             // Remove the entity
             _context.Services.Remove(existingEntity);
-
+            await _context.SaveChangesAsync();
             // Save changes and return the result
-            return await _context.SaveChangesAsync();
+            return existingEntity;
+        }
+
+        public async Task<bool> ExistsAsync(string endPoint)
+        {
+            if (IsEmpty(endPoint))
+                throw new ArgumentException("Endpoint is required!");
+
+            return await _context.Services.AnyAsync(e => e.Endpoint == endPoint);
         }
     }
 }

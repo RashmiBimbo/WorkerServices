@@ -2,10 +2,7 @@
 {
     public class DeleteServiceResponseDto
     {
-
-        public long RecId { get; }
-
-        public string Endpoint { get; set; }
+                public string Endpoint { get; set; }
 
     }
 }

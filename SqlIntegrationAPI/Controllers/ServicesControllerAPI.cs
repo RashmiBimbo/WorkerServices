@@ -1,55 +1,176 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SqlIntegrationAPI.Data;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using SqlIntegrationAPI.Models.Domains;
+using SqlIntegrationAPI.Models.Dtos.Requests;
+using SqlIntegrationAPI.Models.Dtos.Responses;
 using SqlIntegrationAPI.Repositories;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System.ComponentModel.DataAnnotations;
 
 namespace SqlIntegrationAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ServicesControllerAPI : ControllerBase
+    public class ServicesControllerAPI(IServiceRepository serviceRepository, IMapper mapper, ILogger<ServicesControllerAPI> logger) : ControllerBase
     {
-        private readonly ErpSqlDbContext dbContext;
+        private readonly IMapper _mapper = mapper;
+        private readonly ILogger<ServicesControllerAPI> logger = logger;
+        private readonly IServiceRepository _serviceRepository = serviceRepository;
 
-        public IServiceRepository ServiceRepository { get; }
-
-        public ServicesControllerAPI(ErpSqlDbContext dbContext, IServiceRepository serviceRepository)
+        // GET: api/Services
+        [HttpGet("Services")]
+        public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetServices(string? sortBy, string? filterOn, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
-            this.dbContext = dbContext;
-            ServiceRepository = serviceRepository;
+            logger.LogInformation("GetServices get called");
+            //throw new Exception("Hi exception");
+            var services = await _serviceRepository.GetAllAsync(sortBy, filterOn, filterQuery, ascending, pageNo, pageSize);
+            if (services == null || services.Count == 0)
+            {
+                return NoContent();
+            }
+            // Map domain models to DTOs for response
+            var serviceDtos = _mapper.Map<List<GetServiceResponseDto>>(services);
+
+            return Ok(serviceDtos);
         }
 
-        // GET: api/<ServicesControllerAPI>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        // GET: api/Services
+        [HttpGet("Diagnostics")]
+        public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnostics(string? sortBy, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
-            return new string[] { "value1", "value2" };
+            var services = await _serviceRepository.GetAllAsync(sortBy, Emp, filterQuery, ascending, pageNo, pageSize);
+            if (services == null || services.Count == 0)
+            {
+                return NoContent();
+            }
+            // Map domain models to DTOs for response
+            var serviceDtos = _mapper.Map<List<GetDiagnosResponseDto>>(services);
+
+            return Ok(serviceDtos);
         }
 
-        // GET api/<ServicesControllerAPI>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET: api/Services/filter?filter={filter}
+        [HttpGet("Services/{endPoint}")]
+        public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetService(string endPoint)
         {
-            return "value";
+            var services = await _serviceRepository.GetByEndpointAsync(endPoint);
+
+            if (services == null || services.Count == 0)
+            {
+                return NotFound("No service with matching endpoint was found!");
+            }
+
+            // Map domain models to DTOs for response
+            var serviceDtos = _mapper.Map<List<GetServiceResponseDto>>(services);
+            return Ok(serviceDtos);
         }
 
-        // POST api/<ServicesControllerAPI>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // GET: api/Services/filter?filter={filter}
+        [HttpGet("Diagnostics/{endPoint}")]
+        public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnosticsSingle(string endPoint)
         {
+            var services = await _serviceRepository.GetByEndpointAsync(endPoint);
+
+            if (services == null || services.Count == 0)
+            {
+                return NotFound("No service with matching endpoint was found!");
+            }
+
+            // Map domain models to DTOs for response
+            var serviceDtos = _mapper.Map<List<GetDiagnosResponseDto>>(services);
+            return Ok(serviceDtos);
         }
 
-        // PUT api/<ServicesControllerAPI>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // POST: api/Services
+        [HttpPost("Services")]
+        public async Task<ActionResult> CreateService([FromBody] CreateServiceRequestDto createService)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            createService.CreatedBy = "Rashmi";
+
+            var createdEntity = await _serviceRepository.CreateAsync(_mapper.Map<DbService>(createService));
+
+            if (createdEntity is null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to create the service.");
+            }
+
+            // Return the created entity and its location
+            return CreatedAtAction(nameof(GetService), new { endPoint = createService.Endpoint });
         }
 
-        // DELETE api/<ServicesControllerAPI>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // PUT: api/Services/{endPoint}
+        [HttpPut("Services/{endPoint}")]
+        public async Task<IActionResult> UpdateService(string endPoint, [FromBody] EditServiceRequestDto editService)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return await Update(endPoint, editService);
+        }
+
+        // PUT: api/Services/{endPoint}
+        [HttpPut("Diagnostics/{endPoint}")]
+        public async Task<IActionResult> UpdateDiagnose(string endPoint, [FromBody] EditDiagnosRequestDto editService)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            return await Update(endPoint, editService);
+        }
+
+        // DELETE: api/Services/{endPoint}
+        [HttpDelete("Services/{endPoint}")]
+        public async Task<IActionResult> DeleteService(string endPoint)
+        {
+            if (IsEmpty(endPoint))
+            {
+                return BadRequest("Endpoint is required to delete the service.");
+            }
+
+            var deletedResult = await _serviceRepository.DeleteAsync(endPoint);
+
+            if (deletedResult is null)
+            {
+                return NotFound("The service with the given endpoint was not found.");
+            }
+
+            return Ok($"Service with endpoint '{endPoint}' was successfully deleted.");
+        }
+
+        // Utility method to check if a service exists by endpoint
+        private async Task<bool> ServiceExists(string endPoint)
+        {
+            return await _serviceRepository.ExistsAsync(endPoint);
+        }
+
+        private async Task<IActionResult> Update(string endPoint, dynamic editService)
+        {
+            if (editService is null || IsEmpty(endPoint))
+            {
+                return BadRequest("Please provide all the required parameters.");
+            }
+            if (!(editService is EditDiagnosRequestDto || editService is EditServiceRequestDto))
+            {
+                return BadRequest("Please provide all the required parameters in correct format.");
+            }
+            if (IsEmpty(editService.Endpoint))
+            {
+                editService.Endpoint = endPoint;
+            }
+            else if (endPoint != editService.Endpoint)
+                return BadRequest("The provided endpoint does not match the service's endpoint.");
+
+            if (!await ServiceExists(endPoint))
+            {
+                return NotFound();
+            }
+            editService.ModifiedBy = "Rashmi";
+            editService.ModifiedDate = DateTime.Now;
+
+            var updatedResult = await _serviceRepository.UpdateAsync(endPoint, _mapper.Map<DbService>(editService));
+
+            if (updatedResult is null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to update the service.");
+            }
+            return NoContent(); // Successfully updated, returning no content
         }
     }
 }

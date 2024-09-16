@@ -63,8 +63,8 @@ namespace SqlIntegrationUI.Models
         }
 
         [Required]
-        [JsonProperty("Altered")]
-        public bool Altered { get; set; } = false;
+        [JsonProperty("TableAltered")]
+        public bool TableAltered { get; set; } = false;
 
         public string? Status { get; set; }
 

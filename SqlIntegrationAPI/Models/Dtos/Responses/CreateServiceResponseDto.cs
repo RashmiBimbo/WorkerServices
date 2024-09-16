@@ -2,8 +2,6 @@
 {
     public class CreateServiceResponseDto
     {
-        public long RecId { get; }
-
         public string Endpoint { get; set; }
 
     }

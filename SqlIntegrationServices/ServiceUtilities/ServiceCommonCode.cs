@@ -12,8 +12,8 @@ namespace SqlIntegrationServices.ServiceUtilities
 
         static ServiceCommonCode()
         {
-            CrntProjFolder = Path.Combine(CrntSolnFolder, CrntProjName);
-            CrntProjPathFullPath = Path.Combine(CrntProjFolder, $"{CrntProjName}.csproj");
+            CrntProjFolder = Comb(CrntSolnFolder, CrntProjName);
+            CrntProjPathFullPath = Comb(CrntProjFolder, $"{CrntProjName}.csproj");
             NameSpacesUsed = [CrntProjName, nameof(CommonCode)];
         }
 
@@ -23,7 +23,7 @@ namespace SqlIntegrationServices.ServiceUtilities
             {
                 if (IsEmpty(crntProjLogFolder) || !Directory.Exists(crntProjLogFolder))
                 {
-                    crntProjLogFolder = Path.Combine(LogFolder, $"{nameof(SqlIntegrationServices)}Logs");
+                    crntProjLogFolder = Comb(LogFolder, $"{nameof(SqlIntegrationServices)}Logs");
 
                     if (!Directory.Exists(crntProjLogFolder))
                     {
@@ -41,7 +41,7 @@ namespace SqlIntegrationServices.ServiceUtilities
             {
                 if (IsEmpty(logFile) || !File.Exists(logFile))
                 {
-                    logFile = Path.Combine(CrntProjLogFolder, $"{CrntProjName}_Log.txt");
+                    logFile = Comb(CrntProjLogFolder, $"{CrntProjName}_Log.txt");
 
                     if (!File.Exists(logFile))
                     {
