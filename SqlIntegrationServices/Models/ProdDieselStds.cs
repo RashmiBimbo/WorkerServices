@@ -47,6 +47,6 @@ public abstract partial class ProdDieselStdsBase
     public string? DisplayValue1 { get; set; }
 }
 
-public partial class ProdDieselStdsTest : ProdDieselStdsBase {}
+public partial class ProdDieselStdsTest : ProdDieselStdsBase { }
 
-public partial class ProdDieselStds : ProdDieselStdsBase {}
+public partial class ProdDieselStds : ProdDieselStdsBase { }

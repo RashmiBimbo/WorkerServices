@@ -47,6 +47,6 @@ public abstract partial class HSNCodeTable_INBase
     public string? Description { get; set; }
 }
 
-public partial class HSNCodeTable_INTest : HSNCodeTable_INBase {}
+public partial class HSNCodeTable_INTest : HSNCodeTable_INBase { }
 
-public partial class HSNCodeTable_IN : HSNCodeTable_INBase {}
+public partial class HSNCodeTable_IN : HSNCodeTable_INBase { }

@@ -917,6 +917,6 @@ public abstract partial class ReleasedProductsV2Base
     public string? IsSelfCheckoutRegistrationBlocked { get; set; }
 }
 
-public partial class ReleasedProductsV2Test : ReleasedProductsV2Base {}
+public partial class ReleasedProductsV2Test : ReleasedProductsV2Base { }
 
-public partial class ReleasedProductsV2 : ReleasedProductsV2Base {}
+public partial class ReleasedProductsV2 : ReleasedProductsV2Base { }

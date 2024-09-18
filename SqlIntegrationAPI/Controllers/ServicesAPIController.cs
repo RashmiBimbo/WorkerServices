@@ -1,26 +1,26 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SqlIntegrationAPI.Models.Domains;
-using SqlIntegrationAPI.Models.Dtos.Requests;
-using SqlIntegrationAPI.Models.Dtos.Responses;
+using CommonCode.Models.Dtos.Requests;
+using CommonCode.Models.Dtos.Responses;
 using SqlIntegrationAPI.Repositories;
 using System.ComponentModel.DataAnnotations;
 
 namespace SqlIntegrationAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Services")]
     [ApiController]
-    public class ServicesControllerAPI(IServiceRepository serviceRepository, IMapper mapper, ILogger<ServicesControllerAPI> logger) : ControllerBase
+    public class ServicesAPIController(IServiceRepository serviceRepository, IMapper mapper, ILogger<ServicesAPIController> logger) : ControllerBase
     {
         private readonly IMapper _mapper = mapper;
-        private readonly ILogger<ServicesControllerAPI> logger = logger;
+        private readonly ILogger<ServicesAPIController> logger = logger;
         private readonly IServiceRepository _serviceRepository = serviceRepository;
 
         // GET: api/Services
         [HttpGet("Services")]
         public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetServices(string? sortBy, string? filterOn, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
-            logger.LogInformation("GetServices get called");
+            //logger.LogInformation("GetServices get called");
             //throw new Exception("Hi exception");
             var services = await _serviceRepository.GetAllAsync(sortBy, filterOn, filterQuery, ascending, pageNo, pageSize);
             if (services == null || services.Count == 0)
@@ -33,7 +33,7 @@ namespace SqlIntegrationAPI.Controllers
             return Ok(serviceDtos);
         }
 
-        // GET: api/Services
+        // GET: api/Services/Diagnostics
         [HttpGet("Diagnostics")]
         public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnostics(string? sortBy, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
@@ -48,7 +48,7 @@ namespace SqlIntegrationAPI.Controllers
             return Ok(serviceDtos);
         }
 
-        // GET: api/Services/filter?filter={filter}
+        // GET: api/Services/{endPoint}
         [HttpGet("Services/{endPoint}")]
         public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetService(string endPoint)
         {
@@ -64,7 +64,7 @@ namespace SqlIntegrationAPI.Controllers
             return Ok(serviceDtos);
         }
 
-        // GET: api/Services/filter?filter={filter}
+        // GET: api/Services/Diagnostics/{endPoint}
         [HttpGet("Diagnostics/{endPoint}")]
         public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnosticsSingle(string endPoint)
         {
@@ -94,9 +94,10 @@ namespace SqlIntegrationAPI.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Failed to create the service.");
             }
+            return CreatedAtAction(nameof(GetService), new { endPoint = createService.Endpoint }, createService);
 
             // Return the created entity and its location
-            return CreatedAtAction(nameof(GetService), new { endPoint = createService.Endpoint });
+            //return CreatedAtAction(nameof(GetService), new { endPoint = createService.Endpoint });
         }
 
         // PUT: api/Services/{endPoint}

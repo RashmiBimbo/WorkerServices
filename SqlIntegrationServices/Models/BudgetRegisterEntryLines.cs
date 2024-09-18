@@ -72,6 +72,6 @@ public abstract partial class BudgetRegisterEntryLinesBase
     public string? WorkflowStatus { get; set; }
 }
 
-public partial class BudgetRegisterEntryLinesTest : BudgetRegisterEntryLinesBase {}
+public partial class BudgetRegisterEntryLinesTest : BudgetRegisterEntryLinesBase { }
 
-public partial class BudgetRegisterEntryLines : BudgetRegisterEntryLinesBase {}
+public partial class BudgetRegisterEntryLines : BudgetRegisterEntryLinesBase { }

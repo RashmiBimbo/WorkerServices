@@ -51,6 +51,6 @@ public abstract partial class EmploymentsBase
     public string? WorkerType { get; set; }
 }
 
-public partial class EmploymentsTest : EmploymentsBase {}
+public partial class EmploymentsTest : EmploymentsBase { }
 
-public partial class Employments : EmploymentsBase {}
+public partial class Employments : EmploymentsBase { }

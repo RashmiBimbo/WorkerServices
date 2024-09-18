@@ -441,6 +441,6 @@ public abstract partial class SalesOrderHeadersBase
     public string? MTRouteId { get; set; }
 }
 
-public partial class SalesOrderHeadersTest : SalesOrderHeadersBase {}
+public partial class SalesOrderHeadersTest : SalesOrderHeadersBase { }
 
-public partial class SalesOrderHeaders : SalesOrderHeadersBase {}
+public partial class SalesOrderHeaders : SalesOrderHeadersBase { }

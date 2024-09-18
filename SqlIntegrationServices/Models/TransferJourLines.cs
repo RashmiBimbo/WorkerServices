@@ -148,6 +148,6 @@ public abstract partial class TransferJourLinesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class TransferJourLinesTest : TransferJourLinesBase {}
+public partial class TransferJourLinesTest : TransferJourLinesBase { }
 
-public partial class TransferJourLines : TransferJourLinesBase {}
+public partial class TransferJourLines : TransferJourLinesBase { }

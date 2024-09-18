@@ -223,6 +223,6 @@ public abstract partial class MarkupTransTransTaxInformations_1Base
     public string? Voucher { get; set; }
 }
 
-public partial class MarkupTransTransTaxInformations_1Test : MarkupTransTransTaxInformations_1Base {}
+public partial class MarkupTransTransTaxInformations_1Test : MarkupTransTransTaxInformations_1Base { }
 
-public partial class MarkupTransTransTaxInformations_1 : MarkupTransTransTaxInformations_1Base {}
+public partial class MarkupTransTransTaxInformations_1 : MarkupTransTransTaxInformations_1Base { }

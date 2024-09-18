@@ -43,6 +43,6 @@ public abstract partial class LogisticsAddressStatesBase
     public string? DefaultStateForCountryRegion { get; set; }
 }
 
-public partial class LogisticsAddressStatesTest : LogisticsAddressStatesBase {}
+public partial class LogisticsAddressStatesTest : LogisticsAddressStatesBase { }
 
-public partial class LogisticsAddressStates : LogisticsAddressStatesBase {}
+public partial class LogisticsAddressStates : LogisticsAddressStatesBase { }

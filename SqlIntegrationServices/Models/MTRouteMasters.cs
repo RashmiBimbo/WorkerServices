@@ -72,6 +72,6 @@ public abstract partial class MTRouteMastersBase
     public int? RouteTiming { get; set; }
 }
 
-public partial class MTRouteMastersTest : MTRouteMastersBase {}
+public partial class MTRouteMastersTest : MTRouteMastersBase { }
 
-public partial class MTRouteMasters : MTRouteMastersBase {}
+public partial class MTRouteMasters : MTRouteMastersBase { }

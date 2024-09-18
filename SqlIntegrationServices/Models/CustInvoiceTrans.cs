@@ -159,6 +159,6 @@ public abstract partial class CustInvoiceTransBase
     public string? PriceGroupId { get; set; }
 }
 
-public partial class CustInvoiceTransTest : CustInvoiceTransBase {}
+public partial class CustInvoiceTransTest : CustInvoiceTransBase { }
 
-public partial class CustInvoiceTrans : CustInvoiceTransBase {}
+public partial class CustInvoiceTrans : CustInvoiceTransBase { }

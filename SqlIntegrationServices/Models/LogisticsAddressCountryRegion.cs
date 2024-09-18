@@ -44,6 +44,6 @@ public abstract partial class LogisticsAddressCountryRegionBase
     public string? UseZipPlus4 { get; set; }
 }
 
-public partial class LogisticsAddressCountryRegionTest : LogisticsAddressCountryRegionBase {}
+public partial class LogisticsAddressCountryRegionTest : LogisticsAddressCountryRegionBase { }
 
-public partial class LogisticsAddressCountryRegion : LogisticsAddressCountryRegionBase {}
+public partial class LogisticsAddressCountryRegion : LogisticsAddressCountryRegionBase { }

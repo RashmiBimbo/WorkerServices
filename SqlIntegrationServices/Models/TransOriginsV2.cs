@@ -47,6 +47,6 @@ public abstract partial class TransOriginsV2Base
     public string? ReferenceId { get; set; }
 }
 
-public partial class TransOriginsV2Test : TransOriginsV2Base {}
+public partial class TransOriginsV2Test : TransOriginsV2Base { }
 
-public partial class TransOriginsV2 : TransOriginsV2Base {}
+public partial class TransOriginsV2 : TransOriginsV2Base { }

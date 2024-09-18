@@ -73,6 +73,6 @@ public abstract partial class SuppItemsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class SuppItemsTest : SuppItemsBase {}
+public partial class SuppItemsTest : SuppItemsBase { }
 
-public partial class SuppItems : SuppItemsBase {}
+public partial class SuppItems : SuppItemsBase { }

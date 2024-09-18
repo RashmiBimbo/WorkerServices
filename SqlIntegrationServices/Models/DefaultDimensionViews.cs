@@ -40,6 +40,6 @@ public abstract partial class DefaultDimensionViewsBase
     public string? ReportColumnName { get; set; }
 }
 
-public partial class DefaultDimensionViewsTest : DefaultDimensionViewsBase {}
+public partial class DefaultDimensionViewsTest : DefaultDimensionViewsBase { }
 
-public partial class DefaultDimensionViews : DefaultDimensionViewsBase {}
+public partial class DefaultDimensionViews : DefaultDimensionViewsBase { }

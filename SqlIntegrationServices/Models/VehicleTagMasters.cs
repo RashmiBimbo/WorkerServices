@@ -39,6 +39,6 @@ public abstract partial class VehicleTagMastersBase
     public string? VehicleTagName { get; set; }
 }
 
-public partial class VehicleTagMastersTest : VehicleTagMastersBase {}
+public partial class VehicleTagMastersTest : VehicleTagMastersBase { }
 
-public partial class VehicleTagMasters : VehicleTagMastersBase {}
+public partial class VehicleTagMasters : VehicleTagMastersBase { }

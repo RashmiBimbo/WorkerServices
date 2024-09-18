@@ -126,6 +126,6 @@ public abstract partial class PartyLocationPostalAddressesV2_1Base
     public DateTime? AssignmentDate { get; set; }
 }
 
-public partial class PartyLocationPostalAddressesV2_1Test : PartyLocationPostalAddressesV2_1Base {}
+public partial class PartyLocationPostalAddressesV2_1Test : PartyLocationPostalAddressesV2_1Base { }
 
-public partial class PartyLocationPostalAddressesV2_1 : PartyLocationPostalAddressesV2_1Base {}
+public partial class PartyLocationPostalAddressesV2_1 : PartyLocationPostalAddressesV2_1Base { }

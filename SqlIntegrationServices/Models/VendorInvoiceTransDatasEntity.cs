@@ -343,6 +343,6 @@ public abstract partial class VendorInvoiceTransDatasEntityBase
     public decimal? Weight { get; set; }
 }
 
-public partial class VendorInvoiceTransDatasEntityTest : VendorInvoiceTransDatasEntityBase {}
+public partial class VendorInvoiceTransDatasEntityTest : VendorInvoiceTransDatasEntityBase { }
 
-public partial class VendorInvoiceTransDatasEntity : VendorInvoiceTransDatasEntityBase {}
+public partial class VendorInvoiceTransDatasEntity : VendorInvoiceTransDatasEntityBase { }

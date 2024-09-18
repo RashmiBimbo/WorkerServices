@@ -401,6 +401,6 @@ public abstract partial class VendInvoiceInfoDataEntityBase
     public string? VendPaymentGroup { get; set; }
 }
 
-public partial class VendInvoiceInfoDataEntityTest : VendInvoiceInfoDataEntityBase {}
+public partial class VendInvoiceInfoDataEntityTest : VendInvoiceInfoDataEntityBase { }
 
-public partial class VendInvoiceInfoDataEntity : VendInvoiceInfoDataEntityBase {}
+public partial class VendInvoiceInfoDataEntity : VendInvoiceInfoDataEntityBase { }

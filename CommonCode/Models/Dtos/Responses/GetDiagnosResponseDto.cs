@@ -1,7 +1,9 @@
-﻿namespace SqlIntegrationAPI.Models.Dtos.Responses
+﻿namespace CommonCode.Models.Dtos.Responses
 {
-    public class EditDiagnosResponseDto
+    public class GetDiagnosResponseDto
     {
+        public string Name { get; set; }
+
         public string Endpoint { get; set; }
 
         public string? Status { get; set; }

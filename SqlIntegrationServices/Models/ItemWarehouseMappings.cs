@@ -41,6 +41,6 @@ public abstract partial class ItemWarehouseMappingsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ItemWarehouseMappingsTest : ItemWarehouseMappingsBase {}
+public partial class ItemWarehouseMappingsTest : ItemWarehouseMappingsBase { }
 
-public partial class ItemWarehouseMappings : ItemWarehouseMappingsBase {}
+public partial class ItemWarehouseMappings : ItemWarehouseMappingsBase { }

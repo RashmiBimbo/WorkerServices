@@ -99,6 +99,6 @@ public abstract partial class InvIRNDataDatasBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InvIRNDataDatasTest : InvIRNDataDatasBase {}
+public partial class InvIRNDataDatasTest : InvIRNDataDatasBase { }
 
-public partial class InvIRNDataDatas : InvIRNDataDatasBase {}
+public partial class InvIRNDataDatas : InvIRNDataDatasBase { }

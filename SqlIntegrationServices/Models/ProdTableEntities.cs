@@ -333,6 +333,6 @@ public abstract partial class ProdTableEntitiesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProdTableEntitiesTest : ProdTableEntitiesBase {}
+public partial class ProdTableEntitiesTest : ProdTableEntitiesBase { }
 
-public partial class ProdTableEntities : ProdTableEntitiesBase {}
+public partial class ProdTableEntities : ProdTableEntitiesBase { }

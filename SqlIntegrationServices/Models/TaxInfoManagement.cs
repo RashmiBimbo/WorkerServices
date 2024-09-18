@@ -81,6 +81,6 @@ public abstract partial class TaxInfoManagementBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class TaxInfoManagementTest : TaxInfoManagementBase {}
+public partial class TaxInfoManagementTest : TaxInfoManagementBase { }
 
-public partial class TaxInfoManagement : TaxInfoManagementBase {}
+public partial class TaxInfoManagement : TaxInfoManagementBase { }

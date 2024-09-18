@@ -1,4 +1,3 @@
-using CommonCode.Config;
 using SqlIntegrationServices;
 using System.Reflection;
 

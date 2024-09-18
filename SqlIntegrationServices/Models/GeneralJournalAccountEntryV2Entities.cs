@@ -91,6 +91,6 @@ public abstract partial class GeneralJournalAccountEntryV2EntitiesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class GeneralJournalAccountEntryV2EntitiesTest : GeneralJournalAccountEntryV2EntitiesBase {}
+public partial class GeneralJournalAccountEntryV2EntitiesTest : GeneralJournalAccountEntryV2EntitiesBase { }
 
-public partial class GeneralJournalAccountEntryV2Entities : GeneralJournalAccountEntryV2EntitiesBase {}
+public partial class GeneralJournalAccountEntryV2Entities : GeneralJournalAccountEntryV2EntitiesBase { }

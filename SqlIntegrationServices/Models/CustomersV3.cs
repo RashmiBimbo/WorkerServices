@@ -1097,6 +1097,6 @@ public abstract partial class CustomersV3Base
     public decimal? CreditDays { get; set; }
 }
 
-public partial class CustomersV3Test : CustomersV3Base {}
+public partial class CustomersV3Test : CustomersV3Base { }
 
-public partial class CustomersV3 : CustomersV3Base {}
+public partial class CustomersV3 : CustomersV3Base { }

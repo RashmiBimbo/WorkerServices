@@ -230,6 +230,6 @@ public abstract partial class ProductionOrderBillOfMaterialLinesBase
     public decimal? MaterialOverpickPercentage { get; set; }
 }
 
-public partial class ProductionOrderBillOfMaterialLinesTest : ProductionOrderBillOfMaterialLinesBase {}
+public partial class ProductionOrderBillOfMaterialLinesTest : ProductionOrderBillOfMaterialLinesBase { }
 
-public partial class ProductionOrderBillOfMaterialLines : ProductionOrderBillOfMaterialLinesBase {}
+public partial class ProductionOrderBillOfMaterialLines : ProductionOrderBillOfMaterialLinesBase { }

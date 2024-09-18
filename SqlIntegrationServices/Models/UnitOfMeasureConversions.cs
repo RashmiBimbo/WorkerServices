@@ -41,6 +41,6 @@ public abstract partial class UnitOfMeasureConversionsBase
     public string? Rounding { get; set; }
 }
 
-public partial class UnitOfMeasureConversionsTest : UnitOfMeasureConversionsBase {}
+public partial class UnitOfMeasureConversionsTest : UnitOfMeasureConversionsBase { }
 
-public partial class UnitOfMeasureConversions : UnitOfMeasureConversionsBase {}
+public partial class UnitOfMeasureConversions : UnitOfMeasureConversionsBase { }

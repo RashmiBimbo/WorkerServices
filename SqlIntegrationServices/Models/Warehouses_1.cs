@@ -282,6 +282,6 @@ public abstract partial class Warehouses_1Base
     public string? WMSLocationIdGoodsInRoute_RU { get; set; }
 }
 
-public partial class Warehouses_1Test : Warehouses_1Base {}
+public partial class Warehouses_1Test : Warehouses_1Base { }
 
-public partial class Warehouses_1 : Warehouses_1Base {}
+public partial class Warehouses_1 : Warehouses_1Base { }

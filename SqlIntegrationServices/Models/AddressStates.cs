@@ -43,6 +43,6 @@ public abstract partial class AddressStatesBase
     public string? TimeZone { get; set; }
 }
 
-public partial class AddressStatesTest : AddressStatesBase {}
+public partial class AddressStatesTest : AddressStatesBase { }
 
-public partial class AddressStates : AddressStatesBase {}
+public partial class AddressStates : AddressStatesBase { }

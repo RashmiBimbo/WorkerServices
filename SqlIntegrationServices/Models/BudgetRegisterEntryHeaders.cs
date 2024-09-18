@@ -74,6 +74,6 @@ public abstract partial class BudgetRegisterEntryHeadersBase
     public string? ProductTypes { get; set; }
 }
 
-public partial class BudgetRegisterEntryHeadersTest : BudgetRegisterEntryHeadersBase {}
+public partial class BudgetRegisterEntryHeadersTest : BudgetRegisterEntryHeadersBase { }
 
-public partial class BudgetRegisterEntryHeaders : BudgetRegisterEntryHeadersBase {}
+public partial class BudgetRegisterEntryHeaders : BudgetRegisterEntryHeadersBase { }

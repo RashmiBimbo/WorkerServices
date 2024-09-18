@@ -40,6 +40,6 @@ public abstract partial class DimensionAttributesBase
     public string? UseValuesFrom { get; set; }
 }
 
-public partial class DimensionAttributesTest : DimensionAttributesBase {}
+public partial class DimensionAttributesTest : DimensionAttributesBase { }
 
-public partial class DimensionAttributes : DimensionAttributesBase {}
+public partial class DimensionAttributes : DimensionAttributesBase { }

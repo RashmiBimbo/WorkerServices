@@ -29,6 +29,6 @@ public abstract partial class EcoResProductsBase
     public string? ProductSearchName { get; set; }
 }
 
-public partial class EcoResProductsTest : EcoResProductsBase {}
+public partial class EcoResProductsTest : EcoResProductsBase { }
 
-public partial class EcoResProducts : EcoResProductsBase {}
+public partial class EcoResProducts : EcoResProductsBase { }

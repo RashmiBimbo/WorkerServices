@@ -41,6 +41,6 @@ public abstract partial class ProdWastageCrumbsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProdWastageCrumbsTest : ProdWastageCrumbsBase {}
+public partial class ProdWastageCrumbsTest : ProdWastageCrumbsBase { }
 
-public partial class ProdWastageCrumbs : ProdWastageCrumbsBase {}
+public partial class ProdWastageCrumbs : ProdWastageCrumbsBase { }

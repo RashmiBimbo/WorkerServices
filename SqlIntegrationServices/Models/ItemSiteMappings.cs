@@ -40,6 +40,6 @@ public abstract partial class ItemSiteMappingsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ItemSiteMappingsTest : ItemSiteMappingsBase {}
+public partial class ItemSiteMappingsTest : ItemSiteMappingsBase { }
 
-public partial class ItemSiteMappings : ItemSiteMappingsBase {}
+public partial class ItemSiteMappings : ItemSiteMappingsBase { }

@@ -59,6 +59,6 @@ public abstract partial class QualityOrderLineResultsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class QualityOrderLineResultsTest : QualityOrderLineResultsBase {}
+public partial class QualityOrderLineResultsTest : QualityOrderLineResultsBase { }
 
-public partial class QualityOrderLineResults : QualityOrderLineResultsBase {}
+public partial class QualityOrderLineResults : QualityOrderLineResultsBase { }

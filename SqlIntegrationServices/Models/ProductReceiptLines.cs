@@ -129,6 +129,6 @@ public abstract partial class ProductReceiptLinesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProductReceiptLinesTest : ProductReceiptLinesBase {}
+public partial class ProductReceiptLinesTest : ProductReceiptLinesBase { }
 
-public partial class ProductReceiptLines : ProductReceiptLinesBase {}
+public partial class ProductReceiptLines : ProductReceiptLinesBase { }

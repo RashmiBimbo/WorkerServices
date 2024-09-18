@@ -1,7 +1,7 @@
 ﻿using static CommonCode.Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace CommonCode.Config
+namespace CommonCode
 {
     public partial class Services
     {

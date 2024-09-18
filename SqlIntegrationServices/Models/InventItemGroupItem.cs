@@ -36,6 +36,6 @@ public abstract partial class InventItemGroupItemBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InventItemGroupItemTest : InventItemGroupItemBase {}
+public partial class InventItemGroupItemTest : InventItemGroupItemBase { }
 
-public partial class InventItemGroupItem : InventItemGroupItemBase {}
+public partial class InventItemGroupItem : InventItemGroupItemBase { }

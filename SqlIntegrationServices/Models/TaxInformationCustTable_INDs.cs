@@ -64,6 +64,6 @@ public abstract partial class TaxInformationCustTable_INDsBase
     public string? TDSGroup { get; set; }
 }
 
-public partial class TaxInformationCustTable_INDsTest : TaxInformationCustTable_INDsBase {}
+public partial class TaxInformationCustTable_INDsTest : TaxInformationCustTable_INDsBase { }
 
-public partial class TaxInformationCustTable_INDs : TaxInformationCustTable_INDsBase {}
+public partial class TaxInformationCustTable_INDs : TaxInformationCustTable_INDsBase { }

@@ -306,6 +306,6 @@ public abstract partial class WarehousesBase
     public string? IsExportedtoSFTP { get; set; }
 }
 
-public partial class WarehousesTest : WarehousesBase {}
+public partial class WarehousesTest : WarehousesBase { }
 
-public partial class Warehouses : WarehousesBase {}
+public partial class Warehouses : WarehousesBase { }

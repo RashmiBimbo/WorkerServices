@@ -432,6 +432,6 @@ public abstract partial class Employees_1Base
     public string? CalendarDataAreaId { get; set; }
 }
 
-public partial class Employees_1Test : Employees_1Base {}
+public partial class Employees_1Test : Employees_1Base { }
 
-public partial class Employees_1 : Employees_1Base {}
+public partial class Employees_1 : Employees_1Base { }

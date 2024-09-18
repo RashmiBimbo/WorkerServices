@@ -394,6 +394,6 @@ public abstract partial class VendorInvoiceHeadersBase
     public string? InvoiceUUID { get; set; }
 }
 
-public partial class VendorInvoiceHeadersTest : VendorInvoiceHeadersBase {}
+public partial class VendorInvoiceHeadersTest : VendorInvoiceHeadersBase { }
 
-public partial class VendorInvoiceHeaders : VendorInvoiceHeadersBase {}
+public partial class VendorInvoiceHeaders : VendorInvoiceHeadersBase { }

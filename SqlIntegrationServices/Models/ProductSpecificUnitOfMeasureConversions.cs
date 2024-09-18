@@ -47,6 +47,6 @@ public abstract partial class ProductSpecificUnitOfMeasureConversionsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProductSpecificUnitOfMeasureConversionsTest : ProductSpecificUnitOfMeasureConversionsBase {}
+public partial class ProductSpecificUnitOfMeasureConversionsTest : ProductSpecificUnitOfMeasureConversionsBase { }
 
-public partial class ProductSpecificUnitOfMeasureConversions : ProductSpecificUnitOfMeasureConversionsBase {}
+public partial class ProductSpecificUnitOfMeasureConversions : ProductSpecificUnitOfMeasureConversionsBase { }

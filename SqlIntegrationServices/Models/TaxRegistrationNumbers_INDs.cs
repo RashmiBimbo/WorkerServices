@@ -52,6 +52,6 @@ public abstract partial class TaxRegistrationNumbers_INDsBase
     public string? Type { get; set; }
 }
 
-public partial class TaxRegistrationNumbers_INDsTest : TaxRegistrationNumbers_INDsBase {}
+public partial class TaxRegistrationNumbers_INDsTest : TaxRegistrationNumbers_INDsBase { }
 
-public partial class TaxRegistrationNumbers_INDs : TaxRegistrationNumbers_INDsBase {}
+public partial class TaxRegistrationNumbers_INDs : TaxRegistrationNumbers_INDsBase { }

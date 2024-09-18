@@ -58,6 +58,6 @@ public abstract partial class AgreementLineReleasedLinesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class AgreementLineReleasedLinesTest : AgreementLineReleasedLinesBase {}
+public partial class AgreementLineReleasedLinesTest : AgreementLineReleasedLinesBase { }
 
-public partial class AgreementLineReleasedLines : AgreementLineReleasedLinesBase {}
+public partial class AgreementLineReleasedLines : AgreementLineReleasedLinesBase { }

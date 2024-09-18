@@ -988,6 +988,6 @@ public abstract partial class TCustomersBase
     public string? WriteoffReason { get; set; }
 }
 
-public partial class TCustomersTest : TCustomersBase {}
+public partial class TCustomersTest : TCustomersBase { }
 
-public partial class TCustomers : TCustomersBase {}
+public partial class TCustomers : TCustomersBase { }

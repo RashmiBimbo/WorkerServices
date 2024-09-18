@@ -31,6 +31,6 @@ public abstract partial class EcoResProductTranslationsBase
     public string? ProductName { get; set; }
 }
 
-public partial class EcoResProductTranslationsTest : EcoResProductTranslationsBase {}
+public partial class EcoResProductTranslationsTest : EcoResProductTranslationsBase { }
 
-public partial class EcoResProductTranslations : EcoResProductTranslationsBase {}
+public partial class EcoResProductTranslations : EcoResProductTranslationsBase { }

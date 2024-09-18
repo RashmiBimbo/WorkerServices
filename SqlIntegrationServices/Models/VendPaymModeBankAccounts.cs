@@ -37,6 +37,6 @@ public abstract partial class VendPaymModeBankAccountsBase
     public string? PaymMode { get; set; }
 }
 
-public partial class VendPaymModeBankAccountsTest : VendPaymModeBankAccountsBase {}
+public partial class VendPaymModeBankAccountsTest : VendPaymModeBankAccountsBase { }
 
-public partial class VendPaymModeBankAccounts : VendPaymModeBankAccountsBase {}
+public partial class VendPaymModeBankAccounts : VendPaymModeBankAccountsBase { }

@@ -30,6 +30,6 @@ public abstract partial class ReturnReasonCodeBase
     public string? IsGoodReturn { get; set; }
 }
 
-public partial class ReturnReasonCodeTest : ReturnReasonCodeBase {}
+public partial class ReturnReasonCodeTest : ReturnReasonCodeBase { }
 
-public partial class ReturnReasonCode : ReturnReasonCodeBase {}
+public partial class ReturnReasonCode : ReturnReasonCodeBase { }

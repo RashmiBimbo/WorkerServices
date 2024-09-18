@@ -71,6 +71,6 @@ public abstract partial class DirPartyTablesBase
     public string? NameAlias { get; set; }
 }
 
-public partial class DirPartyTablesTest : DirPartyTablesBase {}
+public partial class DirPartyTablesTest : DirPartyTablesBase { }
 
-public partial class DirPartyTables : DirPartyTablesBase {}
+public partial class DirPartyTables : DirPartyTablesBase { }

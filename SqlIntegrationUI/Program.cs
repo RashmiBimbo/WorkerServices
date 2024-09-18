@@ -28,6 +28,8 @@ public class Program
             builder.Services.AddDbContext<ErpSqlDbContext>(options => options.UseSqlServer(erp_SQL_ConnStr, sqlOptions =>
                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
 
+            builder.Services.AddHttpClient();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

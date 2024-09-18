@@ -41,6 +41,6 @@ public abstract partial class LogisticsLocationsBase
     public long? RecId1 { get; set; }
 }
 
-public partial class LogisticsLocationsTest : LogisticsLocationsBase {}
+public partial class LogisticsLocationsTest : LogisticsLocationsBase { }
 
-public partial class LogisticsLocations : LogisticsLocationsBase {}
+public partial class LogisticsLocations : LogisticsLocationsBase { }

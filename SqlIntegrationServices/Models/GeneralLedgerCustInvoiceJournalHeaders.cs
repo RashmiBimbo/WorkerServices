@@ -34,6 +34,6 @@ public abstract partial class GeneralLedgerCustInvoiceJournalHeadersBase
     public string? JournalName { get; set; }
 }
 
-public partial class GeneralLedgerCustInvoiceJournalHeadersTest : GeneralLedgerCustInvoiceJournalHeadersBase {}
+public partial class GeneralLedgerCustInvoiceJournalHeadersTest : GeneralLedgerCustInvoiceJournalHeadersBase { }
 
-public partial class GeneralLedgerCustInvoiceJournalHeaders : GeneralLedgerCustInvoiceJournalHeadersBase {}
+public partial class GeneralLedgerCustInvoiceJournalHeaders : GeneralLedgerCustInvoiceJournalHeadersBase { }

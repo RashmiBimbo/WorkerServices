@@ -170,6 +170,6 @@ public abstract partial class GeneralLedgerCustInvoiceJournalLinesBase
     public string? OverrideSalesTax { get; set; }
 }
 
-public partial class GeneralLedgerCustInvoiceJournalLinesTest : GeneralLedgerCustInvoiceJournalLinesBase {}
+public partial class GeneralLedgerCustInvoiceJournalLinesTest : GeneralLedgerCustInvoiceJournalLinesBase { }
 
-public partial class GeneralLedgerCustInvoiceJournalLines : GeneralLedgerCustInvoiceJournalLinesBase {}
+public partial class GeneralLedgerCustInvoiceJournalLines : GeneralLedgerCustInvoiceJournalLinesBase { }

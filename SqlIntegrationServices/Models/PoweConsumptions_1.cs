@@ -47,6 +47,6 @@ public abstract partial class PoweConsumptions_1Base
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class PoweConsumptions_1Test : PoweConsumptions_1Base {}
+public partial class PoweConsumptions_1Test : PoweConsumptions_1Base { }
 
-public partial class PoweConsumptions_1 : PoweConsumptions_1Base {}
+public partial class PoweConsumptions_1 : PoweConsumptions_1Base { }

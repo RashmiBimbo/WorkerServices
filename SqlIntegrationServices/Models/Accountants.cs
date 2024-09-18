@@ -119,6 +119,6 @@ public abstract partial class AccountantsBase
     public long? PhonePrivateForParty { get; set; }
 }
 
-public partial class AccountantsTest : AccountantsBase {}
+public partial class AccountantsTest : AccountantsBase { }
 
-public partial class Accountants : AccountantsBase {}
+public partial class Accountants : AccountantsBase { }

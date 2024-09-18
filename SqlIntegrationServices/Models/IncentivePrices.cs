@@ -58,6 +58,6 @@ public abstract partial class IncentivePricesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class IncentivePricesTest : IncentivePricesBase {}
+public partial class IncentivePricesTest : IncentivePricesBase { }
 
-public partial class IncentivePrices : IncentivePricesBase {}
+public partial class IncentivePrices : IncentivePricesBase { }

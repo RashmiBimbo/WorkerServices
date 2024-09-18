@@ -208,6 +208,6 @@ public abstract partial class TaxTranss_1Base
     public string? Voucher { get; set; }
 }
 
-public partial class TaxTranss_1Test : TaxTranss_1Base {}
+public partial class TaxTranss_1Test : TaxTranss_1Base { }
 
-public partial class TaxTranss_1 : TaxTranss_1Base {}
+public partial class TaxTranss_1 : TaxTranss_1Base { }

@@ -39,6 +39,6 @@ public abstract partial class SalesDemandStagingsBase
     public decimal? Qty { get; set; }
 }
 
-public partial class SalesDemandStagingsTest : SalesDemandStagingsBase {}
+public partial class SalesDemandStagingsTest : SalesDemandStagingsBase { }
 
-public partial class SalesDemandStagings : SalesDemandStagingsBase {}
+public partial class SalesDemandStagings : SalesDemandStagingsBase { }

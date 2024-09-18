@@ -157,6 +157,6 @@ public abstract partial class LogisticsPostalAddresss_3Base
     public string? ZipCode_ZipCode { get; set; }
 }
 
-public partial class LogisticsPostalAddresss_3Test : LogisticsPostalAddresss_3Base {}
+public partial class LogisticsPostalAddresss_3Test : LogisticsPostalAddresss_3Base { }
 
-public partial class LogisticsPostalAddresss_3 : LogisticsPostalAddresss_3Base {}
+public partial class LogisticsPostalAddresss_3 : LogisticsPostalAddresss_3Base { }

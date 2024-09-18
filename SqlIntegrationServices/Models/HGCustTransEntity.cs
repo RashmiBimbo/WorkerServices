@@ -312,6 +312,6 @@ public abstract partial class HGCustTransEntityBase
     public string? Voucher { get; set; }
 }
 
-public partial class HGCustTransEntityTest : HGCustTransEntityBase {}
+public partial class HGCustTransEntityTest : HGCustTransEntityBase { }
 
-public partial class HGCustTransEntity : HGCustTransEntityBase {}
+public partial class HGCustTransEntity : HGCustTransEntityBase { }

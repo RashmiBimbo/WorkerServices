@@ -74,6 +74,6 @@ public abstract partial class ProdManpowerTranssBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProdManpowerTranssTest : ProdManpowerTranssBase {}
+public partial class ProdManpowerTranssTest : ProdManpowerTranssBase { }
 
-public partial class ProdManpowerTranss : ProdManpowerTranssBase {}
+public partial class ProdManpowerTranss : ProdManpowerTranssBase { }

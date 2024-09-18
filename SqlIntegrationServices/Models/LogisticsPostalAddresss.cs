@@ -160,6 +160,6 @@ public abstract partial class LogisticsPostalAddresssBase
     public string? ZipCode_ZipCode { get; set; }
 }
 
-public partial class LogisticsPostalAddresssTest : LogisticsPostalAddresssBase {}
+public partial class LogisticsPostalAddresssTest : LogisticsPostalAddresssBase { }
 
-public partial class LogisticsPostalAddresss : LogisticsPostalAddresssBase {}
+public partial class LogisticsPostalAddresss : LogisticsPostalAddresssBase { }

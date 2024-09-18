@@ -131,6 +131,6 @@ public abstract partial class DIRPARTYTABLELOCATIONBase
     public DateTime? AssignmentDate { get; set; }
 }
 
-public partial class DIRPARTYTABLELOCATIONTest : DIRPARTYTABLELOCATIONBase {}
+public partial class DIRPARTYTABLELOCATIONTest : DIRPARTYTABLELOCATIONBase { }
 
-public partial class DIRPARTYTABLELOCATION : DIRPARTYTABLELOCATIONBase {}
+public partial class DIRPARTYTABLELOCATION : DIRPARTYTABLELOCATIONBase { }

@@ -69,6 +69,6 @@ public abstract partial class TaxInformationCustTable_INBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class TaxInformationCustTable_INTest : TaxInformationCustTable_INBase {}
+public partial class TaxInformationCustTable_INTest : TaxInformationCustTable_INBase { }
 
-public partial class TaxInformationCustTable_IN : TaxInformationCustTable_INBase {}
+public partial class TaxInformationCustTable_IN : TaxInformationCustTable_INBase { }

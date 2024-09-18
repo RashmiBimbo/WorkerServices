@@ -59,6 +59,6 @@ public abstract partial class EInvoiceDetailsBase
     public string? Success { get; set; }
 }
 
-public partial class EInvoiceDetailsTest : EInvoiceDetailsBase {}
+public partial class EInvoiceDetailsTest : EInvoiceDetailsBase { }
 
-public partial class EInvoiceDetails : EInvoiceDetailsBase {}
+public partial class EInvoiceDetails : EInvoiceDetailsBase { }

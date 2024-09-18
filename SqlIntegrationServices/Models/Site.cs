@@ -112,6 +112,6 @@ public abstract partial class SiteBase
     public string? WillMasterPlannedIntraSiteMovementsUseTransferJournals { get; set; }
 }
 
-public partial class SiteTest : SiteBase {}
+public partial class SiteTest : SiteBase { }
 
-public partial class Site : SiteBase {}
+public partial class Site : SiteBase { }

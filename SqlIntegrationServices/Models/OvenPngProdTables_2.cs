@@ -61,6 +61,6 @@ public abstract partial class OvenPngProdTables_2Base
     public decimal? StdChangeoverMinuteWhite { get; set; }
 }
 
-public partial class OvenPngProdTables_2Test : OvenPngProdTables_2Base {}
+public partial class OvenPngProdTables_2Test : OvenPngProdTables_2Base { }
 
-public partial class OvenPngProdTables_2 : OvenPngProdTables_2Base {}
+public partial class OvenPngProdTables_2 : OvenPngProdTables_2Base { }

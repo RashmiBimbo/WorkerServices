@@ -104,6 +104,6 @@ public abstract partial class FormulaVersion2sBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class FormulaVersion2sTest : FormulaVersion2sBase {}
+public partial class FormulaVersion2sTest : FormulaVersion2sBase { }
 
-public partial class FormulaVersion2s : FormulaVersion2sBase {}
+public partial class FormulaVersion2s : FormulaVersion2sBase { }

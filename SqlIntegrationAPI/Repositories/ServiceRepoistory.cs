@@ -1,7 +1,6 @@
 ﻿using SqlIntegrationAPI.Models.Domains;
 using Microsoft.EntityFrameworkCore;
 using SqlIntegrationAPI.Data;
-using SqlIntegrationAPI.Models.Dtos;
 
 namespace SqlIntegrationAPI.Repositories
 {
@@ -18,7 +17,7 @@ namespace SqlIntegrationAPI.Repositories
         /// <summary>
         /// Retrieves all DbService entities from the database.
         /// </summary>
-        public async Task<List<DbService>> GetAllAsync(string? sortBy = Emp, string? filterOn = Emp, string? filterQuery = Emp, bool ascending = true, int pageNo = 1, int pageSize = 100 )
+        public async Task<List<DbService>> GetAllAsync(string? sortBy = Emp, string? filterOn = Emp, string? filterQuery = Emp, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
             //throw new Exception("Hi");
             var services = await _context.Services.AsNoTracking().ToListAsync();
@@ -51,13 +50,17 @@ namespace SqlIntegrationAPI.Repositories
         public async Task<DbService?> CreateAsync(DbService service)
         {
             DbService result = null;
+            string? endPoint = service.Endpoint;
             if (service == null)
                 throw new ArgumentNullException(nameof(service), "Service cannot be null.");
 
-            if (IsEmpty(service.Endpoint))
+            if (IsEmpty(endPoint))
                 throw new ArgumentException("Service's Endpoint is required!");
 
-            // Ensure the service is not already in the local context (check against Endpoint)
+            var existingEntity = await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Endpoint.Equals(endPoint));
+
+            if (existingEntity is not null) throw new Exception("Given service already exists!");
+;            // Ensure the service is not already in the local context (check against Endpoint)
             if (!_context.Services.Local.Any(s => s.Endpoint == service.Endpoint))
             {
                 var entityCln = await _context.Services.AddAsync(service);

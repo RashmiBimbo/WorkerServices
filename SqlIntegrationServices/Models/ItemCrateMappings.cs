@@ -59,6 +59,6 @@ public abstract partial class ItemCrateMappingsBase
     public decimal? CrateBI { get; set; }
 }
 
-public partial class ItemCrateMappingsTest : ItemCrateMappingsBase {}
+public partial class ItemCrateMappingsTest : ItemCrateMappingsBase { }
 
-public partial class ItemCrateMappings : ItemCrateMappingsBase {}
+public partial class ItemCrateMappings : ItemCrateMappingsBase { }

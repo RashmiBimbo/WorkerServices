@@ -400,6 +400,6 @@ public abstract partial class HGSalesInvoiceHeadersBase
     public string? OrderId { get; set; }
 }
 
-public partial class HGSalesInvoiceHeadersTest : HGSalesInvoiceHeadersBase {}
+public partial class HGSalesInvoiceHeadersTest : HGSalesInvoiceHeadersBase { }
 
-public partial class HGSalesInvoiceHeaders : HGSalesInvoiceHeadersBase {}
+public partial class HGSalesInvoiceHeaders : HGSalesInvoiceHeadersBase { }

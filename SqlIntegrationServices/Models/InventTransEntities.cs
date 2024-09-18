@@ -225,6 +225,6 @@ public abstract partial class InventTransEntitiesBase
     public string? VoucherPhysical { get; set; }
 }
 
-public partial class InventTransEntitiesTest : InventTransEntitiesBase {}
+public partial class InventTransEntitiesTest : InventTransEntitiesBase { }
 
-public partial class InventTransEntities : InventTransEntitiesBase {}
+public partial class InventTransEntities : InventTransEntitiesBase { }

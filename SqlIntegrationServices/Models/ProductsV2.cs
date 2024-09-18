@@ -143,6 +143,6 @@ public abstract partial class ProductsV2Base
     public string? VendAccount { get; set; }
 }
 
-public partial class ProductsV2Test : ProductsV2Base {}
+public partial class ProductsV2Test : ProductsV2Base { }
 
-public partial class ProductsV2 : ProductsV2Base {}
+public partial class ProductsV2 : ProductsV2Base { }

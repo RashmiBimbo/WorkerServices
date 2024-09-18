@@ -923,6 +923,6 @@ public abstract partial class VendorsV2Base
     public string? TPI { get; set; }
 }
 
-public partial class VendorsV2Test : VendorsV2Base {}
+public partial class VendorsV2Test : VendorsV2Base { }
 
-public partial class VendorsV2 : VendorsV2Base {}
+public partial class VendorsV2 : VendorsV2Base { }

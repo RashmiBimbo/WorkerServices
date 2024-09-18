@@ -379,6 +379,6 @@ public abstract partial class PurchaseOrderHeadersV2Base
     public string? FiscalDocumentOperationTypeId { get; set; }
 }
 
-public partial class PurchaseOrderHeadersV2Test : PurchaseOrderHeadersV2Base {}
+public partial class PurchaseOrderHeadersV2Test : PurchaseOrderHeadersV2Base { }
 
-public partial class PurchaseOrderHeadersV2 : PurchaseOrderHeadersV2Base {}
+public partial class PurchaseOrderHeadersV2 : PurchaseOrderHeadersV2Base { }

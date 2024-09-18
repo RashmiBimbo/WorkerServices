@@ -152,6 +152,6 @@ public abstract partial class CustInvoiceTrans_1Base
     public string? ReturnReasonCodeId { get; set; }
 }
 
-public partial class CustInvoiceTrans_1Test : CustInvoiceTrans_1Base {}
+public partial class CustInvoiceTrans_1Test : CustInvoiceTrans_1Base { }
 
-public partial class CustInvoiceTrans_1 : CustInvoiceTrans_1Base {}
+public partial class CustInvoiceTrans_1 : CustInvoiceTrans_1Base { }

@@ -605,3 +605,7 @@ FodyWeavers.xsd
 /SqlIntegrationServices-InventTransV2/ServiceUtilities/ServiceCommonCode.cs
 /SqlIntegrationServices-InventTransV2/SqlIntegrationServices-InventTransV2.csproj
 /SqlIntegrationServices-InventTransV2/SqlIntegrationServices_Log.txt
+/SqlIntegrationUI/Migrations/20240906194314_UpdateTbls.cs
+/SqlIntegrationUI/Migrations/20240906194314_UpdateTbls.Designer.cs
+/SqlIntegrationUI/Controllers/ServicesController.cs
+/SqlIntegrationUI/Migrations/UIDbContextModelSnapshot.cs

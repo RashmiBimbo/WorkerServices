@@ -32,6 +32,6 @@ public abstract partial class CompaniesBase
     public string? PartyNumber { get; set; }
 }
 
-public partial class CompaniesTest : CompaniesBase {}
+public partial class CompaniesTest : CompaniesBase { }
 
-public partial class Companies : CompaniesBase {}
+public partial class Companies : CompaniesBase { }

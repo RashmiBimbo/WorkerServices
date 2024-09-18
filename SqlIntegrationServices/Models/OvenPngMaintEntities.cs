@@ -67,6 +67,6 @@ public abstract partial class OvenPngMaintEntitiesBase
     public int? RecVersion1 { get; set; }
 }
 
-public partial class OvenPngMaintEntitiesTest : OvenPngMaintEntitiesBase {}
+public partial class OvenPngMaintEntitiesTest : OvenPngMaintEntitiesBase { }
 
-public partial class OvenPngMaintEntities : OvenPngMaintEntitiesBase {}
+public partial class OvenPngMaintEntities : OvenPngMaintEntitiesBase { }

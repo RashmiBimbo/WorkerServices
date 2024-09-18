@@ -140,6 +140,6 @@ public abstract partial class BillOfMaterialsLinesV2Base
     public string? WillManufacturedItemInheritShelfLifeDates { get; set; }
 }
 
-public partial class BillOfMaterialsLinesV2Test : BillOfMaterialsLinesV2Base {}
+public partial class BillOfMaterialsLinesV2Test : BillOfMaterialsLinesV2Base { }
 
-public partial class BillOfMaterialsLinesV2 : BillOfMaterialsLinesV2Base {}
+public partial class BillOfMaterialsLinesV2 : BillOfMaterialsLinesV2Base { }

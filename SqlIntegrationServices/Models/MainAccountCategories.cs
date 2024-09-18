@@ -33,6 +33,6 @@ public abstract partial class MainAccountCategoriesBase
     public string? MainAccountType { get; set; }
 }
 
-public partial class MainAccountCategoriesTest : MainAccountCategoriesBase {}
+public partial class MainAccountCategoriesTest : MainAccountCategoriesBase { }
 
-public partial class MainAccountCategories : MainAccountCategoriesBase {}
+public partial class MainAccountCategories : MainAccountCategoriesBase { }

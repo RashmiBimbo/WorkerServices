@@ -208,6 +208,6 @@ public abstract partial class InventTransferJoursBase
     public string? WaybillNum_RU { get; set; }
 }
 
-public partial class InventTransferJoursTest : InventTransferJoursBase {}
+public partial class InventTransferJoursTest : InventTransferJoursBase { }
 
-public partial class InventTransferJours : InventTransferJoursBase {}
+public partial class InventTransferJours : InventTransferJoursBase { }

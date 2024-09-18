@@ -37,6 +37,6 @@ public abstract partial class VehicleCodeMastersBase
     public string? VehicleType { get; set; }
 }
 
-public partial class VehicleCodeMastersTest : VehicleCodeMastersBase {}
+public partial class VehicleCodeMastersTest : VehicleCodeMastersBase { }
 
-public partial class VehicleCodeMasters : VehicleCodeMastersBase {}
+public partial class VehicleCodeMasters : VehicleCodeMastersBase { }

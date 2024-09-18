@@ -1,19 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SqlIntegrationAPI.Models.Dtos.Requests
+namespace CommonCode.Models.Dtos.Requests
 {
     public class EditServiceRequestDto
     {
         [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string? Endpoint { get; set; }
 
         public bool? Enable { get; set; } = true;
 
         [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string? Name { get; set; }
 
         public string? QueryString { get; set; }
@@ -22,7 +22,7 @@ namespace SqlIntegrationAPI.Models.Dtos.Requests
 
         [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string? Table { get; set; }
 
         public string? Columns { get; set; }
@@ -33,7 +33,7 @@ namespace SqlIntegrationAPI.Models.Dtos.Requests
 
         [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string? ModifiedBy { get; set; }
     }
 }

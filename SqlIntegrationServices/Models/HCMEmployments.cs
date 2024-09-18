@@ -51,6 +51,6 @@ public abstract partial class HCMEmploymentsBase
     public string? WorkerType { get; set; }
 }
 
-public partial class HCMEmploymentsTest : HCMEmploymentsBase {}
+public partial class HCMEmploymentsTest : HCMEmploymentsBase { }
 
-public partial class HCMEmployments : HCMEmploymentsBase {}
+public partial class HCMEmployments : HCMEmploymentsBase { }

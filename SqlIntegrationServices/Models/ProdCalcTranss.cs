@@ -152,6 +152,6 @@ public abstract partial class ProdCalcTranssBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProdCalcTranssTest : ProdCalcTranssBase {}
+public partial class ProdCalcTranssTest : ProdCalcTranssBase { }
 
-public partial class ProdCalcTranss : ProdCalcTranssBase {}
+public partial class ProdCalcTranss : ProdCalcTranssBase { }

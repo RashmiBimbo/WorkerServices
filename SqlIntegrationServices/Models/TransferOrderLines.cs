@@ -298,6 +298,6 @@ public abstract partial class TransferOrderLinesBase
     public DateTime? MfgDate { get; set; }
 }
 
-public partial class TransferOrderLinesTest : TransferOrderLinesBase {}
+public partial class TransferOrderLinesTest : TransferOrderLinesBase { }
 
-public partial class TransferOrderLines : TransferOrderLinesBase {}
+public partial class TransferOrderLines : TransferOrderLinesBase { }

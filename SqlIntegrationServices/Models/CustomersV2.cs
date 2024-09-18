@@ -785,6 +785,6 @@ public abstract partial class CustomersV2Base
     public string? WriteoffReason { get; set; }
 }
 
-public partial class CustomersV2Test : CustomersV2Base {}
+public partial class CustomersV2Test : CustomersV2Base { }
 
-public partial class CustomersV2 : CustomersV2Base {}
+public partial class CustomersV2 : CustomersV2Base { }

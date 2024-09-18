@@ -134,6 +134,6 @@ public abstract partial class MainAccounts_1Base
     public string? DoNotAllowManualEntryLegalEntity { get; set; }
 }
 
-public partial class MainAccounts_1Test : MainAccounts_1Base {}
+public partial class MainAccounts_1Test : MainAccounts_1Base { }
 
-public partial class MainAccounts_1 : MainAccounts_1Base {}
+public partial class MainAccounts_1 : MainAccounts_1Base { }

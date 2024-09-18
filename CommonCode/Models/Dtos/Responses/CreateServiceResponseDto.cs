@@ -1,4 +1,4 @@
-﻿namespace SqlIntegrationAPI.Models.Dtos.Responses
+﻿namespace CommonCode.Models.Dtos.Responses
 {
     public class CreateServiceResponseDto
     {

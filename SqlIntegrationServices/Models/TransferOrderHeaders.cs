@@ -305,6 +305,6 @@ public abstract partial class TransferOrderHeadersBase
     public string? AcknowledgementNum { get; set; }
 }
 
-public partial class TransferOrderHeadersTest : TransferOrderHeadersBase {}
+public partial class TransferOrderHeadersTest : TransferOrderHeadersBase { }
 
-public partial class TransferOrderHeaders : TransferOrderHeadersBase {}
+public partial class TransferOrderHeaders : TransferOrderHeadersBase { }

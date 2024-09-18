@@ -203,6 +203,6 @@ public abstract partial class TaxTranss_DBase
     public string Voucher { get; set; } = null!;
 }
 
-public partial class TaxTranss_DTest : TaxTranss_DBase {}
+public partial class TaxTranss_DTest : TaxTranss_DBase { }
 
-public partial class TaxTranss_D : TaxTranss_DBase {}
+public partial class TaxTranss_D : TaxTranss_DBase { }

@@ -194,6 +194,6 @@ public abstract partial class SalesInvoiceHeadersV2Base
     public string? PriceGroupId { get; set; }
 }
 
-public partial class SalesInvoiceHeadersV2Test : SalesInvoiceHeadersV2Base {}
+public partial class SalesInvoiceHeadersV2Test : SalesInvoiceHeadersV2Base { }
 
-public partial class SalesInvoiceHeadersV2 : SalesInvoiceHeadersV2Base {}
+public partial class SalesInvoiceHeadersV2 : SalesInvoiceHeadersV2Base { }

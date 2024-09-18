@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Azure;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Reflection;
 using static System.DateTime;
@@ -19,7 +20,7 @@ namespace SqlIntegrationUI.UIUtilities
             RlzFolder = @$"{ServiceProjFoldr}\bin\Release\net8.0\";
         }
 
-        public static async Task<bool> RestartServices()
+        public static async Task<bool> RestartServices(HttpClient httpClient=null)
         {
             string ProcessExecutable = Comb(RlzFolder, $"{SqlIntegrationServices}.exe");
             try
@@ -36,7 +37,7 @@ namespace SqlIntegrationUI.UIUtilities
                 else
                     Log($"No running process named {SqlIntegrationServices} found.");
 
-                await DeleteServices();
+                await DeleteServices(httpClient);
 
                 //bool buildSuccess = await GenerateModel();
                 await UpdateModels();
@@ -500,7 +501,7 @@ namespace SqlIntegrationUI.UIUtilities
             }
         }
 
-        public static async Task DeleteServices()
+        public static async Task DeleteServices(HttpClient client = null)
         {
             if (!(DeletedServices?.Count > 0)) return;
             try
@@ -510,6 +511,17 @@ namespace SqlIntegrationUI.UIUtilities
                     //string filePath = Comb(CrntSolnFolder, $@"{SqlIntegrationServices}\Models\{service.Endpoint}.cs");
                     //if (File.Exists(filePath)) File.Delete(filePath);
                     DeletedServices.Remove(service);
+                    var response = await client.DeleteAsync($"{BaseUrl}/Services/{service.Endpoint}");
+                    if (response == null)
+                    { }
+                    response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                        Log(msg);
+                        //return Problem("ConfigServices could not be loaded!");
+                        return ;
+                    }
                 }
                 //if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
                 //    Log($"{SqlIntegrationServices} project could not be built after deleting services!");

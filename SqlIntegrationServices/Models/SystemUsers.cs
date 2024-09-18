@@ -138,6 +138,6 @@ public abstract partial class SystemUsersBase
     public string? EventWorkflowTasksInActionCenter { get; set; }
 }
 
-public partial class SystemUsersTest : SystemUsersBase {}
+public partial class SystemUsersTest : SystemUsersBase { }
 
-public partial class SystemUsers : SystemUsersBase {}
+public partial class SystemUsers : SystemUsersBase { }

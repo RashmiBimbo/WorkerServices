@@ -28,6 +28,6 @@ public abstract partial class SyncTableBase
     public DateTime? LastSyncDate { get; set; }
 }
 
-public partial class SyncTableTest : SyncTableBase {}
+public partial class SyncTableTest : SyncTableBase { }
 
-public partial class SyncTable : SyncTableBase {}
+public partial class SyncTable : SyncTableBase { }

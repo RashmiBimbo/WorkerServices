@@ -406,6 +406,6 @@ public abstract partial class EmployeesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class EmployeesTest : EmployeesBase {}
+public partial class EmployeesTest : EmployeesBase { }
 
-public partial class Employees : EmployeesBase {}
+public partial class Employees : EmployeesBase { }

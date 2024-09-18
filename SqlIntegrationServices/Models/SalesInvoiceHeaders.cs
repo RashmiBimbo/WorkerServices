@@ -98,6 +98,6 @@ public abstract partial class SalesInvoiceHeadersBase
     public decimal? TotalTaxAmount { get; set; }
 }
 
-public partial class SalesInvoiceHeadersTest : SalesInvoiceHeadersBase {}
+public partial class SalesInvoiceHeadersTest : SalesInvoiceHeadersBase { }
 
-public partial class SalesInvoiceHeaders : SalesInvoiceHeadersBase {}
+public partial class SalesInvoiceHeaders : SalesInvoiceHeadersBase { }

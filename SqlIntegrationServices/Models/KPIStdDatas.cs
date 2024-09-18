@@ -64,6 +64,6 @@ public abstract partial class KPIStdDatasBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class KPIStdDatasTest : KPIStdDatasBase {}
+public partial class KPIStdDatasTest : KPIStdDatasBase { }
 
-public partial class KPIStdDatas : KPIStdDatasBase {}
+public partial class KPIStdDatas : KPIStdDatasBase { }

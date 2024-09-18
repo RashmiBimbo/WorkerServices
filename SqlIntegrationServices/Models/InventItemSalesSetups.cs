@@ -89,6 +89,6 @@ public abstract partial class InventItemSalesSetupsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InventItemSalesSetupsTest : InventItemSalesSetupsBase {}
+public partial class InventItemSalesSetupsTest : InventItemSalesSetupsBase { }
 
-public partial class InventItemSalesSetups : InventItemSalesSetupsBase {}
+public partial class InventItemSalesSetups : InventItemSalesSetupsBase { }

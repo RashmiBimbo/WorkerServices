@@ -25,6 +25,6 @@ public abstract partial class DynamicsExportBase
     public string? Sales_order { get; set; }
 }
 
-public partial class DynamicsExportTest : DynamicsExportBase {}
+public partial class DynamicsExportTest : DynamicsExportBase { }
 
-public partial class DynamicsExport : DynamicsExportBase {}
+public partial class DynamicsExport : DynamicsExportBase { }

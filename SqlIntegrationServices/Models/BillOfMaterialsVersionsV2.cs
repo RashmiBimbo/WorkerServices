@@ -82,6 +82,6 @@ public abstract partial class BillOfMaterialsVersionsV2Base
     public string? VersionName { get; set; }
 }
 
-public partial class BillOfMaterialsVersionsV2Test : BillOfMaterialsVersionsV2Base {}
+public partial class BillOfMaterialsVersionsV2Test : BillOfMaterialsVersionsV2Base { }
 
-public partial class BillOfMaterialsVersionsV2 : BillOfMaterialsVersionsV2Base {}
+public partial class BillOfMaterialsVersionsV2 : BillOfMaterialsVersionsV2Base { }

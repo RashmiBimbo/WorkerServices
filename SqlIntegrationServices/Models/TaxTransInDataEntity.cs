@@ -265,6 +265,6 @@ public abstract partial class TaxTransInDataEntityBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class TaxTransInDataEntityTest : TaxTransInDataEntityBase {}
+public partial class TaxTransInDataEntityTest : TaxTransInDataEntityBase { }
 
-public partial class TaxTransInDataEntity : TaxTransInDataEntityBase {}
+public partial class TaxTransInDataEntity : TaxTransInDataEntityBase { }

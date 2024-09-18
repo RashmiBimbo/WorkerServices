@@ -10,6 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\ErrorHandlerMiddleware.cs" />
+    <Compile Remove="Helpers\password-hashhelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Helpers\ErrorHandlerMiddleware.cs" />
+    <None Include="Helpers\password-hashhelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <!--<Compile Remove="Data\**" />
     <Content Remove="Data\**" />
     <EmbeddedResource Remove="Data\**" />
@@ -23,6 +33,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />

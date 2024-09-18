@@ -39,6 +39,6 @@ public abstract partial class ProdCratessBase
     public decimal? OpeningBalance { get; set; }
 }
 
-public partial class ProdCratessTest : ProdCratessBase {}
+public partial class ProdCratessTest : ProdCratessBase { }
 
-public partial class ProdCratess : ProdCratessBase {}
+public partial class ProdCratess : ProdCratessBase { }

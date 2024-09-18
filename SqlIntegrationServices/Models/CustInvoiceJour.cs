@@ -198,6 +198,6 @@ public abstract partial class CustInvoiceJourBase
     public string? PriceGroupId { get; set; }
 }
 
-public partial class CustInvoiceJourTest : CustInvoiceJourBase {}
+public partial class CustInvoiceJourTest : CustInvoiceJourBase { }
 
-public partial class CustInvoiceJour : CustInvoiceJourBase {}
+public partial class CustInvoiceJour : CustInvoiceJourBase { }

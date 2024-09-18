@@ -150,6 +150,6 @@ public abstract partial class InventTransferJourLinesBase
     public decimal? VATAmt_IN { get; set; }
 }
 
-public partial class InventTransferJourLinesTest : InventTransferJourLinesBase {}
+public partial class InventTransferJourLinesTest : InventTransferJourLinesBase { }
 
-public partial class InventTransferJourLines : InventTransferJourLinesBase {}
+public partial class InventTransferJourLines : InventTransferJourLinesBase { }

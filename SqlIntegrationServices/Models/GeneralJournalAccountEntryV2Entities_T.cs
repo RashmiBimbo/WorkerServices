@@ -91,6 +91,6 @@ public abstract partial class GeneralJournalAccountEntryV2Entities_TBase
     public string? Voucher { get; set; }
 }
 
-public partial class GeneralJournalAccountEntryV2Entities_TTest : GeneralJournalAccountEntryV2Entities_TBase {}
+public partial class GeneralJournalAccountEntryV2Entities_TTest : GeneralJournalAccountEntryV2Entities_TBase { }
 
-public partial class GeneralJournalAccountEntryV2Entities_T : GeneralJournalAccountEntryV2Entities_TBase {}
+public partial class GeneralJournalAccountEntryV2Entities_T : GeneralJournalAccountEntryV2Entities_TBase { }

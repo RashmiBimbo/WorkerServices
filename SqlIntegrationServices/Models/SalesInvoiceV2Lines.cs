@@ -153,6 +153,6 @@ public abstract partial class SalesInvoiceV2LinesBase
     public decimal? SumLineDisc { get; set; }
 }
 
-public partial class SalesInvoiceV2LinesTest : SalesInvoiceV2LinesBase {}
+public partial class SalesInvoiceV2LinesTest : SalesInvoiceV2LinesBase { }
 
-public partial class SalesInvoiceV2Lines : SalesInvoiceV2LinesBase {}
+public partial class SalesInvoiceV2Lines : SalesInvoiceV2LinesBase { }

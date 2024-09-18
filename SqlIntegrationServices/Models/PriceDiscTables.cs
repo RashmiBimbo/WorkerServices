@@ -150,6 +150,6 @@ public abstract partial class PriceDiscTablesBase
     public DateTime? ToDate { get; set; }
 }
 
-public partial class PriceDiscTablesTest : PriceDiscTablesBase {}
+public partial class PriceDiscTablesTest : PriceDiscTablesBase { }
 
-public partial class PriceDiscTables : PriceDiscTablesBase {}
+public partial class PriceDiscTables : PriceDiscTablesBase { }

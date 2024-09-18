@@ -232,6 +232,6 @@ public abstract partial class VendInvoiceJournalLinesBase
     public string? Voucher { get; set; }
 }
 
-public partial class VendInvoiceJournalLinesTest : VendInvoiceJournalLinesBase {}
+public partial class VendInvoiceJournalLinesTest : VendInvoiceJournalLinesBase { }
 
-public partial class VendInvoiceJournalLines : VendInvoiceJournalLinesBase {}
+public partial class VendInvoiceJournalLines : VendInvoiceJournalLinesBase { }

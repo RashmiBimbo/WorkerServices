@@ -119,6 +119,6 @@ public abstract partial class ProductReceiptHeadersBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProductReceiptHeadersTest : ProductReceiptHeadersBase {}
+public partial class ProductReceiptHeadersTest : ProductReceiptHeadersBase { }
 
-public partial class ProductReceiptHeaders : ProductReceiptHeadersBase {}
+public partial class ProductReceiptHeaders : ProductReceiptHeadersBase { }

@@ -102,6 +102,6 @@ public abstract partial class SalesInvoiceLinesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class SalesInvoiceLinesTest : SalesInvoiceLinesBase {}
+public partial class SalesInvoiceLinesTest : SalesInvoiceLinesBase { }
 
-public partial class SalesInvoiceLines : SalesInvoiceLinesBase {}
+public partial class SalesInvoiceLines : SalesInvoiceLinesBase { }

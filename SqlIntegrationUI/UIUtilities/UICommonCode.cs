@@ -9,6 +9,7 @@ namespace SqlIntegrationUI.UIUtilities
         private static string crntProjLogFolder, logFile;
         public static readonly string CrntProjFolder, CrntProjPathFullPath;
         internal static readonly List<string> NameSpacesUsed;
+        public static readonly string BaseUrl = "https://localhost:7182/api/Services";
         public static readonly string CrntProjName = nameof(SqlIntegrationUI);
 
         static UICommonCode()

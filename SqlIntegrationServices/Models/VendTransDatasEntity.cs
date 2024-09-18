@@ -304,6 +304,6 @@ public abstract partial class VendTransDatasEntityBase
     public string? Voucher { get; set; }
 }
 
-public partial class VendTransDatasEntityTest : VendTransDatasEntityBase {}
+public partial class VendTransDatasEntityTest : VendTransDatasEntityBase { }
 
-public partial class VendTransDatasEntity : VendTransDatasEntityBase {}
+public partial class VendTransDatasEntity : VendTransDatasEntityBase { }

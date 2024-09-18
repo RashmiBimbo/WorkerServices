@@ -69,6 +69,6 @@ public abstract partial class ProductCategoriesBase
     public string? ProjectCategoryName { get; set; }
 }
 
-public partial class ProductCategoriesTest : ProductCategoriesBase {}
+public partial class ProductCategoriesTest : ProductCategoriesBase { }
 
-public partial class ProductCategories : ProductCategoriesBase {}
+public partial class ProductCategories : ProductCategoriesBase { }

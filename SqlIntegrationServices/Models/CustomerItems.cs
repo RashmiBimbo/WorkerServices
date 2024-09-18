@@ -50,6 +50,6 @@ public abstract partial class CustomerItemsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class CustomerItemsTest : CustomerItemsBase {}
+public partial class CustomerItemsTest : CustomerItemsBase { }
 
-public partial class CustomerItems : CustomerItemsBase {}
+public partial class CustomerItems : CustomerItemsBase { }

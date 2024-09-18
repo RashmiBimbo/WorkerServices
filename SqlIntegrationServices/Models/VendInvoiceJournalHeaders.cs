@@ -37,6 +37,6 @@ public abstract partial class VendInvoiceJournalHeadersBase
     public string? SalesTaxIncluded { get; set; }
 }
 
-public partial class VendInvoiceJournalHeadersTest : VendInvoiceJournalHeadersBase {}
+public partial class VendInvoiceJournalHeadersTest : VendInvoiceJournalHeadersBase { }
 
-public partial class VendInvoiceJournalHeaders : VendInvoiceJournalHeadersBase {}
+public partial class VendInvoiceJournalHeaders : VendInvoiceJournalHeadersBase { }

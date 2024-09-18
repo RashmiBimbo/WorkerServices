@@ -28,6 +28,6 @@ public abstract partial class BudgetModelBase
     public string? Stopped { get; set; }
 }
 
-public partial class BudgetModelTest : BudgetModelBase {}
+public partial class BudgetModelTest : BudgetModelBase { }
 
-public partial class BudgetModel : BudgetModelBase {}
+public partial class BudgetModel : BudgetModelBase { }

@@ -58,6 +58,6 @@ public abstract partial class TaxWithholdTransBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class TaxWithholdTransTest : TaxWithholdTransBase {}
+public partial class TaxWithholdTransTest : TaxWithholdTransBase { }
 
-public partial class TaxWithholdTrans : TaxWithholdTransBase {}
+public partial class TaxWithholdTrans : TaxWithholdTransBase { }

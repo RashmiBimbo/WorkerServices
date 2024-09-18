@@ -226,6 +226,6 @@ public abstract partial class InventTransEntities__r_204536460Base
     public string? VoucherPhysical { get; set; }
 }
 
-public partial class InventTransEntities__r_204536460Test : InventTransEntities__r_204536460Base {}
+public partial class InventTransEntities__r_204536460Test : InventTransEntities__r_204536460Base { }
 
-public partial class InventTransEntities__r_204536460 : InventTransEntities__r_204536460Base {}
+public partial class InventTransEntities__r_204536460 : InventTransEntities__r_204536460Base { }

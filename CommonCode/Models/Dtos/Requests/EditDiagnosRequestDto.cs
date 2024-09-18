@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SqlIntegrationAPI.Models.Dtos.Requests
+namespace CommonCode.Models.Dtos.Requests
 {
-    
-    public class GetServiceRequestDto
+    public class EditDiagnosRequestDto
     {
         [Required]
         [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string Endpoint { get; set; }
 
         public string? Status { get; set; }
@@ -25,5 +24,13 @@ namespace SqlIntegrationAPI.Models.Dtos.Requests
 
         public DateTime? NextRun { get; set; }
 
+        public bool? TableAltered { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
+
+        [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
+        [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
+        public string? ModifiedBy { get; set; }
     }
 }

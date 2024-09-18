@@ -298,6 +298,6 @@ public abstract partial class CustTransBiEntitiesBase
     public string? Voucher { get; set; }
 }
 
-public partial class CustTransBiEntitiesTest : CustTransBiEntitiesBase {}
+public partial class CustTransBiEntitiesTest : CustTransBiEntitiesBase { }
 
-public partial class CustTransBiEntities : CustTransBiEntitiesBase {}
+public partial class CustTransBiEntities : CustTransBiEntitiesBase { }

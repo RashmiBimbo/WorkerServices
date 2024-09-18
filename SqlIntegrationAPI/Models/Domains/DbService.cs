@@ -20,7 +20,7 @@ namespace SqlIntegrationAPI.Models.Domains
         [Required]
         [StringLength(255, ErrorMessage = "The service name has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The service name has to be minimum of 3 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         [JsonProperty("Name")]
         public string Name
         {
@@ -34,7 +34,7 @@ namespace SqlIntegrationAPI.Models.Domains
         [Required]
         [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         [JsonProperty("Endpoint")]
         [Key]
         public string Endpoint
@@ -49,7 +49,7 @@ namespace SqlIntegrationAPI.Models.Domains
         [Required]
         [StringLength(255, ErrorMessage = "The table name has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The table name has to be minimum of 3 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         [JsonProperty("Table")]
         public string Table
         {
@@ -97,13 +97,13 @@ namespace SqlIntegrationAPI.Models.Domains
 
         [Required]
         [StringLength(255, ErrorMessage = "The Created By field has to be maximum of 255 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string CreatedBy { get; set; }
 
         public DateTime? ModifiedDate { get; set; }
 
         [StringLength(255, ErrorMessage = "The Modified By field has to be maximum of 255 characters")]
-        [RegularExpression("^[a-zA-Z0-9]*$")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string? ModifiedBy { get; set; }
 
         public bool Active { get; set; } = true;

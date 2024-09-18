@@ -29,6 +29,6 @@ public abstract partial class ChartOfAccountsBase
     public string? MainAccountMask { get; set; }
 }
 
-public partial class ChartOfAccountsTest : ChartOfAccountsBase {}
+public partial class ChartOfAccountsTest : ChartOfAccountsBase { }
 
-public partial class ChartOfAccounts : ChartOfAccountsBase {}
+public partial class ChartOfAccounts : ChartOfAccountsBase { }

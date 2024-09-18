@@ -78,6 +78,6 @@ public abstract partial class WorkCalendarDateBase
     public decimal? WorkHours { get; set; }
 }
 
-public partial class WorkCalendarDateTest : WorkCalendarDateBase {}
+public partial class WorkCalendarDateTest : WorkCalendarDateBase { }
 
-public partial class WorkCalendarDate : WorkCalendarDateBase {}
+public partial class WorkCalendarDate : WorkCalendarDateBase { }

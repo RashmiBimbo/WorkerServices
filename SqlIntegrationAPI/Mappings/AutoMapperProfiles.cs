@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using SqlIntegrationAPI.Models.Domains;
-using SqlIntegrationAPI.Models.Dtos.Requests;
-using SqlIntegrationAPI.Models.Dtos;
-using SqlIntegrationAPI.Models.Dtos.Responses;
+using CommonCode.Models.Dtos.Requests;
+using CommonCode.Models.Dtos;
+using CommonCode.Models.Dtos.Responses;
 
 namespace SqlIntegrationAPI.Mappings
 {

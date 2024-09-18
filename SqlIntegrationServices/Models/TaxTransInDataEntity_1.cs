@@ -251,6 +251,6 @@ public abstract partial class TaxTransInDataEntity_1Base
     public string? Warehouse { get; set; }
 }
 
-public partial class TaxTransInDataEntity_1Test : TaxTransInDataEntity_1Base {}
+public partial class TaxTransInDataEntity_1Test : TaxTransInDataEntity_1Base { }
 
-public partial class TaxTransInDataEntity_1 : TaxTransInDataEntity_1Base {}
+public partial class TaxTransInDataEntity_1 : TaxTransInDataEntity_1Base { }

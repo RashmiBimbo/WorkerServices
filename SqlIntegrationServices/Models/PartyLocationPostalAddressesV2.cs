@@ -133,6 +133,6 @@ public abstract partial class PartyLocationPostalAddressesV2Base
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class PartyLocationPostalAddressesV2Test : PartyLocationPostalAddressesV2Base {}
+public partial class PartyLocationPostalAddressesV2Test : PartyLocationPostalAddressesV2Base { }
 
-public partial class PartyLocationPostalAddressesV2 : PartyLocationPostalAddressesV2Base {}
+public partial class PartyLocationPostalAddressesV2 : PartyLocationPostalAddressesV2Base { }

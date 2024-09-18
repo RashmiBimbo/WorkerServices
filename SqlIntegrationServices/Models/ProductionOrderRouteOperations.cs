@@ -150,6 +150,6 @@ public abstract partial class ProductionOrderRouteOperationsBase
     public string? WorkingTimeSchedulingPropertyId { get; set; }
 }
 
-public partial class ProductionOrderRouteOperationsTest : ProductionOrderRouteOperationsBase {}
+public partial class ProductionOrderRouteOperationsTest : ProductionOrderRouteOperationsBase { }
 
-public partial class ProductionOrderRouteOperations : ProductionOrderRouteOperationsBase {}
+public partial class ProductionOrderRouteOperations : ProductionOrderRouteOperationsBase { }

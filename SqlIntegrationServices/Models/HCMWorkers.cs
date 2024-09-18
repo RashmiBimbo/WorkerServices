@@ -333,6 +333,6 @@ public abstract partial class HCMWorkersBase
     public string? WorksFromHome { get; set; }
 }
 
-public partial class HCMWorkersTest : HCMWorkersBase {}
+public partial class HCMWorkersTest : HCMWorkersBase { }
 
-public partial class HCMWorkers : HCMWorkersBase {}
+public partial class HCMWorkers : HCMWorkersBase { }

@@ -180,6 +180,6 @@ public abstract partial class TransferJoursBase
     public long? RecIdCopy1 { get; set; }
 }
 
-public partial class TransferJoursTest : TransferJoursBase {}
+public partial class TransferJoursTest : TransferJoursBase { }
 
-public partial class TransferJours : TransferJoursBase {}
+public partial class TransferJours : TransferJoursBase { }

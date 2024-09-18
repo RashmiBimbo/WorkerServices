@@ -42,6 +42,6 @@ public abstract partial class InvoiceSubLinesV2Base
     public decimal? PurchaseQuantity { get; set; }
 }
 
-public partial class InvoiceSubLinesV2Test : InvoiceSubLinesV2Base {}
+public partial class InvoiceSubLinesV2Test : InvoiceSubLinesV2Base { }
 
-public partial class InvoiceSubLinesV2 : InvoiceSubLinesV2Base {}
+public partial class InvoiceSubLinesV2 : InvoiceSubLinesV2Base { }

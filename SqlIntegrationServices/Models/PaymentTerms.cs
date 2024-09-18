@@ -72,6 +72,6 @@ public abstract partial class PaymentTermsBase
     public string? VendorDueDateUpdatePolicy { get; set; }
 }
 
-public partial class PaymentTermsTest : PaymentTermsBase {}
+public partial class PaymentTermsTest : PaymentTermsBase { }
 
-public partial class PaymentTerms : PaymentTermsBase {}
+public partial class PaymentTerms : PaymentTermsBase { }

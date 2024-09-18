@@ -34,6 +34,6 @@ public abstract partial class ProductCategoryAssignmentsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProductCategoryAssignmentsTest : ProductCategoryAssignmentsBase {}
+public partial class ProductCategoryAssignmentsTest : ProductCategoryAssignmentsBase { }
 
-public partial class ProductCategoryAssignments : ProductCategoryAssignmentsBase {}
+public partial class ProductCategoryAssignments : ProductCategoryAssignmentsBase { }

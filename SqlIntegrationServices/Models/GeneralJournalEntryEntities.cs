@@ -58,6 +58,6 @@ public abstract partial class GeneralJournalEntryEntitiesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class GeneralJournalEntryEntitiesTest : GeneralJournalEntryEntitiesBase {}
+public partial class GeneralJournalEntryEntitiesTest : GeneralJournalEntryEntitiesBase { }
 
-public partial class GeneralJournalEntryEntities : GeneralJournalEntryEntitiesBase {}
+public partial class GeneralJournalEntryEntities : GeneralJournalEntryEntitiesBase { }

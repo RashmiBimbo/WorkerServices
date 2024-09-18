@@ -70,6 +70,6 @@ public abstract partial class TransPostingsBase
     public DateTime? ModifiedDateTimeCopy1 { get; set; }
 }
 
-public partial class TransPostingsTest : TransPostingsBase {}
+public partial class TransPostingsTest : TransPostingsBase { }
 
-public partial class TransPostings : TransPostingsBase {}
+public partial class TransPostings : TransPostingsBase { }

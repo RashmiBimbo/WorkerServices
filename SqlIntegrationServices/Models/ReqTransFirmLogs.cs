@@ -54,6 +54,6 @@ public abstract partial class ReqTransFirmLogsBase
     public string? ReqPlanId { get; set; }
 }
 
-public partial class ReqTransFirmLogsTest : ReqTransFirmLogsBase {}
+public partial class ReqTransFirmLogsTest : ReqTransFirmLogsBase { }
 
-public partial class ReqTransFirmLogs : ReqTransFirmLogsBase {}
+public partial class ReqTransFirmLogs : ReqTransFirmLogsBase { }

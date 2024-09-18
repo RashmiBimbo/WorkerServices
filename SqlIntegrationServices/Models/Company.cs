@@ -318,6 +318,6 @@ public abstract partial class CompanyBase
     public string? VATRefund { get; set; }
 }
 
-public partial class CompanyTest : CompanyBase {}
+public partial class CompanyTest : CompanyBase { }
 
-public partial class Company : CompanyBase {}
+public partial class Company : CompanyBase { }

@@ -586,6 +586,6 @@ public abstract partial class ReleasedProductMastersV2Base
     public decimal? YieldPercentage { get; set; }
 }
 
-public partial class ReleasedProductMastersV2Test : ReleasedProductMastersV2Base {}
+public partial class ReleasedProductMastersV2Test : ReleasedProductMastersV2Base { }
 
-public partial class ReleasedProductMastersV2 : ReleasedProductMastersV2Base {}
+public partial class ReleasedProductMastersV2 : ReleasedProductMastersV2Base { }
