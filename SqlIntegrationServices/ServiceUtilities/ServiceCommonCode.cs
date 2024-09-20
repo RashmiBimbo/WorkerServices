@@ -5,18 +5,52 @@ namespace SqlIntegrationServices.ServiceUtilities
 {
     internal static class ServiceCommonCode
     {
-        public static readonly string LogFile;
         public static readonly string CrntProjName = nameof(SqlIntegrationServices);
-        public static readonly string CrntProjFolder, LogFolder, CrntProjPathFullPath;
+        public static readonly string CrntProjFolder, CrntProjPathFullPath;
+        public static string crntProjLogFolder, logFile;
         public static readonly List<string> NameSpacesUsed;
 
         static ServiceCommonCode()
         {
             CrntProjFolder = Path.Combine(CrntSolnFolder, CrntProjName);
-            LogFolder = Path.Combine(CrntSolnFolder, "Logs");
             CrntProjPathFullPath = Path.Combine(CrntProjFolder, $"{CrntProjName}.csproj");
-            LogFile = Path.Combine(LogFolder, $"{CrntProjName}_Log.txt");
             NameSpacesUsed = [CrntProjName, nameof(CommonCode)];
+        }
+
+        public static string CrntProjLogFolder
+        {
+            get
+            {
+                if (IsEmpty(crntProjLogFolder) || !Directory.Exists(crntProjLogFolder))
+                {
+                    crntProjLogFolder = Path.Combine(LogFolder, $"{nameof(SqlIntegrationServices)}Logs");
+
+                    if (!Directory.Exists(crntProjLogFolder))
+                    {
+                        Directory.CreateDirectory(crntProjLogFolder);
+                        Console.WriteLine($"Directory created at: {crntProjLogFolder}");
+                    }
+                }
+                return crntProjLogFolder;
+            }
+        }
+
+        public static string LogFile
+        {
+            get
+            {
+                if (IsEmpty(logFile) || !File.Exists(logFile))
+                {
+                    logFile = Path.Combine(CrntProjLogFolder, $"{CrntProjName}_Log.txt");
+
+                    if (!File.Exists(logFile))
+                    {
+                        File.Create(logFile);
+                        Console.WriteLine($"File created at: {logFile}");
+                    }
+                }
+                return logFile;
+            }
         }
     }
 }

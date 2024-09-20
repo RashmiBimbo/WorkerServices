@@ -6,8 +6,9 @@ namespace SqlIntegrationUI.UIUtilities
     internal static class UICommonCode
     {
         public static IMemoryCache memoryCache;
-        public static readonly string LogFile, CrntProjFolder, CrntProjPathFullPath, LogFolder;
-        public static readonly List<string> NameSpacesUsed;
+        public static string crntProjLogFolder, logFile;
+        public static readonly string CrntProjFolder, CrntProjPathFullPath;
+        internal static readonly List<string> NameSpacesUsed;
         public static readonly string CrntProjName = nameof(SqlIntegrationUI);
 
         static UICommonCode()
@@ -15,12 +16,47 @@ namespace SqlIntegrationUI.UIUtilities
             memoryCache = new MemoryCache(new MemoryCacheOptions());
 
             CrntProjFolder = Path.Combine(CrntSolnFolder, CrntProjName);
-            LogFolder = Path.Combine(CrntSolnFolder, "Logs");
             CrntProjPathFullPath = Path.Combine(CrntProjFolder, $"{CrntProjName}.csproj");
-            LogFile = Path.Combine(LogFolder, $"{CrntProjName}_Log.txt");
 
             NameSpacesUsed = [CrntProjName, nameof(CommonCode)];
         }
+
+        public static string CrntProjLogFolder
+        {
+            get
+            {
+                if (IsEmpty(crntProjLogFolder) || !Directory.Exists(crntProjLogFolder))
+                {
+                    crntProjLogFolder = Path.Combine(LogFolder, $"{nameof(SqlIntegrationUI)}");
+
+                    if (!Directory.Exists(crntProjLogFolder))
+                    {
+                        Directory.CreateDirectory(crntProjLogFolder);
+                        Console.WriteLine($"Directory created at: {crntProjLogFolder}");
+                    }
+                }
+                return crntProjLogFolder;
+            }
+        }
+
+        public static string LogFile
+        {
+            get
+            {
+                if (IsEmpty(logFile) || !File.Exists(logFile))
+                {
+                    logFile = Path.Combine(CrntProjLogFolder, $"{CrntProjName}_Log.txt");
+
+                    if (!File.Exists(logFile))
+                    {
+                        File.Create(logFile);
+                        Console.WriteLine($"File created at: {logFile}");
+                    }
+                }
+                return logFile;
+            }
+        }
+
 
         public static Services? ConfigServices
         {
@@ -100,7 +136,7 @@ namespace SqlIntegrationUI.UIUtilities
                 }
             }
         }
-        
+
         public static HashSet<ServiceDetail> DeletedServices
         {
             get
@@ -133,7 +169,7 @@ namespace SqlIntegrationUI.UIUtilities
                 }
                 else
                 {
-                    Exception ex = new ("The passed object is not of HashSet<ServiceDetail> type!");
+                    Exception ex = new("The passed object is not of HashSet<ServiceDetail> type!");
                     LogInfo(ex, LogFile, NameSpacesUsed);
                     throw ex;
                 }

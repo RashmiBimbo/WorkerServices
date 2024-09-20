@@ -10,7 +10,7 @@ namespace CommonCode
 {
     public static class Common
     {
-        private static string crntSolnFolder, configFullPath;
+        private static string crntSolnFolder, configFullPath, appFolder, logFolder;
         public const string SqlIntegrationUI = nameof(SqlIntegrationUI);
         public const string SqlIntegrationServices = nameof(SqlIntegrationServices);
         public static readonly string Emp = string.Empty;
@@ -21,6 +21,8 @@ namespace CommonCode
         public static readonly StringComparison StrComp = StringComparison.InvariantCultureIgnoreCase;
         private static readonly object fileLock = new();
 
+        public static Func<string, string, string> Comb => Path.Combine;
+
         public static string CrntSolnFolder
         {
             get
@@ -30,11 +32,48 @@ namespace CommonCode
             }
         }
 
+        public static string ProgramDataAppFolder
+        {
+            get
+            {
+                if (IsEmpty(appFolder) || !Directory.Exists(appFolder))
+                {
+                    string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                    appFolder = Path.Combine(programFilesPath, "ErpSqlIntegration");
+
+                    if (!Directory.Exists(appFolder))
+                    {
+                        Directory.CreateDirectory(appFolder);
+                        Console.WriteLine($"Directory created at: {appFolder}");
+                    }
+                }
+                return appFolder;
+            }
+        }
+
+        public static string LogFolder
+        {
+            get
+            {
+                if (IsEmpty(logFolder) || !Directory.Exists(logFolder))
+                {
+                    logFolder = Path.Combine(ProgramDataAppFolder, "Logs");
+
+                    if (!Directory.Exists(logFolder))
+                    {
+                        Directory.CreateDirectory(logFolder);
+                        Console.WriteLine($"Directory created at: {logFolder}");
+                    }
+                }
+                return logFolder;
+            }
+        }
+
         public static string ConfigFullPath
         {
             get
             {
-                configFullPath = IsEmpty(configFullPath) ? GetConfigFullPath(CrntSolnFolder) : configFullPath;
+                configFullPath = IsEmpty(configFullPath) ? GetConfigFullPath() : configFullPath;
                 return configFullPath;
             }
         }
@@ -44,8 +83,8 @@ namespace CommonCode
 
         private static string GetConfigFullPath(string solnFolder = null)
         {
-            solnFolder = IsEmpty(solnFolder) ? GetSolnFolder() : solnFolder;
-            string configFullPath = Path.Combine(solnFolder, "Config.json");
+            //solnFolder = IsEmpty(solnFolder) ? GetSolnFolder() : solnFolder;
+            string configFullPath = Path.Combine(ProgramDataAppFolder, "Config.json");
             if (IsEmpty(configFullPath)) throw new Exception("Config file full path not found!");
             //Console.WriteLine(configFullPath);
             return configFullPath;
