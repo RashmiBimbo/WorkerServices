@@ -1,6 +1,6 @@
-﻿using static CommonCode.Common;
+﻿using static CommonCode.CommonClasses.Common;
 
-namespace CommonCode
+namespace CommonCode.CommonClasses
 {
     public static class ExceptionLogger
     {

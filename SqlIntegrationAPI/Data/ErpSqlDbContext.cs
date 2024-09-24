@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SqlIntegrationAPI.Models.Domains;
 using System.Reflection;
-using CommonCode.Identity;
+using SqlIntegrationAPI.Models.Domains.Identity;
 
 namespace SqlIntegrationAPI.Data
 {
-    public class ErpSqlDbContext(DbContextOptions<ErpSqlDbContext> options) : IdentityDbContext(options)
+    public class ErpSqlDbContext(DbContextOptions<ErpSqlDbContext> options) : IdentityDbContext<AppUser, AppRole, Guid>(options)
     {
         public DbSet<DbService> Services { get; set; }
 

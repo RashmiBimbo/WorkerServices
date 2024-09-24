@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text;
 
-namespace CommonCode
+namespace CommonCode.CommonClasses
 {
     public static class Common
     {

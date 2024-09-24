@@ -1,4 +1,5 @@
-﻿using CommonCode.Models.Dtos.Requests;
+﻿using CommonCode.CommonClasses;
+using CommonCode.Models.Dtos.Requests;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
@@ -99,35 +100,40 @@ namespace SqlIntegrationUI.Controllers
                     service.Columns = await GetColumns(jObj);
                     ConfigServices.ServiceSet.Add(service);
                 }
-                var dto = new CreateServiceRequestDto()
+                try
                 {
-                    Name = service.Name,
-                    Endpoint = service.Endpoint,
-                    Enable = true,
-                    Period = service.Period,
-                    Table = service.Table,
-                    QueryString = service.QueryString,
-                    Columns = "null",
-                    CreatedBy = "Rashmi",
-                    CreatedDate = DateTime.Now
-                };
-                string json = Serialize.ToJson(dto);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await Client.PostAsync($"{BaseUrl}/Services", content);
-                if (response == null)
-                {
-                    Log("ConfigServices could not be loaded!");
-                    //return Problem("ConfigServices could not be loaded!");
-                    return View();
+                    var dto = new CreateServiceRequestDto()
+                    {
+                        Name = service.Name,
+                        Endpoint = service.Endpoint,
+                        Enable = true,
+                        Period = service.Period,
+                        Table = service.Table,
+                        QueryString = service.QueryString,
+                        Columns = "null",
+                        CreatedBy = "Rashmi",
+                        CreatedDate = DateTime.Now
+                    };
+                    string json = Serialize.ToJson(dto);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await Client.PostAsync($"{BaseUrl}/Services", content);
+                    if (response == null)
+                    {
+                        Log("ConfigServices could not be loaded!");
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
+                    response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                        Log(msg);
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
                 }
-                response.EnsureSuccessStatusCode();
-                if (!response.IsSuccessStatusCode)
-                {
-                    string msg = $"HTTP request failed with status code: {response.StatusCode}";
-                    Log(msg);
-                    //return Problem("ConfigServices could not be loaded!");
-                    return View();
-                }
+                catch (Exception)
+                { }
                 return RedirectToAction(nameof(ServicesController.Index), nameof(ServicesController).Replace("Controller", Emp));
             }
             catch (Exception ex)

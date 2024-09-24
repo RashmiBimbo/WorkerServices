@@ -25,10 +25,15 @@ public class Program
                 throw new InvalidOperationException("Connection string 'ERP_SQL_ConnStr' not found or is empty.");
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ErpSqlDbContext>();
+
             builder.Services.AddDbContext<ErpSqlDbContext>(options => options.UseSqlServer(erp_SQL_ConnStr, sqlOptions =>
                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
 
             builder.Services.AddHttpClient();
+            //builder.Services.AddAuthorization(options=>
+            //{ 
+            //    options.FallbackPolicy = new authpolicybuilder
+            //});
 
             var app = builder.Build();
 
@@ -46,7 +51,10 @@ public class Program
             app.UseStaticFiles();
 
             app.UseRouting();
+
             //app.UseResponseCaching();
+
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllerRoute(
                 name: "default",

@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonCode.Identity
+namespace SqlIntegrationAPI.Models.Domains.Identity
 {
-    public class AppRole : IdentityUser<string>
+    public class AppUser : IdentityUser<Guid>
     {
+        public string PersonName { get; set; }
     }
 }

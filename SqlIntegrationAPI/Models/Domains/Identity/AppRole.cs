@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonCode.Identity
+namespace SqlIntegrationAPI.Models.Domains.Identity
 {
-    public class AppUser : IdentityUser<string>
+    public class AppRole : Microsoft.AspNetCore.Identity.IdentityRole<Guid>
     {
-        public string UserName { get; set; }
     }
 }

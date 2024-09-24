@@ -7,7 +7,7 @@ namespace SqlIntegrationServices.ServiceUtilities
     {
         public static readonly string CrntProjName = nameof(SqlIntegrationServices);
         public static readonly string CrntProjFolder, CrntProjPathFullPath;
-        public static string crntProjLogFolder, logFile;
+        private static string crntProjLogFolder, logFile;
         public static readonly List<string> NameSpacesUsed;
 
         static ServiceCommonCode()

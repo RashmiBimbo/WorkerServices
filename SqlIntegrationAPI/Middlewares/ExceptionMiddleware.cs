@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SqlIntegrationAPI.Helpers;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SqlIntegrationAPI.Middlewares
@@ -16,25 +18,39 @@ namespace SqlIntegrationAPI.Middlewares
             {
                 await next(httpContext);
             }
-            catch (Exception ex)
+            catch (Exception error)
             {
-                var errId = Guid.NewGuid();
-                logger.LogError(ex, message: $"{errId}:{ex.Message}");
+                var response = httpContext.Response;
+                response.ContentType = "application/json";
 
-                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                httpContext.Response.ContentType = "application/json";
-                //var problemDetails = new ProblemDetails()
-                //{
-                //    Detail = string.Empty,
-                //    Status = (int)HttpStatusCode.InternalServerError,
-                    
-                //};
-                var error = new
+                response.StatusCode = error switch
                 {
-                    Id = errId,
-                    ErrorMessage = "Sorry, something went wrong!"
+                    AppException e => (int)HttpStatusCode.BadRequest,// custom application error
+                    NotFoundException e => (int)HttpStatusCode.NotFound,// not found error
+                    _ => (int)HttpStatusCode.InternalServerError,// unhandled error
                 };
-                await httpContext.Response.WriteAsJsonAsync(error);
+                var result = JsonSerializer.Serialize(new { message = error?.Message });
+                await response.WriteAsync(result);
+
+                {
+                    //    var errId = Guid.NewGuid();
+                    //    logger.LogError(ex, message: $"{errId}:{ex.Message}");
+
+                    //    httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    //    httpContext.Response.ContentType = "application/json";
+                    //    //var problemDetails = new ProblemDetails()
+                    //    //{
+                    //    //    Detail = string.Empty,
+                    //    //    Status = (int)HttpStatusCode.InternalServerError,
+
+                    //    //};
+                    //    var error = new
+                    //    {
+                    //        Id = errId,
+                    //        ErrorMessage = $"Sorry, something went wrong! Here's the Error: \"{errId}:{ex.Message}\""
+                    //    };
+                    //    await httpContext.Response.WriteAsJsonAsync(error);
+                }
             }
         }
     }

@@ -1,5 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using CommonCode.CommonClasses;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json.Linq;
+using CommonCode.CommonClasses;
+using static CommonCode.CommonClasses.Common;
+
 
 namespace SqlIntegrationUI.UIUtilities
 {
@@ -9,7 +13,7 @@ namespace SqlIntegrationUI.UIUtilities
         private static string crntProjLogFolder, logFile;
         public static readonly string CrntProjFolder, CrntProjPathFullPath;
         internal static readonly List<string> NameSpacesUsed;
-        public static readonly string BaseUrl = "https://localhost:7182/api/Services";
+        public static readonly string BaseUrl = "https://localhost:7182/ServicesAPI";
         public static readonly string CrntProjName = nameof(SqlIntegrationUI);
 
         static UICommonCode()

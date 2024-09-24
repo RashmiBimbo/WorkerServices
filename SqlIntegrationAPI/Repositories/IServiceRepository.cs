@@ -1,4 +1,7 @@
 ﻿using SqlIntegrationAPI.Models.Domains;
+using CommonCode.CommonClasses;
+using static CommonCode.CommonClasses.Common;
+
 
 namespace SqlIntegrationAPI.Repositories
 {

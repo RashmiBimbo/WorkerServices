@@ -1,4 +1,5 @@
 ﻿using Azure;
+using CommonCode.CommonClasses;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Reflection;
@@ -511,17 +512,22 @@ namespace SqlIntegrationUI.UIUtilities
                     //string filePath = Comb(CrntSolnFolder, $@"{SqlIntegrationServices}\Models\{service.Endpoint}.cs");
                     //if (File.Exists(filePath)) File.Delete(filePath);
                     DeletedServices.Remove(service);
-                    var response = await client.DeleteAsync($"{BaseUrl}/Services/{service.Endpoint}");
-                    if (response == null)
-                    { }
-                    response.EnsureSuccessStatusCode();
-                    if (!response.IsSuccessStatusCode)
+                    try
                     {
-                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
-                        Log(msg);
-                        //return Problem("ConfigServices could not be loaded!");
-                        return ;
+                        var response = await client.DeleteAsync($"{BaseUrl}/Services/{service.Endpoint}");
+                        if (response == null)
+                        { }
+                        response.EnsureSuccessStatusCode();
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                            Log(msg);
+                            //return Problem("ConfigServices could not be loaded!");
+                            return;
+                        }
                     }
+                    catch (Exception)
+                    { }
                 }
                 //if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
                 //    Log($"{SqlIntegrationServices} project could not be built after deleting services!");

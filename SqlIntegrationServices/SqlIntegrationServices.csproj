@@ -17,7 +17,11 @@
 
 	<ItemGroup>
 		<Using Include="CommonCode" />
-		<Using Include="CommonCode.Common">
+		<Using Include="CommonCode.CommonClasses" />
+		<Using Include="CommonCode.CommonClasses.Common">
+		  <Static>True</Static>
+		</Using>
+		<Using Include="CommonCode.CommonClasses.ExceptionLogger">
 		  <Static>True</Static>
 		</Using>
 		<Using Include="Microsoft.EntityFrameworkCore" />

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CommonCode.CommonClasses;
 using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationUI.Models

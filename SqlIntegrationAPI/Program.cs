@@ -1,21 +1,16 @@
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Sinks.File;
 using static SqlIntegrationAPI.ApiUtilities.ApiCommonCode;
 using SqlIntegrationAPI.Data;
 using SqlIntegrationAPI.Mappings;
 using SqlIntegrationAPI.Middlewares;
 using SqlIntegrationAPI.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using CommonCode.Identity;
-using Microsoft.Extensions.Options;
+using SqlIntegrationAPI.Models.Domains.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using CommonCode.Jwt;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace SqlIntegrationAPI
 {
@@ -24,7 +19,7 @@ namespace SqlIntegrationAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-           
+
             var logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .WriteTo.File(LogFile, rollingInterval: RollingInterval.Minute)
@@ -34,7 +29,6 @@ namespace SqlIntegrationAPI
             // Add services to the container.
             builder.Logging.ClearProviders();
             builder.Logging.AddSerilog(logger);
-
             builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -56,22 +50,48 @@ namespace SqlIntegrationAPI
 
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ErpSqlDbContext>();
 
+            //CORS: localhost:4200, localhost:4100
+            builder.Services.AddCors(options => {
+                options.AddDefaultPolicy(policyBuilder =>
+                {
+                    policyBuilder
+                    .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()[0])
+                    .WithHeaders("Authorization", "origin", "accept", "content-type")
+                    .WithMethods("GET", "POST", "PUT", "DELETE")
+                    ;
+                });
+
+                options.AddPolicy("7182Client", policyBuilder =>
+                {
+                    policyBuilder
+                    .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()[0])
+                    .WithHeaders("Authorization", "origin", "accept")
+                    .WithMethods("GET")
+                    ;
+                });
+            });
+
+
             builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
-            //builder.Services.AddIdentity<AppUser, AppRole>(options =>
-            //    {
-            //        options.Password.RequiredLength = 8;
-            //        options.Password.RequireUppercase = true;
-            //        options.Password.RequireLowercase = true;
-            //        options.Password.RequireDigit = true;
-            //        options.Password.RequireNonAlphanumeric = true;
-            //        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            //    }
-            //)
-            //.AddEntityFrameworkStores<ErpSqlDbContext>()
-            //.AddDefaultTokenProviders();
+            builder.Services.AddIdentity<AppUser, AppRole>(options =>
+                {
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
+                }
+            )
+            .AddEntityFrameworkStores<ErpSqlDbContext>()
+            .AddUserStore<UserStore<AppUser, AppRole, ErpSqlDbContext, Guid>>()
+            .AddRoleStore<RoleStore<AppRole, ErpSqlDbContext, Guid>>()
+            .AddDefaultTokenProviders();
+
+            builder.Services.AddTransient<IJwtService, JwtService>();
 
             //var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             //var key = builder.Configuration.GetSection(jwtSettings["Secret"]);
@@ -86,7 +106,8 @@ namespace SqlIntegrationAPI
             }
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
-
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

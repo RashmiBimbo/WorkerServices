@@ -3,6 +3,8 @@ using SqlIntegrationAPI.Models.Domains;
 using CommonCode.Models.Dtos.Requests;
 using CommonCode.Models.Dtos;
 using CommonCode.Models.Dtos.Responses;
+using SqlIntegrationAPI.Models.Domains.Identity;
+using CommonCode.Models.Dtos.Identity;
 
 namespace SqlIntegrationAPI.Mappings
 {
@@ -16,6 +18,8 @@ namespace SqlIntegrationAPI.Mappings
             CreateMap<DbService, ServiceDto>().ReverseMap();
             CreateMap<DbService, GetServiceResponseDto>().ReverseMap();
             CreateMap<DbService, GetDiagnosResponseDto>().ReverseMap();
+            CreateMap<AppUser, RegisterDto>().ReverseMap();
+            CreateMap<AppUser, AppUserDto>().ReverseMap();
         }
     }
 }
