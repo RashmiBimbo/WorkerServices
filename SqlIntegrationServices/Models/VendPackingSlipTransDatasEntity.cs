@@ -216,6 +216,6 @@ public abstract partial class VendPackingSlipTransDatasEntityBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class VendPackingSlipTransDatasEntityTest : VendPackingSlipTransDatasEntityBase {}
+public partial class VendPackingSlipTransDatasEntityTest : VendPackingSlipTransDatasEntityBase { }
 
-public partial class VendPackingSlipTransDatasEntity : VendPackingSlipTransDatasEntityBase {}
+public partial class VendPackingSlipTransDatasEntity : VendPackingSlipTransDatasEntityBase { }

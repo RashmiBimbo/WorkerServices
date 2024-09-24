@@ -255,6 +255,6 @@ public abstract partial class ProductionOrderHeadersBase
     public decimal? PlanningPriority { get; set; }
 }
 
-public partial class ProductionOrderHeadersTest : ProductionOrderHeadersBase {}
+public partial class ProductionOrderHeadersTest : ProductionOrderHeadersBase { }
 
-public partial class ProductionOrderHeaders : ProductionOrderHeadersBase {}
+public partial class ProductionOrderHeaders : ProductionOrderHeadersBase { }

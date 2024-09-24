@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Azure;
+using CommonCode.CommonClasses;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Reflection;
 using static System.DateTime;
@@ -12,16 +14,16 @@ namespace SqlIntegrationUI.UIUtilities
 
         static ReBuild()
         {
-            ServiceProjFoldr = Path.Combine(CrntSolnFolder, SqlIntegrationServices);
-            ServiceProjFullPath = Path.Combine(ServiceProjFoldr, $"{SqlIntegrationServices}.csproj");
+            ServiceProjFoldr = Comb(CrntSolnFolder, SqlIntegrationServices);
+            ServiceProjFullPath = Comb(ServiceProjFoldr, $"{SqlIntegrationServices}.csproj");
 
             DebugFolder = @$"{ServiceProjFoldr}\bin\Debug\net8.0\";
             RlzFolder = @$"{ServiceProjFoldr}\bin\Release\net8.0\";
         }
 
-        public static async Task<bool> RestartServices()
+        public static async Task<bool> RestartServices(HttpClient httpClient=null)
         {
-            string ProcessExecutable = Path.Combine(RlzFolder, $"{SqlIntegrationServices}.exe");
+            string ProcessExecutable = Comb(RlzFolder, $"{SqlIntegrationServices}.exe");
             try
             {
                 Process[] processes = Process.GetProcessesByName(SqlIntegrationServices);
@@ -36,18 +38,18 @@ namespace SqlIntegrationUI.UIUtilities
                 else
                     Log($"No running process named {SqlIntegrationServices} found.");
 
-                await DeleteServices();
+                await DeleteServices(httpClient);
 
-                bool buildSuccess = await GenerateModel();
+                //bool buildSuccess = await GenerateModel();
                 await UpdateModels();
 
-                if (!buildSuccess)
-                {
-                    Log($"{SqlIntegrationServices} project could not be built after adding services!");
+                //if (!buildSuccess)
+                //{
+                //    Log($"{SqlIntegrationServices} project could not be built after adding services!");
 
-                    if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
-                        Log($"{SqlIntegrationServices} project could not be re-built !");
-                }
+                //    if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
+                //        Log($"{SqlIntegrationServices} project could not be re-built !");
+                //}
                 // Start the process again
                 Log($"Starting the process {SqlIntegrationServices}...");
 
@@ -102,7 +104,7 @@ namespace SqlIntegrationUI.UIUtilities
                         Log($"{SqlIntegrationServices} project could not be re-built!");
                         return false;
                     }
-                    ConfigServices.ServiceSet.First(s => s.Table.Equals(item.Table, StrComp)).Altered = true;
+                    ConfigServices.ServiceSet.First(s => s.Table.Equals(item.Table, StrComp)).TableAltered = true;
                 }
             }
             return true;
@@ -110,7 +112,7 @@ namespace SqlIntegrationUI.UIUtilities
 
         public static async Task<bool> RebuildSqlIntegrationServices(string projPath)
         {
-            string logFilePath = "build_log.txt";
+            string logFilePath = Comb(CrntProjLogFolder, "build_log.txt");
             await CleanProject(projPath, "Debug", logFilePath);
 
             bool debugBuildSuccess = await BuildProject(projPath, "Debug", logFilePath);
@@ -209,15 +211,15 @@ namespace SqlIntegrationUI.UIUtilities
                 if (!IsEmpty(output))
                 {
                     string msg = $"{config} Clean Output:{output}";
-                    File.AppendAllText(logFilePath, msg);
-                    Log(msg);
+                    //File.AppendAllText(logFilePath, msg);
+                    Log(msg, true, logFilePath);
                 }
 
                 if (!IsEmpty(error))
                 {
                     string errMsg = $"{config} Clean Errors:{error}";
-                    File.AppendAllText(logFilePath, errMsg);
-                    Log(errMsg);
+                    //File.AppendAllText(logFilePath, errMsg);
+                    Log(errMsg, true, logFilePath);
                 }
             }
             catch (Exception ex)
@@ -230,7 +232,7 @@ namespace SqlIntegrationUI.UIUtilities
         {
             try
             {
-                string batchFilePath = "buildcommand.bat", logFile = "buildoutput.log";
+                string batchFilePath = Comb(CrntProjLogFolder, "TryInDfrntWindow_buildcommand.bat"), logFile = Comb(CrntProjLogFolder, "TryInDfrntWindow_buildoutput.log");
                 bool genSuccess = true;
 
                 File.WriteAllLines(batchFilePath,
@@ -268,14 +270,15 @@ namespace SqlIntegrationUI.UIUtilities
                 }
                 catch (Exception ex)
                 {
-                    Log($"Error killing process: {ex.Message}");
+                    //Log($"Error killing process: {ex.Message}");
+                    LogInfo(ex, LogFile, NameSpacesUsed);
                     return false;
                 }
 
                 // Read and display the output from the log file
                 string output = File.ReadAllText(logFile);
 
-                Log($"Output:{output}");
+                Log($"TryInDfrntWindow Output:{output}");
                 // Clean up
                 if (!File.Exists(batchFilePath))
                     File.Delete(batchFilePath);
@@ -344,7 +347,7 @@ namespace SqlIntegrationUI.UIUtilities
         {
             try
             {
-                string batchFilePath = Comb(LogFolder, "command.bat"), logFilePath = Comb(LogFolder, "output.log");
+                string batchFilePath = Comb(CrntProjLogFolder, "EFDBFirstCmd.bat"), logFilePath = Comb(CrntProjLogFolder, "EFDBFirstCmdoutput.log");
                 bool genSuccess = true;
 
                 File.WriteAllLines(batchFilePath,
@@ -389,11 +392,11 @@ namespace SqlIntegrationUI.UIUtilities
                 // Read and display the output from the log file
                 string output = File.ReadAllText(logFilePath);
 
-                Log($"Output:{output}");
+                Log($"GenerateModel Output:{output}");
                 // Clean up
-                if (!File.Exists(batchFilePath))
+                if (File.Exists(batchFilePath))
                     File.Delete(batchFilePath);
-                if (!File.Exists(logFilePath))
+                if (File.Exists(logFilePath))
                     File.Delete(logFilePath);
 
                 return genSuccess;
@@ -449,8 +452,8 @@ namespace SqlIntegrationUI.UIUtilities
         {
             try
             {
-                string debugDll = Path.Combine(DebugFolder, $"{SqlIntegrationServices}.dll");
-                string rlzDll = Path.Combine(RlzFolder, $"{SqlIntegrationServices}.dll");
+                string debugDll = Comb(DebugFolder, $"{SqlIntegrationServices}.dll");
+                string rlzDll = Comb(RlzFolder, $"{SqlIntegrationServices}.dll");
 
                 Assembly asmbly = Assembly.LoadFrom(rlzDll);
                 asmbly ??= Assembly.LoadFrom(debugDll);
@@ -499,19 +502,35 @@ namespace SqlIntegrationUI.UIUtilities
             }
         }
 
-        public static async Task DeleteServices()
+        public static async Task DeleteServices(HttpClient client = null)
         {
             if (!(DeletedServices?.Count > 0)) return;
             try
             {
                 foreach (ServiceDetail service in DeletedServices)
                 {
-                    string filePath = Path.Combine(CrntSolnFolder, $@"{SqlIntegrationServices}\Models\{service.Endpoint}.cs");
-                    if (File.Exists(filePath)) File.Delete(filePath);
+                    //string filePath = Comb(CrntSolnFolder, $@"{SqlIntegrationServices}\Models\{service.Endpoint}.cs");
+                    //if (File.Exists(filePath)) File.Delete(filePath);
                     DeletedServices.Remove(service);
+                    try
+                    {
+                        var response = await client.DeleteAsync($"{BaseUrl}/Services/{service.Endpoint}");
+                        if (response == null)
+                        { }
+                        response.EnsureSuccessStatusCode();
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                            Log(msg);
+                            //return Problem("ConfigServices could not be loaded!");
+                            return;
+                        }
+                    }
+                    catch (Exception)
+                    { }
                 }
-                if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
-                    Log($"{SqlIntegrationServices} project could not be built after deleting services!");
+                //if (!await RebuildSqlIntegrationServices(ServiceProjFullPath))
+                //    Log($"{SqlIntegrationServices} project could not be built after deleting services!");
             }
             catch (Exception ex)
             {

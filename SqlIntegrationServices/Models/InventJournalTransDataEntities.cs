@@ -228,6 +228,6 @@ public abstract partial class InventJournalTransDataEntitiesBase
     public long? Worker { get; set; }
 }
 
-public partial class InventJournalTransDataEntitiesTest : InventJournalTransDataEntitiesBase {}
+public partial class InventJournalTransDataEntitiesTest : InventJournalTransDataEntitiesBase { }
 
-public partial class InventJournalTransDataEntities : InventJournalTransDataEntitiesBase {}
+public partial class InventJournalTransDataEntities : InventJournalTransDataEntitiesBase { }

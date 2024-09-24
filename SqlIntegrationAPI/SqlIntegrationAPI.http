@@ -1,0 +1,6 @@
+@SqlIntegrationAPI_HostAddress = http://localhost:5210
+
+GET {{SqlIntegrationAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

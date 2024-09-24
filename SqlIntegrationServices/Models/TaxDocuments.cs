@@ -85,6 +85,6 @@ public abstract partial class TaxDocumentsBase
     public string? TaxDocumentTransactionTypeOfTax { get; set; }
 }
 
-public partial class TaxDocumentsTest : TaxDocumentsBase {}
+public partial class TaxDocumentsTest : TaxDocumentsBase { }
 
-public partial class TaxDocuments : TaxDocumentsBase {}
+public partial class TaxDocuments : TaxDocumentsBase { }

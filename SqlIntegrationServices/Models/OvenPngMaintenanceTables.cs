@@ -65,6 +65,6 @@ public abstract partial class OvenPngMaintenanceTablesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class OvenPngMaintenanceTablesTest : OvenPngMaintenanceTablesBase {}
+public partial class OvenPngMaintenanceTablesTest : OvenPngMaintenanceTablesBase { }
 
-public partial class OvenPngMaintenanceTables : OvenPngMaintenanceTablesBase {}
+public partial class OvenPngMaintenanceTables : OvenPngMaintenanceTablesBase { }

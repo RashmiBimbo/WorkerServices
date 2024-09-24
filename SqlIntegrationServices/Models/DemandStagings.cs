@@ -59,6 +59,6 @@ public abstract partial class DemandStagingsBase
     public DateTime? OrderDate { get; set; }
 }
 
-public partial class DemandStagingsTest : DemandStagingsBase {}
+public partial class DemandStagingsTest : DemandStagingsBase { }
 
-public partial class DemandStagings : DemandStagingsBase {}
+public partial class DemandStagings : DemandStagingsBase { }

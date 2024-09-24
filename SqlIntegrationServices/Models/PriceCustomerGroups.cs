@@ -35,6 +35,6 @@ public abstract partial class PriceCustomerGroupsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class PriceCustomerGroupsTest : PriceCustomerGroupsBase {}
+public partial class PriceCustomerGroupsTest : PriceCustomerGroupsBase { }
 
-public partial class PriceCustomerGroups : PriceCustomerGroupsBase {}
+public partial class PriceCustomerGroups : PriceCustomerGroupsBase { }

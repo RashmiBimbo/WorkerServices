@@ -68,6 +68,6 @@ public abstract partial class InventoryMovementJournalHeadersBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InventoryMovementJournalHeadersTest : InventoryMovementJournalHeadersBase {}
+public partial class InventoryMovementJournalHeadersTest : InventoryMovementJournalHeadersBase { }
 
-public partial class InventoryMovementJournalHeaders : InventoryMovementJournalHeadersBase {}
+public partial class InventoryMovementJournalHeaders : InventoryMovementJournalHeadersBase { }

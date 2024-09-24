@@ -1,22 +1,27 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using CommonCode.CommonClasses;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json.Linq;
+using CommonCode.CommonClasses;
+using static CommonCode.CommonClasses.Common;
+
 
 namespace SqlIntegrationUI.UIUtilities
 {
     internal static class UICommonCode
     {
         public static IMemoryCache memoryCache;
-        public static string crntProjLogFolder, logFile;
+        private static string crntProjLogFolder, logFile;
         public static readonly string CrntProjFolder, CrntProjPathFullPath;
         internal static readonly List<string> NameSpacesUsed;
+        public static readonly string BaseUrl = "https://localhost:7182/ServicesAPI";
         public static readonly string CrntProjName = nameof(SqlIntegrationUI);
 
         static UICommonCode()
         {
             memoryCache = new MemoryCache(new MemoryCacheOptions());
 
-            CrntProjFolder = Path.Combine(CrntSolnFolder, CrntProjName);
-            CrntProjPathFullPath = Path.Combine(CrntProjFolder, $"{CrntProjName}.csproj");
+            CrntProjFolder = Comb(CrntSolnFolder, CrntProjName);
+            CrntProjPathFullPath = Comb(CrntProjFolder, $"{CrntProjName}.csproj");
 
             NameSpacesUsed = [CrntProjName, nameof(CommonCode)];
         }
@@ -27,7 +32,7 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 if (IsEmpty(crntProjLogFolder) || !Directory.Exists(crntProjLogFolder))
                 {
-                    crntProjLogFolder = Path.Combine(LogFolder, $"{nameof(SqlIntegrationUI)}");
+                    crntProjLogFolder = Comb(LogFolder, $"{nameof(SqlIntegrationUI)}");
 
                     if (!Directory.Exists(crntProjLogFolder))
                     {
@@ -45,7 +50,7 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 if (IsEmpty(logFile) || !File.Exists(logFile))
                 {
-                    logFile = Path.Combine(CrntProjLogFolder, $"{CrntProjName}_Log.txt");
+                    logFile = Comb(CrntProjLogFolder, $"{CrntProjName}_Log.txt");
 
                     if (!File.Exists(logFile))
                     {
@@ -176,9 +181,10 @@ namespace SqlIntegrationUI.UIUtilities
             }
         }
 
-        public static void Log(string msg, bool writeConsole = true)
+        public static void Log(string msg, bool writeConsole = true, string logFile = null)
         {
-            LogMsg(LogFile, $"{Entr}{DateTime.Now}:{msg}", writeConsole);
+            logFile ??= LogFile;
+            LogMsg(logFile, $"{Entr}{DateTime.Now}:{msg}", writeConsole);
         }
     }
 }

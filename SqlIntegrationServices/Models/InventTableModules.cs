@@ -103,6 +103,6 @@ public abstract partial class InventTableModulesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InventTableModulesTest : InventTableModulesBase {}
+public partial class InventTableModulesTest : InventTableModulesBase { }
 
-public partial class InventTableModules : InventTableModulesBase {}
+public partial class InventTableModules : InventTableModulesBase { }

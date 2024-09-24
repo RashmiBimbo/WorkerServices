@@ -138,6 +138,6 @@ public abstract partial class VendPackingSlipJourDatasEntityBase
     public byte[]? PackedExtensions { get; set; }
 }
 
-public partial class VendPackingSlipJourDatasEntityTest : VendPackingSlipJourDatasEntityBase {}
+public partial class VendPackingSlipJourDatasEntityTest : VendPackingSlipJourDatasEntityBase { }
 
-public partial class VendPackingSlipJourDatasEntity : VendPackingSlipJourDatasEntityBase {}
+public partial class VendPackingSlipJourDatasEntity : VendPackingSlipJourDatasEntityBase { }

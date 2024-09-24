@@ -48,6 +48,6 @@ public abstract partial class InventTransOriginsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InventTransOriginsTest : InventTransOriginsBase {}
+public partial class InventTransOriginsTest : InventTransOriginsBase { }
 
-public partial class InventTransOrigins : InventTransOriginsBase {}
+public partial class InventTransOrigins : InventTransOriginsBase { }

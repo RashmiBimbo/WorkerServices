@@ -16,13 +16,18 @@ public partial class MFELDynamics365Context : DbContext
     }
 
 
-    public virtual DbSet<InventTransV2> InventTransV2 { get; set; }
+    public virtual DbSet<ChartOfAccounts> ChartOfAccounts { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=MFELConnStr");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ChartOfAccounts>(entity =>
+        {
+            entity.HasKey(e => e.ChartOfAccounts1).HasName("PK__ChartOfA__A1B246CF173BED24");
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

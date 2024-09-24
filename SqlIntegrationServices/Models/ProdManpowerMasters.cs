@@ -73,6 +73,6 @@ public abstract partial class ProdManpowerMastersBase
     public decimal? SBGLabour { get; set; }
 }
 
-public partial class ProdManpowerMastersTest : ProdManpowerMastersBase {}
+public partial class ProdManpowerMastersTest : ProdManpowerMastersBase { }
 
-public partial class ProdManpowerMasters : ProdManpowerMastersBase {}
+public partial class ProdManpowerMasters : ProdManpowerMastersBase { }

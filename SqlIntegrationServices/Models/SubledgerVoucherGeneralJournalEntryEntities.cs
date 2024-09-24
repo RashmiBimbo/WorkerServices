@@ -45,6 +45,6 @@ public abstract partial class SubledgerVoucherGeneralJournalEntryEntitiesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class SubledgerVoucherGeneralJournalEntryEntitiesTest : SubledgerVoucherGeneralJournalEntryEntitiesBase {}
+public partial class SubledgerVoucherGeneralJournalEntryEntitiesTest : SubledgerVoucherGeneralJournalEntryEntitiesBase { }
 
-public partial class SubledgerVoucherGeneralJournalEntryEntities : SubledgerVoucherGeneralJournalEntryEntitiesBase {}
+public partial class SubledgerVoucherGeneralJournalEntryEntities : SubledgerVoucherGeneralJournalEntryEntitiesBase { }

@@ -108,6 +108,6 @@ public abstract partial class InventoryMovementJournalEntriesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InventoryMovementJournalEntriesTest : InventoryMovementJournalEntriesBase {}
+public partial class InventoryMovementJournalEntriesTest : InventoryMovementJournalEntriesBase { }
 
-public partial class InventoryMovementJournalEntries : InventoryMovementJournalEntriesBase {}
+public partial class InventoryMovementJournalEntries : InventoryMovementJournalEntriesBase { }

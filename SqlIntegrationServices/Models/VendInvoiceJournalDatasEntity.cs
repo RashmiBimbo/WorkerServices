@@ -340,6 +340,6 @@ public abstract partial class VendInvoiceJournalDatasEntityBase
     public decimal? Weight { get; set; }
 }
 
-public partial class VendInvoiceJournalDatasEntityTest : VendInvoiceJournalDatasEntityBase {}
+public partial class VendInvoiceJournalDatasEntityTest : VendInvoiceJournalDatasEntityBase { }
 
-public partial class VendInvoiceJournalDatasEntity : VendInvoiceJournalDatasEntityBase {}
+public partial class VendInvoiceJournalDatasEntity : VendInvoiceJournalDatasEntityBase { }

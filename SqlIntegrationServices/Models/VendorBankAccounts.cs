@@ -237,6 +237,6 @@ public abstract partial class VendorBankAccountsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class VendorBankAccountsTest : VendorBankAccountsBase {}
+public partial class VendorBankAccountsTest : VendorBankAccountsBase { }
 
-public partial class VendorBankAccounts : VendorBankAccountsBase {}
+public partial class VendorBankAccounts : VendorBankAccountsBase { }

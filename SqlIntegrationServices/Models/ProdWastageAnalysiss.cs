@@ -69,6 +69,6 @@ public abstract partial class ProdWastageAnalysissBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProdWastageAnalysissTest : ProdWastageAnalysissBase {}
+public partial class ProdWastageAnalysissTest : ProdWastageAnalysissBase { }
 
-public partial class ProdWastageAnalysiss : ProdWastageAnalysissBase {}
+public partial class ProdWastageAnalysiss : ProdWastageAnalysissBase { }

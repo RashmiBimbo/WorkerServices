@@ -56,6 +56,6 @@ public abstract partial class DimensionAttributeValueCombinationsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class DimensionAttributeValueCombinationsTest : DimensionAttributeValueCombinationsBase {}
+public partial class DimensionAttributeValueCombinationsTest : DimensionAttributeValueCombinationsBase { }
 
-public partial class DimensionAttributeValueCombinations : DimensionAttributeValueCombinationsBase {}
+public partial class DimensionAttributeValueCombinations : DimensionAttributeValueCombinationsBase { }

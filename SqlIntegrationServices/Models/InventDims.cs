@@ -95,6 +95,6 @@ public abstract partial class InventDimsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InventDimsTest : InventDimsBase {}
+public partial class InventDimsTest : InventDimsBase { }
 
-public partial class InventDims : InventDimsBase {}
+public partial class InventDims : InventDimsBase { }

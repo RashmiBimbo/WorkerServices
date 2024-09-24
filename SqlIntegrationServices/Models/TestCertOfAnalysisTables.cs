@@ -52,6 +52,6 @@ public abstract partial class TestCertOfAnalysisTablesBase
     public string? RouteId { get; set; }
 }
 
-public partial class TestCertOfAnalysisTablesTest : TestCertOfAnalysisTablesBase {}
+public partial class TestCertOfAnalysisTablesTest : TestCertOfAnalysisTablesBase { }
 
-public partial class TestCertOfAnalysisTables : TestCertOfAnalysisTablesBase {}
+public partial class TestCertOfAnalysisTables : TestCertOfAnalysisTablesBase { }

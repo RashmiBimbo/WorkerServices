@@ -1,4 +1,4 @@
-﻿@model CommonCode.Config.ServiceDetail
+﻿@model             ServiceDetail
 
 @{
     ViewData["Title"] = "Upload";
@@ -48,7 +48,7 @@
     </div>
     <br />
     <input type="submit" value="Create" class="btn btn-primary" asp-action="Create" />
-    <input type="submit" value="Cancel" class="btn btn-outline-secondary" asp-action="Index" id="CancelBtn" />
+    <input type="submit" value="Cancel" class="btn btn-outline-secondary" asp-action="Index" id="CancelBtn" asp-controller="Services"/>
 </form>
 <script>
     document.getElementById("CancelBtn").

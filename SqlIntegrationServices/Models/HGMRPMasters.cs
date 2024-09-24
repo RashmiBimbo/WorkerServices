@@ -73,6 +73,6 @@ public abstract partial class HGMRPMastersBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class HGMRPMastersTest : HGMRPMastersBase {}
+public partial class HGMRPMastersTest : HGMRPMastersBase { }
 
-public partial class HGMRPMasters : HGMRPMastersBase {}
+public partial class HGMRPMasters : HGMRPMastersBase { }

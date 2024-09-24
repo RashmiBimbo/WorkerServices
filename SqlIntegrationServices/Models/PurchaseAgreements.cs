@@ -305,6 +305,6 @@ public abstract partial class PurchaseAgreementsBase
     public long? RecIdCopy1 { get; set; }
 }
 
-public partial class PurchaseAgreementsTest : PurchaseAgreementsBase {}
+public partial class PurchaseAgreementsTest : PurchaseAgreementsBase { }
 
-public partial class PurchaseAgreements : PurchaseAgreementsBase {}
+public partial class PurchaseAgreements : PurchaseAgreementsBase { }

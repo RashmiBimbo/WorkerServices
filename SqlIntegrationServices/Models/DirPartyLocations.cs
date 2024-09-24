@@ -63,6 +63,6 @@ public abstract partial class DirPartyLocationsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class DirPartyLocationsTest : DirPartyLocationsBase {}
+public partial class DirPartyLocationsTest : DirPartyLocationsBase { }
 
-public partial class DirPartyLocations : DirPartyLocationsBase {}
+public partial class DirPartyLocations : DirPartyLocationsBase { }

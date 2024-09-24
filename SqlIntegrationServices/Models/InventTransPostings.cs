@@ -64,6 +64,6 @@ public abstract partial class InventTransPostingsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class InventTransPostingsTest : InventTransPostingsBase {}
+public partial class InventTransPostingsTest : InventTransPostingsBase { }
 
-public partial class InventTransPostings : InventTransPostingsBase {}
+public partial class InventTransPostings : InventTransPostingsBase { }

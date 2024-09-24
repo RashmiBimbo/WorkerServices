@@ -181,6 +181,6 @@ public abstract partial class QualityOrderHeadersBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class QualityOrderHeadersTest : QualityOrderHeadersBase {}
+public partial class QualityOrderHeadersTest : QualityOrderHeadersBase { }
 
-public partial class QualityOrderHeaders : QualityOrderHeadersBase {}
+public partial class QualityOrderHeaders : QualityOrderHeadersBase { }

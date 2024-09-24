@@ -61,6 +61,6 @@ public abstract partial class ProdManpowerMasterEntitiesBase
     public int? SSupervisorsBun { get; set; }
 }
 
-public partial class ProdManpowerMasterEntitiesTest : ProdManpowerMasterEntitiesBase {}
+public partial class ProdManpowerMasterEntitiesTest : ProdManpowerMasterEntitiesBase { }
 
-public partial class ProdManpowerMasterEntities : ProdManpowerMasterEntitiesBase {}
+public partial class ProdManpowerMasterEntities : ProdManpowerMasterEntitiesBase { }

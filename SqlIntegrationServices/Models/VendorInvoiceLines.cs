@@ -307,6 +307,6 @@ public abstract partial class VendorInvoiceLinesBase
     public string? WithholdingTaxItemGroup { get; set; }
 }
 
-public partial class VendorInvoiceLinesTest : VendorInvoiceLinesBase {}
+public partial class VendorInvoiceLinesTest : VendorInvoiceLinesBase { }
 
-public partial class VendorInvoiceLines : VendorInvoiceLinesBase {}
+public partial class VendorInvoiceLines : VendorInvoiceLinesBase { }

@@ -3,15 +3,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
 using SysFile = System.IO.File;
 using Microsoft.CodeAnalysis;
+using CommonCode.Models.Dtos.Requests;
+using CommonCode.Models.Dtos.Responses;
+using static System.Net.WebRequestMethods;
+using CommonCode.Models.Dtos;
+using CommonCode.CommonClasses;
+using static CommonCode.CommonClasses.Common;
 
 namespace SqlIntegrationUI.Controllers
 {
     public class ServicesController : Controller
     {
-        public ServicesController(IMemoryCache memoryCache)
+        private readonly IHttpClientFactory HttpClientFactory;
+        private readonly HttpClient Client;
+
+        public ServicesController(IHttpClientFactory httpClientFactory)
         {
+            ArgumentNullException.ThrowIfNull(httpClientFactory);
             try
             {
+                HttpClientFactory = httpClientFactory;
+                Client = HttpClientFactory.CreateClient();
+
                 if (ConfigServices is null)
                 {
                     Log("ConfigServices not found");
@@ -30,10 +43,32 @@ namespace SqlIntegrationUI.Controllers
             }
         }
 
-        public IActionResult Index(string searchString)
+        [HttpGet]
+        public async Task<IActionResult> Index(string? searchString)
         {
             try
             {
+                try
+                {
+                    var response = await Client.GetAsync($"{BaseUrl}/Services");
+                    if (response == null)
+                    {
+                        Log("ConfigServices could not be loaded!");
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
+                    response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                        Log(msg);
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
+                    var result = await response.Content.ReadFromJsonAsync<GetServiceResponseDto[]>();
+                }
+                catch (Exception)
+                { }
                 if (ConfigServices is null)
                 {
                     Log("ConfigServices could not be loaded!");
@@ -141,6 +176,28 @@ namespace SqlIntegrationUI.Controllers
 
                         set = [.. set.OrderBy(s => s.Name)];
                         ConfigServices = new Services() { ServiceSet = set };
+
+                        try
+                        {
+                            var response = await Client.GetAsync($"{BaseUrl}/Services/{service.Endpoint}");
+                            if (response == null)
+                            {
+                                Log("ConfigServices could not be loaded!");
+                                //return Problem("ConfigServices could not be loaded!");
+                                return View();
+                            }
+                            response.EnsureSuccessStatusCode();
+                            if (!response.IsSuccessStatusCode)
+                            {
+                                string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                                Log(msg);
+                                //return Problem("ConfigServices could not be loaded!");
+                                return View();
+                            }
+                            var result = await response.Content.ReadFromJsonAsync<GetServiceResponseDto[]>();
+                        }
+                        catch (Exception)
+                        { }
                     }
                     catch (Exception ex)
                     {
@@ -224,25 +281,34 @@ namespace SqlIntegrationUI.Controllers
 
         public async Task<IActionResult> Submit(bool Redirect = true)
         {
-            var services = ConfigServices;
+            if (!(ConfigServices?.ServiceSet.Count > 0))
+            {
+                string msg = "Services are null or empty!";
+                Log(msg);
+                ViewData["ErrorMessage"] = msg;
+                return RedirectToAction(nameof(Index));
+            }
             try
             {
-                if (services == null)
-                    Log("ConfigServices could not be loaded!");
-                else
-                {
-                    string servicesJson = JsonConvert.SerializeObject(services, Formatting.Indented);
-                    SysFile.WriteAllText(ConfigFullPath, servicesJson);
-                    ConfigServices = null;
-                }
+                ConfigServices.ServiceSet = [.. ConfigServices.ServiceSet.OrderBy(s => s.Endpoint)];
+                string servicesJson = JsonConvert.SerializeObject(ConfigServices, Formatting.Indented);
+                SysFile.WriteAllText(ConfigFullPath, servicesJson);
+                ConfigServices = null;
+
                 bool restartServices = false;
 
                 for (int i = 0; i < 2; i++)
                 {
-                    restartServices = await ReBuild.RestartServices();
+                    restartServices = await ReBuild.RestartServices(Client);
                     if (restartServices) break;
                 }
-                if (!restartServices) return Problem("Background ConfigServices could not be started");
+                if (!restartServices)
+                {
+                    string msg = "Background Services could not be started!";
+                    Log(msg);
+                    ViewData["ErrorMessage"] = msg;
+                    return RedirectToAction(nameof(Index));
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

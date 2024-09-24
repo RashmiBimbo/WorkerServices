@@ -51,6 +51,6 @@ public abstract partial class ProdErrorQtiesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProdErrorQtiesTest : ProdErrorQtiesBase {}
+public partial class ProdErrorQtiesTest : ProdErrorQtiesBase { }
 
-public partial class ProdErrorQties : ProdErrorQtiesBase {}
+public partial class ProdErrorQties : ProdErrorQtiesBase { }

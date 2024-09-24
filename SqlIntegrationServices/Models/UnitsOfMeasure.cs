@@ -46,6 +46,6 @@ public abstract partial class UnitsOfMeasureBase
     public string? UnitDescription { get; set; }
 }
 
-public partial class UnitsOfMeasureTest : UnitsOfMeasureBase {}
+public partial class UnitsOfMeasureTest : UnitsOfMeasureBase { }
 
-public partial class UnitsOfMeasure : UnitsOfMeasureBase {}
+public partial class UnitsOfMeasure : UnitsOfMeasureBase { }

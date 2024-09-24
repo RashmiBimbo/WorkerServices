@@ -54,6 +54,6 @@ public abstract partial class HSNCodesBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class HSNCodesTest : HSNCodesBase {}
+public partial class HSNCodesTest : HSNCodesBase { }
 
-public partial class HSNCodes : HSNCodesBase {}
+public partial class HSNCodes : HSNCodesBase { }

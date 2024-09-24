@@ -111,6 +111,6 @@ public abstract partial class ProductionRouteTransactionsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProductionRouteTransactionsTest : ProductionRouteTransactionsBase {}
+public partial class ProductionRouteTransactionsTest : ProductionRouteTransactionsBase { }
 
-public partial class ProductionRouteTransactions : ProductionRouteTransactionsBase {}
+public partial class ProductionRouteTransactions : ProductionRouteTransactionsBase { }

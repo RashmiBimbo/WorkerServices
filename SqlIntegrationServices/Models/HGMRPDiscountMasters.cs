@@ -51,6 +51,6 @@ public abstract partial class HGMRPDiscountMastersBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class HGMRPDiscountMastersTest : HGMRPDiscountMastersBase {}
+public partial class HGMRPDiscountMastersTest : HGMRPDiscountMastersBase { }
 
-public partial class HGMRPDiscountMasters : HGMRPDiscountMastersBase {}
+public partial class HGMRPDiscountMasters : HGMRPDiscountMastersBase { }

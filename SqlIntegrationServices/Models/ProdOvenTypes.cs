@@ -43,6 +43,6 @@ public abstract partial class ProdOvenTypesBase
     public int? ProdStdCapacity { get; set; }
 }
 
-public partial class ProdOvenTypesTest : ProdOvenTypesBase {}
+public partial class ProdOvenTypesTest : ProdOvenTypesBase { }
 
-public partial class ProdOvenTypes : ProdOvenTypesBase {}
+public partial class ProdOvenTypes : ProdOvenTypesBase { }

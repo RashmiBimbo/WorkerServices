@@ -135,6 +135,6 @@ public abstract partial class PurchaseAgreementLinesV2Base
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class PurchaseAgreementLinesV2Test : PurchaseAgreementLinesV2Base {}
+public partial class PurchaseAgreementLinesV2Test : PurchaseAgreementLinesV2Base { }
 
-public partial class PurchaseAgreementLinesV2 : PurchaseAgreementLinesV2Base {}
+public partial class PurchaseAgreementLinesV2 : PurchaseAgreementLinesV2Base { }

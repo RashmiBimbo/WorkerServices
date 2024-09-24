@@ -36,6 +36,6 @@ public abstract partial class ProductTranslationsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class ProductTranslationsTest : ProductTranslationsBase {}
+public partial class ProductTranslationsTest : ProductTranslationsBase { }
 
-public partial class ProductTranslations : ProductTranslationsBase {}
+public partial class ProductTranslations : ProductTranslationsBase { }

@@ -453,6 +453,6 @@ public abstract partial class PurchaseOrderLinesV2Base
     public string? ShipCalendarId { get; set; }
 }
 
-public partial class PurchaseOrderLinesV2Test : PurchaseOrderLinesV2Base {}
+public partial class PurchaseOrderLinesV2Test : PurchaseOrderLinesV2Base { }
 
-public partial class PurchaseOrderLinesV2 : PurchaseOrderLinesV2Base {}
+public partial class PurchaseOrderLinesV2 : PurchaseOrderLinesV2Base { }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-[PrimaryKey(nameof(RecId1))]
+[PrimaryKey("RecId1")]
 public abstract partial class InventTransV2Base
 {
     [StringLength(2000)]

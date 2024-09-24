@@ -62,6 +62,6 @@ public abstract partial class FinancialDimensionValuesBase
     public string? HG_CompanyName { get; set; }
 }
 
-public partial class FinancialDimensionValuesTest : FinancialDimensionValuesBase {}
+public partial class FinancialDimensionValuesTest : FinancialDimensionValuesBase { }
 
-public partial class FinancialDimensionValues : FinancialDimensionValuesBase {}
+public partial class FinancialDimensionValues : FinancialDimensionValuesBase { }

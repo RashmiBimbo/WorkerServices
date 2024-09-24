@@ -153,6 +153,6 @@ public abstract partial class FormulaLineV3sBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class FormulaLineV3sTest : FormulaLineV3sBase {}
+public partial class FormulaLineV3sTest : FormulaLineV3sBase { }
 
-public partial class FormulaLineV3s : FormulaLineV3sBase {}
+public partial class FormulaLineV3s : FormulaLineV3sBase { }

@@ -106,6 +106,6 @@ public abstract partial class HGMRPCalculationsBase
     public DateTime? ModifiedDateTime1 { get; set; }
 }
 
-public partial class HGMRPCalculationsTest : HGMRPCalculationsBase {}
+public partial class HGMRPCalculationsTest : HGMRPCalculationsBase { }
 
-public partial class HGMRPCalculations : HGMRPCalculationsBase {}
+public partial class HGMRPCalculations : HGMRPCalculationsBase { }
