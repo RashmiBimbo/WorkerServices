@@ -1,4 +1,4 @@
-﻿@model             ServiceDetail
+﻿@model ServiceDetail
 
 @{
     ViewData["Title"] = "Edit";
@@ -108,7 +108,7 @@
             <br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" asp-action="Edit" asp-route-name="@Model.Name" />
-                <input type="submit" value="Cancel" class="btn btn-outline-secondary" asp-action="Index" />
+                <input type="submit" value="Cancel" class="btn btn-outline-secondary" id="CancelBtn" asp-action="Index" asp-controller="Services" />
             </div>
         </form>
     </div>
@@ -119,19 +119,24 @@
 </div>
 
 <script>
-    document.getElementById("ViewBtn").addEventListener("click", function () {
-        // Get the selected value from the dropdown
-        var colSearch = document.getElementById("DdlColNames").value;
+    document.getElementById("CancelBtn").
+        addEventListener("click", function () {
+            window.location.href =
+                '@Url.Action("Index", "Services")';
+        });
+    // document.getElementById("ViewBtn").addEventListener("click", function () {
+    //     // Get the selected value from the dropdown
+    //     var colSearch = document.getElementById("DdlColNames").value;
 
-        // Get the value of the name input or from the Razor model if needed
-        var name = '@Model.Name';  // Ensure this matches your actual model property
+    //     // Get the value of the name input or from the Razor model if needed
+    //     var name = '@Model.Name';  // Ensure this matches your actual model property
 
-        // Construct the URL with query parameters using the selected value
-        var url = '@Url.Action("Edit", "Services")' + '?name=' + encodeURIComponent(name) + '&colSearch=' + encodeURIComponent(colSearch);
+    //     // Construct the URL with query parameters using the selected value
+    //     var url = '@Url.Action("Edit", "Services")' + '?name=' + encodeURIComponent(name) + '&colSearch=' + encodeURIComponent(colSearch);
 
-        // Redirect to the constructed URL
-        window.location.href = url;
-    });
+    //     // Redirect to the constructed URL
+    //     window.location.href = url;
+    // });
 </script>
 
 @section Scripts {

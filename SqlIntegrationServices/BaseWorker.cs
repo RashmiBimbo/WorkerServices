@@ -1,12 +1,14 @@
-﻿using CommonCode.Config;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Data;
 using static System.DateTime;
-using static CommonCode.ExceptionLogger;
+using static CommonCode.CommonClasses.ExceptionLogger;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using CommonCode.CommonClasses;
+using SqlIntegrationServices;
 
 namespace SqlIntegrationServices
 {
@@ -24,18 +26,29 @@ namespace SqlIntegrationServices
         private readonly ServiceDetail CrntService;
         private readonly Services Services;
         private readonly string logFile, ServiceName, ServiceEndpoint, ServiceTbl, QueryString;
-        private static long? TrkCnt, AddCnt, UpdtCnt;
-        //private readonly List<long> msngRecIds = [5702217655, 5702217684, 5702206797, 5702206804, 5702217735, 5702217653, 5702217651, 5702206800, 5702219121];
-        //private ExceptionLogger ErrMsgFltr;
+        private long? DtTrkCnt = 0, DtAddCnt = 0, DtUpdtCnt = 0;
+        private const int BatchSize = 1000; // Define an appropriate batch size
 
         public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDetail service)
         {
-            TrkCnt = 0; AddCnt = 0; UpdtCnt = 0;
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             CrntService = service;
             ServiceTbl = CrntService.Table;
-            logFile = AppDomain.CurrentDomain.BaseDirectory + $"{CrntService.Endpoint}Service_Log.txt";
+            try
+            {
+                string logFolder = Comb(CrntProjLogFolder, "ServiceLogs");
+                if (!Directory.Exists(logFolder))
+                {
+                    Directory.CreateDirectory(logFolder);
+                }
+                logFile = Comb(logFolder, $"{CrntService.Endpoint}Service_Log.txt");
+                //logFile = AppDomain.CurrentDomain.BaseDirectory + $"{CrntService.Endpoint}Service_Log.txt";
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
             ServiceEndpoint = CrntService.Endpoint;
             ServiceName = CrntService.Name;
             period = CrntService.Period;
@@ -98,45 +111,61 @@ namespace SqlIntegrationServices
                 using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
                 do
                 {
-                    //string deflFltr = "&cross-company=true";
-                    //string s = " and ";
-                    //msngRecIds.ForEach(action: r => s += $"RecId1 eq {r} or ");
-                    //s = s.Remove(s.LastIndexOf("or"));
-                    //CrntService.QueryString += CrntService.QueryString.Replace(deflFltr, Emp) + s + deflFltr;
-
+                    long? tTrkCnt = 0, tAddCnt = 0, tUpdtCnt = 0, tI = 0;
+                    DateTime septDt = DateTime.Parse("2024-09-27");
+                    var startTime = Now;
                     int count = Interlocked.Increment(ref ExecutionCount);
-                    
-                    string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
-
                     string msg = $"{Now}: {ServiceName} Service is running; Count: {count}";
                     LogInfo(msg);
+                    //while (septDt.Month == 9)
+                    //{
+                    string septDtStr = $"{septDt:yyyy-MM-dd}";
+                    string deflFltr = "&cross-company=true";
+                    //string s = $" and ";
+                    //msngRecIds.ForEach(action: r => s += $"RecId1 eq {r} or ");
+                    //s = s.Remove(s.LastIndexOf("or"));
+                    //CrntService.QueryString = $"$filter=DatePhysical eq {septDtStr} " + deflFltr;
 
-                    var startTime = Now;
+                    string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
+
+                    var startTimeD = Now;
                     msg = $"{Entr}{Now}: Data migration started.";
                     LogInfo(msg);
 
                     CrntService.Status = "Running";
-                    await WriteToConfig();
+                    //await WriteToConfig();
 
                     int i = 0;
                     while (!IsEmpty(url))
                     {
                         LogInfo($"{Entr}{Now}: Page no. {++i}");
                         url = await DoWork(resource, url);
+                        LogInfo($"{Entr}{Now}: Total no. of records tracked:{DtTrkCnt}"
+                              + $"{Entr}{Now}: Total no. of records added: {DtAddCnt}"
+                              + $"{Entr}{Now}: Total no. of records updated: {DtUpdtCnt}");
+                        //+ $"{Entr}{Now}: Task execution time: {elapsedTime}");
+
                     }
+                    var endTimeD = Now;
+                    var elapsedTime = endTimeD - startTimeD;
+
+                    tAddCnt += DtAddCnt; tTrkCnt += DtTrkCnt; tUpdtCnt += DtUpdtCnt; tI += i;
+                    DtAddCnt = 0; DtTrkCnt = 0; DtUpdtCnt = 0;
+                    //septDt = septDt.AddDays(1);
+                    //}
                     var endTime = Now;
-                    var elapsedTime = endTime - startTime;
 
                     LogInfo($"{Entr}{Now}: Data migration completed."
-                          + $"{Entr}{Now}: Total pages read : {i}"
-                          + $"{Entr}{Now}: Total no. of records tracked:{TrkCnt}"
-                          + $"{Entr}{Now}: Total no. of records added: {AddCnt}"
-                          + $"{Entr}{Now}: Total no. of records updated: {UpdtCnt}"
-                          + $"{Entr}{Now}: Task execution time: {elapsedTime}"
-                          + $"{Entr}{Now}: Next iteration will start after {period} minutes at {Now.AddMinutes(period)}"
+                          + $"{Entr}{Now}: Total pages read : {tI}"
+                          + $"{Entr}{Now}: Total no. of records tracked:{tTrkCnt}"
+                          + $"{Entr}{Now}: Total no. of records added: {tAddCnt}"
+                          + $"{Entr}{Now}: Total no. of records updated: {tUpdtCnt}"
+                          + $"{Entr}{Now}: Task execution time: {endTime - startTime}");
+
+                    LogInfo($"{Entr}{Now}: Next iteration will start after {period} minutes at {Now.AddMinutes(period)}"
                           + $"{Entr}***********************************************************{Entr}");
 
-                    TrkCnt = 0; AddCnt = 0; UpdtCnt = 0;
+                    tTrkCnt = 0; tAddCnt = 0; tUpdtCnt = 0;
                     await Task.Delay(TimeSpan.FromMinutes(period), stoppingToken);
                 }
                 while (await timer.WaitForNextTickAsync(stoppingToken));
@@ -167,8 +196,7 @@ namespace SqlIntegrationServices
                     }
                 }
                 catch (Exception)
-                {
-                }
+                { }
             }
             if (IsEmpty(result)) return Emp;
             await RunStrategy(result);
@@ -191,15 +219,34 @@ namespace SqlIntegrationServices
             }
             try
             {
-                using (var scope = serviceScopeFactory.CreateScope())
+                JObject obj = JObject.Parse(result);
+                JArray items = (JArray)obj?["value"];
+                long? i = items?.Count;
+
+                var batches = items
+                    .Select((item, index) => new { item, index })
+                    .GroupBy(x => x.index / BatchSize)
+                    .Select(g => g.Select(x => x.item).ToList())
+                    .ToList();
+
+                long addCntBatch = 0, updtCntBatch = 0, trkCntBatch = 0;
+
+                foreach (var batch in batches)
                 {
-                    ServiceDbContext context = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
+                    if (batch is null) continue;
+                    using (var scope = serviceScopeFactory.CreateScope())
+                    {
+                        ServiceDbContext context = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
 
-                    var strategy = context.Database.CreateExecutionStrategy();
+                        context.Database.SetCommandTimeout(180); // Timeout in seconds
 
-                    await strategy.ExecuteAsync(async () => await Transact(context, result));
+                        var strategy = context.Database.CreateExecutionStrategy();
+
+                        await strategy.ExecuteAsync(async () => await Transact(context, result, batch));
+                        //updtCntBatch += cnts[1]; addCntBatch += cnts[0]; trkCntBatch += batch.Count;
+                    }
+                    //await Transact(result);
                 }
-                //await Transact(result);
             }
             catch (Exception ex)
             {
@@ -208,16 +255,28 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async virtual Task Transact(ServiceDbContext context, string result)
+        protected async virtual Task Transact(ServiceDbContext context, string result, dynamic batch)
         {
             try
             {
-                JObject obj = JObject.Parse(result);
-                JArray Items = (JArray)obj?["value"];
+                //JObject obj = JObject.Parse(result);
+                //JArray items = (JArray)obj?["value"];
+                //long? i = items?.Count;
 
-                long? i = Items?.Count;
-                List<long> cnts = await CallUpdateCntxt(context, Items, CrntService.Table);
-                long updtCnt = cnts[1], addCnt = cnts[0];
+                //var batches = items
+                //    .Select((item, index) => new { item, index })
+                //    .GroupBy(x => x.index / BatchSize)
+                //    .Select(g => g.Select(x => x.item).ToList())
+                //    .ToList();
+
+                long addCntBatch = 0, updtCntBatch = 0, trkCntBatch = 0;
+
+                //foreach (var batch in batches)
+                //{
+                //    if (batch is null) continue;
+                context.ChangeTracker.Clear(); // Clear tracked entities to save memory
+                List<long> cnts = await CallUpdateCntxt(context, batch, CrntService.Table);
+                updtCntBatch += cnts[1]; addCntBatch += cnts[0]; trkCntBatch += batch.Count;
 
                 using var transaction = await context.Database.BeginTransactionAsync();
                 {
@@ -231,12 +290,12 @@ namespace SqlIntegrationServices
                         }
                         catch (Exception ex)
                         {
-                            string msg = GetRelErrorMsg(ex, NameSpacesUsed);
-                            LogInfo($"{Now}: Error: {msg}");
+                            string msg1 = GetRelErrorMsg(ex, NameSpacesUsed);
+                            LogInfo($"{Now}: Error: {msg1}");
                             if (cnt < 2)
                             {
-                                msg = $"{Now}: Error: Saving changes failed! Retrying...";
-                                LogInfo(msg);
+                                msg1 = $"{Now}: Error: Saving changes failed! Retrying...";
+                                LogInfo(msg1);
                             }
                             else
                             {
@@ -246,12 +305,14 @@ namespace SqlIntegrationServices
                         }
                     }
                 }
-                msg = $"{Entr}{Now}: Success: Saved data successfully." +
-                      $"{Entr}{Now}: No. of records tracked:{i}" +
-                      $"{Entr}{Now}: No. of records added: {addCnt}" +
-                      $"{Entr}{Now}: No. of records updated: {updtCnt}";
-                AddCnt += addCnt; UpdtCnt += updtCnt; TrkCnt += i;
-                LogInfo(msg);
+                //string msg = $"{Entr}{Now}: Success: Saved data successfully." +
+                //        $"{Entr}{Now}: No. of records tracked:{trkCntBatch}" +
+                //        $"{Entr}{Now}: No. of records added: {addCntBatch}" +
+                //        $"{Entr}{Now}: No. of records updated: {updtCntBatch}";
+
+                //LogInfo(msg);
+                //}
+                DtAddCnt += addCntBatch; DtUpdtCnt += updtCntBatch; DtTrkCnt += trkCntBatch;
             }
             catch (Exception ex)
             {
@@ -260,7 +321,7 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async Task<List<long>> CallUpdateCntxt(ServiceDbContext context, JArray Items, string tableName)
+        protected async Task<List<long>> CallUpdateCntxt(ServiceDbContext context, dynamic Items, string tableName)
         {
             string currentNamespace = typeof(BaseWorker).Namespace;
             string typeName = $"{currentNamespace}.{tableName}";
@@ -280,7 +341,7 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async Task<List<long>> UpdateDbSet<T>(ServiceDbContext context, JArray Items) where T : class, new()
+        protected async Task<List<long>> UpdateDbSet<T>(ServiceDbContext context, dynamic batch) where T : class, new()
         {
             long addCnt = 0, updtCnt = 0;
             T ent;
@@ -292,17 +353,17 @@ namespace SqlIntegrationServices
                     //LogInfo($"\r\n{Now}: Error: Could not find or create or alter the table {CrntService.Table}!");
                     throw new Exception($"Could not find or create or alter the table {CrntService.Table}!");
                 }
-
+                int i = 0;
                 DbSet<T> dbSet = context.Set<T>();
                 List<PropertyInfo> primaryKeyProperties = GetPrimaryKeyProperties(typeof(T));
-
-                foreach (var itm in Items)
+                foreach (var itm in batch)
                 {
-                    string itmJsn;
-                    T existingEntity = null;
+                    if (itm is null) continue;
+                    string itmJsn = Serialize.ToJson(itm);
 
                     for (int cnt = 1; cnt <= 2; cnt++)
                     {
+                        T existingEntity = null;
                         try
                         {
                             itmJsn = Serialize.ToJson(itm);
@@ -331,8 +392,9 @@ namespace SqlIntegrationServices
                             {
                                 ent = PrepareEntity(poco);
                                 if (ent is null) continue;
-                                //if (msngRecIds.Contains((poco as dynamic).RecId1))
-                                //    LogInfo($"{(poco as dynamic).RecId1} found in Missing RecIds!");
+                                //if (msngRecIdsL.Contains((poco as dynamic).RecId1))
+                                //    LogInfo($"{(poco as dynamic).RecId1} found in Missing RecIds!{i}");
+                                //else continue;
                                 if (existingEntity is null) // Add the new entity
                                 {
                                     dbSet.Add(ent);
@@ -340,10 +402,21 @@ namespace SqlIntegrationServices
                                 }
                                 else // Update the existing entity if modified
                                 {
-                                    if (typeof(T).GetProperties().Any(p => p.Name.ToLower().Trim() == "modifieddatetime1"))
-                                        if (((poco as dynamic).ModifiedDateTime1 != null) && !((existingEntity as dynamic).ModifiedDateTime1 != null) && ((poco as dynamic).ModifiedDateTime1 > (existingEntity as dynamic).ModifiedDateTime1))
+                                    if (typeof(T).Name is nameof(InventTransV2) && (typeof(T).GetProperties().Any(p => p.Name.ToLower().Trim() == "modifieddatetimecopy1")))
+                                    {
+                                        if (((poco as dynamic).ModifiedDateTimeCopy1 is not null) && ((existingEntity as dynamic).ModifiedDateTimeCopy1 is not null) && ((poco as dynamic).ModifiedDateTimeCopy1 > (existingEntity as dynamic).ModifiedDateTimeCopy1))
                                         {
                                             context.Entry(existingEntity).CurrentValues.SetValues(ent);
+                                            context.Entry(existingEntity).State = EntityState.Modified;
+                                            updtCnt++;
+                                        }
+                                    }
+                                    else
+                                    if (typeof(T).GetProperties().Any(p => p.Name.ToLower().Trim() == "modifieddatetime1"))
+                                        if (((poco as dynamic).ModifiedDateTime1 is not null) && ((existingEntity as dynamic).ModifiedDateTime1 is not null) && ((poco as dynamic).ModifiedDateTime1 > (existingEntity as dynamic).ModifiedDateTime1))
+                                        {
+                                            context.Entry(existingEntity).CurrentValues.SetValues(ent);
+                                            context.Entry(existingEntity).State = EntityState.Modified;
                                             updtCnt++;
                                         }
                                 }

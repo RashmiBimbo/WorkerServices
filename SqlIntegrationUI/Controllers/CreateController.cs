@@ -89,13 +89,13 @@ namespace SqlIntegrationUI.Controllers
 
                 string qStr = service.QueryString;
                 string fltr = "cross-company=true";
-                service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : "&" + fltr;
+                service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : " &" + fltr;
                 JObject jObj = await GetServiceJObject(service);
 
                 AddedServices ??= [];
                 AddedServices.TryAdd(service.Table, jObj);
 
-                if (!ConfigServices.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)))
+                if (!ConfigServices.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)) && jObj is not null)
                 {
                     service.Columns = await GetColumns(jObj);
                     ConfigServices.ServiceSet.Add(service);
@@ -123,7 +123,7 @@ namespace SqlIntegrationUI.Controllers
                         //return Problem("ConfigServices could not be loaded!");
                         return View();
                     }
-                    response.EnsureSuccessStatusCode();
+                    //response.EnsureSuccessStatusCode();
                     if (!response.IsSuccessStatusCode)
                     {
                         string msg = $"HTTP request failed with status code: {response.StatusCode}";
@@ -132,7 +132,7 @@ namespace SqlIntegrationUI.Controllers
                         return View();
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 { }
                 return RedirectToAction(nameof(ServicesController.Index), nameof(ServicesController).Replace("Controller", Emp));
             }
@@ -241,8 +241,9 @@ namespace SqlIntegrationUI.Controllers
                 foreach (Row row in sheetData.Elements<Row>().Skip(1))
                 {
                     string endPoint = GetCellValueByColumn(doc, row, columnMappings, "ENDPOINT");
-                    if (IsEmpty(endPoint))
-                        continue;
+
+                    if (IsEmpty(endPoint)) continue;
+
                     //string name = GetCellValueByColumn(doc, row, columnMappings, "Name");
                     //if (IsEmpty(name)) name = endPoint;
 

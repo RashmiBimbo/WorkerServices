@@ -82,7 +82,7 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 JObject? itmJObj = null;
                 string entityName = item.Table;
-                entityName = entityName.EndsWith("TEST", StrComp) ? entityName.Remove(entityName.LastIndexOf("Test"), 4) : entityName;
+                entityName = entityName.EndsWith("TEST", StrComp) ? entityName.Remove(entityName.LastIndexOf("Test", StrComp), 4) : entityName;
 
                 string filePath = $@"{SqlIntegrationServices}\Models\{entityName}.cs";
                 bool updated = false;

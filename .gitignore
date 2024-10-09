@@ -609,3 +609,5 @@ FodyWeavers.xsd
 /SqlIntegrationUI/Migrations/20240906194314_UpdateTbls.Designer.cs
 /SqlIntegrationUI/Controllers/ServicesController.cs
 /SqlIntegrationUI/Migrations/UIDbContextModelSnapshot.cs
+/SqlIntegrationServices/Class1.cs
+/SqlIntegrationServices/Class2.cs

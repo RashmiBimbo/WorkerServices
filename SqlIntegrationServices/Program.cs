@@ -55,8 +55,8 @@ class Program
         foreach (ServiceDetail serviceDtl in services.ServiceSet)
         {
             string itmJsn;
-            //if (serviceDtl.Name.Contains("HSNCodes") && serviceDtl.Enable)
-            if (serviceDtl.Enable)
+            //if (serviceDtl.Name.Contains("GeneralJournalEntryEntities"))
+                if (serviceDtl.Enable)
             {
                 //ServiceConfiguration serviceConfig = serviceDtl.ServiceConfiguration;
                 for (int cnt = 1; cnt <= 2; cnt++)

@@ -11,15 +11,16 @@ namespace SqlIntegrationAPI.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    public class ServicesAPIController(IServiceRepository serviceRepository, IMapper mapper, ILogger<ServicesAPIController> logger) : ControllerBase
+    //[Authorize]
+    public class ServicesController(IServiceRepository serviceRepository, IMapper mapper, ILogger<ServicesController> logger) : ControllerBase
     {
         private readonly IMapper _mapper = mapper;
-        private readonly ILogger<ServicesAPIController> logger = logger;
+        private readonly ILogger<ServicesController> logger = logger;
         private readonly IServiceRepository _serviceRepository = serviceRepository;
 
         // GET: api/ServicesAPI/Services
         [HttpGet("Services")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetServices(string? sortBy, string? filterOn, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
             //logger.LogInformation("GetServices get called");
@@ -37,7 +38,6 @@ namespace SqlIntegrationAPI.Controllers
 
         // GET: api/ServicesAPI/Diagnostics
         [HttpGet("Diagnostics")]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnostics(string? sortBy, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
             var services = await _serviceRepository.GetAllAsync(sortBy, Emp, filterQuery, ascending, pageNo, pageSize);
@@ -53,7 +53,7 @@ namespace SqlIntegrationAPI.Controllers
 
         // GET: api/ServicesAPI/Services/{endPoint}
         [HttpGet("Services/{endPoint}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetService(string endPoint)
         {
             var services = await _serviceRepository.GetByEndpointAsync(endPoint);
@@ -70,7 +70,7 @@ namespace SqlIntegrationAPI.Controllers
 
         // GET: api/ServicesAPI/Diagnostics/{endPoint}
         [HttpGet("Diagnostics/{endPoint}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnosticsSingle(string endPoint)
         {
             var services = await _serviceRepository.GetByEndpointAsync(endPoint);
@@ -87,7 +87,7 @@ namespace SqlIntegrationAPI.Controllers
 
         // POST: api/ServicesAPI/Services
         [HttpPost("Services")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> CreateService([FromBody] CreateServiceRequestDto createService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -108,7 +108,7 @@ namespace SqlIntegrationAPI.Controllers
 
         // PUT: api/ServicesAPI/Services/{endPoint}
         [HttpPut("Services/{endPoint}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateService(string endPoint, [FromBody] EditServiceRequestDto editService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -117,7 +117,7 @@ namespace SqlIntegrationAPI.Controllers
 
         // PUT: api/ServicesAPI/Diagnostics/{endPoint}
         [HttpPut("Diagnostics/{endPoint}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateDiagnose(string endPoint, [FromBody] EditDiagnosRequestDto editService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -126,7 +126,7 @@ namespace SqlIntegrationAPI.Controllers
 
         // DELETE: api/ServicesAPI/Services/{endPoint}
         [HttpDelete("Services/{endPoint}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> DeleteService(string endPoint)
         {
             if (IsEmpty(endPoint))
@@ -182,5 +182,28 @@ namespace SqlIntegrationAPI.Controllers
             }
             return NoContent(); // Successfully updated, returning no content
         }
+
+
+        // POST: api/ServicesAPI/Services
+        [HttpPut("Columns")]
+        //[Authorize]
+        public async Task<ActionResult> UpdateColumns([FromBody] CreateServiceRequestDto createService)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            createService.CreatedBy = "Rashmi";
+
+            var createdEntity = await _serviceRepository.CreateAsync(_mapper.Map<DbService>(createService));
+
+            if (createdEntity is null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to create the service.");
+            }
+            return CreatedAtAction(nameof(GetService), new { endPoint = createService.Endpoint }, createService);
+
+            // Return the created entity and its location
+            //return CreatedAtAction(nameof(GetService), new { endPoint = createService.Endpoint });
+        }
+
     }
 }

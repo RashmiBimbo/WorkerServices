@@ -50,14 +50,14 @@ namespace SqlIntegrationUI.Controllers
             {
                 try
                 {
-                    var response = await Client.GetAsync($"{BaseUrl}/Services");
+                    using HttpResponseMessage response = await Client.GetAsync($"{BaseUrl}/Services");
                     if (response == null)
                     {
                         Log("ConfigServices could not be loaded!");
                         //return Problem("ConfigServices could not be loaded!");
                         return View();
                     }
-                    response.EnsureSuccessStatusCode();
+                    //response.EnsureSuccessStatusCode();
                     if (!response.IsSuccessStatusCode)
                     {
                         string msg = $"HTTP request failed with status code: {response.StatusCode}";
@@ -65,7 +65,7 @@ namespace SqlIntegrationUI.Controllers
                         //return Problem("ConfigServices could not be loaded!");
                         return View();
                     }
-                    var result = await response.Content.ReadFromJsonAsync<GetServiceResponseDto[]>();
+                    GetServiceResponseDto[] result = await response.Content.ReadFromJsonAsync<GetServiceResponseDto[]>();
                 }
                 catch (Exception)
                 { }
@@ -75,9 +75,11 @@ namespace SqlIntegrationUI.Controllers
                     //return Problem("ConfigServices could not be loaded!");
                     return View();
                 }
-                IEnumerable<ServiceDetail> genreQry = from serviceDtl in ConfigServices.ServiceSet orderby serviceDtl.Name select serviceDtl;
+                IEnumerable<ServiceDetail> genreQry = from serviceDtl in ConfigServices.ServiceSet
+                                                      orderby serviceDtl.Name
+                                                      select serviceDtl;
 
-                if (genreQry is null || genreQry.Count() < 1) return View();
+                if (genreQry is null || !genreQry.Any()) return View();
 
                 List<ServiceDetail> ServiceListOrgnl = genreQry.Distinct().ToList();
 
@@ -179,7 +181,9 @@ namespace SqlIntegrationUI.Controllers
 
                         try
                         {
-                            var response = await Client.GetAsync($"{BaseUrl}/Services/{service.Endpoint}");
+                            string json = Serialize.ToJson(service);
+                            StringContent content = new(json);
+                            var response = await Client.PutAsync($"{BaseUrl}/Services/{service.Endpoint}", content);
                             if (response == null)
                             {
                                 Log("ConfigServices could not be loaded!");
@@ -299,7 +303,7 @@ namespace SqlIntegrationUI.Controllers
 
                 for (int i = 0; i < 2; i++)
                 {
-                    restartServices = await ReBuild.RestartServices(Client);
+                    //restartServices = await ReBuild.RestartServices(Client);
                     if (restartServices) break;
                 }
                 if (!restartServices)
