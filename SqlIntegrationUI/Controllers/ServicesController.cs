@@ -9,6 +9,9 @@ using static System.Net.WebRequestMethods;
 using CommonCode.Models.Dtos;
 using CommonCode.CommonClasses;
 using static CommonCode.CommonClasses.Common;
+using Humanizer;
+using System.Text;
+using Azure;
 
 namespace SqlIntegrationUI.Controllers
 {
@@ -50,7 +53,7 @@ namespace SqlIntegrationUI.Controllers
             {
                 try
                 {
-                    using HttpResponseMessage response = await Client.GetAsync($"{BaseUrl}/Services");
+                    using HttpResponseMessage response = await Client.GetAsync($"{ApiBaseUrl}");
                     if (response == null)
                     {
                         Log("ConfigServices could not be loaded!");
@@ -177,13 +180,25 @@ namespace SqlIntegrationUI.Controllers
                             throw new Exception("Error: Passed Service could not be added to ServiceList!");
 
                         set = [.. set.OrderBy(s => s.Name)];
-                        ConfigServices = new Services() { ServiceSet = set };
+                        //ConfigServices = new Services() { ServiceSet = set };
 
                         try
                         {
-                            string json = Serialize.ToJson(service);
-                            StringContent content = new(json);
-                            var response = await Client.PutAsync($"{BaseUrl}/Services/{service.Endpoint}", content);
+                            EditServiceRequestDto dto = new()
+                            {
+                                Endpoint = service.Endpoint,
+                                Enable = service.Enable,
+                                Name = service.Name,
+                                Table = service.Table,
+                                QueryString = service.QueryString,
+                                Period = TimeSpan.FromMinutes(service.Period),
+                                Columns = service.Columns.ToJson(),
+                                TableAltered = service.TableAltered
+                            };
+                            string json = Serialize.ToJson(dto);
+
+                            var content = new StringContent(json, Encoding.UTF8, "application/json");
+                            var response = await Client.PutAsync($"{ApiBaseUrl}/{service.Endpoint}", content);
                             if (response == null)
                             {
                                 Log("ConfigServices could not be loaded!");
@@ -273,6 +288,23 @@ namespace SqlIntegrationUI.Controllers
                     ConfigServices?.ServiceSet?.Remove(service);
                     DeletedServices ??= [];
                     DeletedServices.Add(service);
+
+                    using HttpResponseMessage response = await Client.DeleteAsync($"{ApiBaseUrl}/{endPoint}");
+
+                    if (response == null)
+                    {
+                        Log("ConfigServices could not be loaded!");
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
+                    //response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                        Log(msg);
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -321,5 +353,54 @@ namespace SqlIntegrationUI.Controllers
                 throw;
             }
         }
+
+        public async Task<IActionResult> Diagnostics(string? searchStr)
+        {
+            List<GetDiagnosResponseDto> result = [];
+            try
+            {
+                using HttpResponseMessage response = await Client.GetAsync($"{ApiBaseUrl}/Diagnostics");
+                if (response == null)
+                {
+                    Log("Services could not be loaded!");
+                    //return Problem("Services could not be loaded!");
+                    return View();
+                }
+                //response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                    Log(msg);
+                    //return Problem("Services could not be loaded!");
+                    return View();
+                }
+                result = await response.Content.ReadFromJsonAsync<List<GetDiagnosResponseDto>>();
+            }
+            catch (Exception)
+            { }
+
+            if (ConfigServices is null)
+            {
+                Log("Services could not be loaded!");
+                //return Problem("Services could not be loaded!");
+                return View();
+            }
+            IEnumerable<GetDiagnosResponseDto> genreQry = from service in result orderby service.Name select service;
+
+            if (genreQry is null || !genreQry.Any()) return View();
+
+            List<GetDiagnosResponseDto> ServiceListOrgnl = genreQry.Distinct().ToList();
+
+            if (!string.IsNullOrEmpty(searchStr))
+                genreQry = genreQry.Where(s => s.Name!.Contains(searchStr));
+
+            List<GetDiagnosResponseDto> ServiceListFltrd = genreQry.Distinct().ToList();
+            ViewData["ServiceSet"] = new SelectList(ServiceListOrgnl, "Name", "Name");
+            ViewData["ServiceListFltrd"] = new SelectList(ServiceListFltrd, "Name", "Name");
+
+            List<List<GetDiagnosResponseDto>> lst = [ServiceListOrgnl, ServiceListFltrd];
+            return View("Diagnostics", lst);
+        }
     }
+
 }

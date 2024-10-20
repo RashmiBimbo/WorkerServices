@@ -1,14 +1,13 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
+﻿using AutoMapper;
+using CommonCode.Models.Dtos.Requests;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System.Data;
-using static System.DateTime;
-using static CommonCode.CommonClasses.ExceptionLogger;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using CommonCode.CommonClasses;
+using Newtonsoft.Json.Linq;
 using SqlIntegrationServices;
+using System.Data;
+using System.Linq.Expressions;
+using System.Reflection;
+using static System.DateTime;
 
 namespace SqlIntegrationServices
 {
@@ -18,19 +17,25 @@ namespace SqlIntegrationServices
         protected ServiceDbContext cntxt;
         protected string msg;
         protected readonly double period = 30;
+        protected const string DateFromat = "dd-MMM-yyyy:HH:mm:ss.fff";
         protected readonly IServiceScopeFactory serviceScopeFactory;
         protected readonly ILogger<BaseWorker> logger;
         protected Timer timer;
         protected Thread BackgroundThread;
         private CancellationTokenSource? _stoppingCts;
         private readonly ServiceDetail CrntService;
+        private readonly IHttpClientFactory HttpClientFactory;
+        private HttpClient Client;
         private readonly Services Services;
         private readonly string logFile, ServiceName, ServiceEndpoint, ServiceTbl, QueryString;
-        private long? DtTrkCnt = 0, DtAddCnt = 0, DtUpdtCnt = 0;
+        private long? PgTrkCnt = 0, PgAddCnt = 0, PgUpdtCnt = 0;
+        //private readonly IMapper mapper;
         private const int BatchSize = 1000; // Define an appropriate batch size
 
         public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDetail service)
         {
+            //ArgumentNullException.ThrowIfNull(httpClientFactory);
+            //HttpClientFactory = httpClientFactory;
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
             CrntService = service;
@@ -112,60 +117,65 @@ namespace SqlIntegrationServices
                 do
                 {
                     long? tTrkCnt = 0, tAddCnt = 0, tUpdtCnt = 0, tI = 0;
-                    DateTime septDt = DateTime.Parse("2024-09-27");
+
                     var startTime = Now;
                     int count = Interlocked.Increment(ref ExecutionCount);
                     string msg = $"{Now}: {ServiceName} Service is running; Count: {count}";
                     LogInfo(msg);
-                    //while (septDt.Month == 9)
-                    //{
-                    string septDtStr = $"{septDt:yyyy-MM-dd}";
-                    string deflFltr = "&cross-company=true";
-                    //string s = $" and ";
-                    //msngRecIds.ForEach(action: r => s += $"RecId1 eq {r} or ");
-                    //s = s.Remove(s.LastIndexOf("or"));
-                    //CrntService.QueryString = $"$filter=DatePhysical eq {septDtStr} " + deflFltr;
 
+                    string defFltr = "&cross-company=true";
                     string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
 
-                    var startTimeD = Now;
                     msg = $"{Entr}{Now}: Data migration started.";
                     LogInfo(msg);
 
                     CrntService.Status = "Running";
-                    //await WriteToConfig();
+                    CrntService.LastRun = startTime;
+                    CrntService.TotalRecordsTracked = null;
+                    CrntService.TotalRecordsAdded = null;
+                    CrntService.TotalRecordsUpdated = null;
+                    CrntService.NextRun = null;
+                    CrntService.TimeTaken = null;
+
+                    await UpdateDiagnostics(CrntService);
 
                     int i = 0;
                     while (!IsEmpty(url))
                     {
                         LogInfo($"{Entr}{Now}: Page no. {++i}");
                         url = await DoWork(resource, url);
-                        LogInfo($"{Entr}{Now}: Total no. of records tracked:{DtTrkCnt}"
-                              + $"{Entr}{Now}: Total no. of records added: {DtAddCnt}"
-                              + $"{Entr}{Now}: Total no. of records updated: {DtUpdtCnt}");
-                        //+ $"{Entr}{Now}: Task execution time: {elapsedTime}");
+                        LogInfo($"{Entr}{Now}: Total no. of records tracked:{PgTrkCnt}, added: {PgAddCnt}, updated: {PgUpdtCnt}.");
 
+                        tAddCnt += PgAddCnt; tTrkCnt += PgTrkCnt; tUpdtCnt += PgUpdtCnt; tI += i;
+                        PgAddCnt = 0; PgTrkCnt = 0; PgUpdtCnt = 0;
+
+                        CrntService.TotalRecordsTracked = tTrkCnt;
+                        CrntService.TotalRecordsAdded = tAddCnt;
+                        CrntService.TotalRecordsUpdated = tUpdtCnt;
+
+                        await UpdateDiagnostics(CrntService);
                     }
-                    var endTimeD = Now;
-                    var elapsedTime = endTimeD - startTimeD;
 
-                    tAddCnt += DtAddCnt; tTrkCnt += DtTrkCnt; tUpdtCnt += DtUpdtCnt; tI += i;
-                    DtAddCnt = 0; DtTrkCnt = 0; DtUpdtCnt = 0;
-                    //septDt = septDt.AddDays(1);
-                    //}
-                    var endTime = Now;
+                    var elapsedTime = (Now - startTime).TotalMinutes;
+                    DateTime nxtRun = Now.AddMinutes(period);
+
+                    CrntService.Status = "Paused";
+                    CrntService.LastRun = Now;
+                    CrntService.TimeTaken = elapsedTime /*TimeSpan.FromMinutes(elapsedTime)*/;
+                    CrntService.NextRun = nxtRun;
+
+                    await UpdateDiagnostics(CrntService);
 
                     LogInfo($"{Entr}{Now}: Data migration completed."
-                          + $"{Entr}{Now}: Total pages read : {tI}"
-                          + $"{Entr}{Now}: Total no. of records tracked:{tTrkCnt}"
-                          + $"{Entr}{Now}: Total no. of records added: {tAddCnt}"
-                          + $"{Entr}{Now}: Total no. of records updated: {tUpdtCnt}"
-                          + $"{Entr}{Now}: Task execution time: {endTime - startTime}");
+                          + $"{Entr}{Now}: Total pages read : {tI}."
+                          + $"{Entr}{Now}: Total no. of records tracked:{tTrkCnt}, added: {tAddCnt}, updated: {tUpdtCnt}."
+                          + $"{Entr}{Now}: Task execution time: {elapsedTime}.");
 
-                    LogInfo($"{Entr}{Now}: Next iteration will start after {period} minutes at {Now.AddMinutes(period)}"
+                    LogInfo($"{Entr}{Now}: Next iteration will start after {CrntService.Period} at {nxtRun:dd-MMM-yyyy:hh:mm:ss}."
                           + $"{Entr}***********************************************************{Entr}");
 
                     tTrkCnt = 0; tAddCnt = 0; tUpdtCnt = 0;
+                    //}
                     await Task.Delay(TimeSpan.FromMinutes(period), stoppingToken);
                 }
                 while (await timer.WaitForNextTickAsync(stoppingToken));
@@ -177,6 +187,50 @@ namespace SqlIntegrationServices
             finally
             {
                 LogInfo($"{Now}: {ServiceName} Service stopped.");
+            }
+        }
+
+        private async Task UpdateDiagnostics(ServiceDetail crntService)
+        {
+            try
+            {
+                using var scope = serviceScopeFactory.CreateScope();
+                Client = scope.ServiceProvider.GetService<HttpClient>();
+                double timetkn = (double)(crntService.TimeTaken is null ? 0 : crntService.TimeTaken);
+                var mapper = scope.ServiceProvider.GetRequiredService<AutoMapper.IMapper>();
+                //EditDiagnosRequestDto dto = mapper.Map<EditDiagnosRequestDto>(crntService);
+                EditDiagnosRequestDto dto = new()
+                {
+                    Endpoint = crntService.Endpoint,
+                    LastRun = crntService.LastRun,
+                    NextRun = crntService.NextRun,
+                    TotalRecordsTracked = crntService.TotalRecordsTracked,
+                    TotalRecordsAdded = crntService.TotalRecordsAdded,
+                    TotalRecordsUpdated = crntService.TotalRecordsUpdated,
+                    Status = crntService.Status,                    
+                    TimeTaken = TimeSpan.FromMinutes(timetkn),
+                    ModifiedDate = DateTime.Now
+                };                               
+                string json = JsonConvert.SerializeObject(dto);
+                StringContent content = new(json, Encoding.UTF8, "application/json");
+                var response = await Client.PutAsync($"{ApiDiagnosUrl}/{dto.Endpoint}", content);
+                if (response == null)
+                {
+                    LogInfo("ConfigServices could not be loaded!");
+                    return;
+                }
+                if (!response.IsSuccessStatusCode)
+                {
+                    string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                    LogInfo(msg); ;
+                    return;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string msg = GetRelErrorMsg(ex, NameSpacesUsed);
+                LogInfo($"{Now} : Error: {msg}");
             }
         }
 
@@ -231,11 +285,11 @@ namespace SqlIntegrationServices
 
                 long addCntBatch = 0, updtCntBatch = 0, trkCntBatch = 0;
 
-                foreach (var batch in batches)
+                using (var scope = serviceScopeFactory.CreateScope())
                 {
-                    if (batch is null) continue;
-                    using (var scope = serviceScopeFactory.CreateScope())
+                    foreach (var batch in batches)
                     {
+                        if (batch is null) continue;
                         ServiceDbContext context = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
 
                         context.Database.SetCommandTimeout(180); // Timeout in seconds
@@ -312,7 +366,7 @@ namespace SqlIntegrationServices
 
                 //LogInfo(msg);
                 //}
-                DtAddCnt += addCntBatch; DtUpdtCnt += updtCntBatch; DtTrkCnt += trkCntBatch;
+                PgAddCnt += addCntBatch; PgUpdtCnt += updtCntBatch; PgTrkCnt += trkCntBatch;
             }
             catch (Exception ex)
             {

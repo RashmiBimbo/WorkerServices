@@ -20,6 +20,7 @@ namespace SqlIntegrationAPI.Mappings
             CreateMap<DbService, GetDiagnosResponseDto>().ReverseMap();
             CreateMap<AppUser, RegisterDto>().ReverseMap();
             CreateMap<AppUser, AppUserDto>().ReverseMap();
+
         }
     }
 }

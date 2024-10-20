@@ -24,8 +24,6 @@ namespace CommonCode.Models.Dtos.Requests
 
         public DateTime? NextRun { get; set; }
 
-        public bool? TableAltered { get; set; }
-
         public DateTime? ModifiedDate { get; set; }
 
         [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]

@@ -1,0 +1,92 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model List<List<GetDiagnosResponseDto>>
+
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-dismissible alert-info">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @ViewData["Message"]
+    </div>
+}
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-dismissible alert-danger">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @ViewData["ErrorMessage"]
+    </div>
+}
+@if (ViewData["SuccessMessage"] != null)
+{
+    <div class="alert alert-dismissible alert-success">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @ViewData["SuccessMessage"]
+    </div>
+}
+@{
+    ViewData["Title"] = "Services";
+}
+<br />
+<div runat="server" class="form-horizontal form-group">
+    <form asp-controller="Services" asp-action="Diagnostics" method="get">
+        @{
+            if (Model is null || Model.Count < 1 || Model[0] is null || Model[0].Count() < 1) return;
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <label asp-for="@Model[0][0].Name" class="control-label">Services</label>
+                    <select asp-items="@ViewData["ServiceSet"] as SelectList" id="DdlNames" class="form-select" name="searchStr">
+                        <option class="dropdown-item" value="">All</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <br />
+                    <button class="btn btn-primary" asp-action="Diagnostics">View</button>
+                </div>
+            </div>
+            <br />
+            <br />
+            @* <legend>Services</legend> *@
+            <table class="table table-hover table-bordered table-responsive table-group-divider">
+                <thead>
+                    <tr>
+                        <th>Sno</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Name)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Status)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].LastRun)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsTracked)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsAdded)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsUpdated)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].TimeTaken)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].NextRun)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 0;
+                        foreach (GetDiagnosResponseDto itm in Model![1])
+                        {
+                            i++;
+                            <tr>
+                                <td>@i</td>
+                                <td scope="col">@itm.Name</td>
+                                <td scope="col">@itm.Status</td>
+                                <td scope="col">@itm.LastRun</td>
+                                <td scope="col">@itm.TotalRecordsTracked</td>
+                                <td scope="col">@itm.TotalRecordsAdded</td>
+                                <td scope="col">@itm.TotalRecordsUpdated</td>
+                                <td scope="col">@itm.TimeTaken</td>
+                                <td scope="col">@itm.NextRun</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            <form>
+                <button type="button" class="btn btn-outline-primary" onclick="location.href='@Url.Action("Reset", "Services")'">Back</button>
+            </form>
+        }
+    </form>
+</div>

@@ -63,20 +63,20 @@ namespace CommonCode.CommonClasses
         [JsonProperty("TableAltered")]
         public bool TableAltered { get; set; } = false;
 
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
-        public string LastRun { get; set; }
+        public string? LastRun { get; set; }
 
-        public int TotalRecordsTracked { get; set; }
+        public long? TotalRecordsTracked { get; set; }
+                   
+        public long? TotalRecordsAdded { get; set; }
+                   
+        public long? TotalRecordsUpdated { get; set; }
 
-        public int TotalRecordsAdded { get; set; }
-
-        public int TotalRecordsUpdated { get; set; }
-
-        public int TimeTaken { get; set; }
+        public double? TimeTaken { get; set; }
 
         [StringLength(255)]
-        public string NextRun { get; set; }
+        public string? NextRun { get; set; }
 
         [JsonProperty("Columns")]
         public List<Column> Columns { get; set; }

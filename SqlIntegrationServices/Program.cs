@@ -1,5 +1,9 @@
+using Azure;
 using CommonCode.CommonClasses;
+using CommonCode.Mappings;
+using CommonCode.Models.Dtos.Responses;
 using SqlIntegrationServices;
+using System.Net.Http.Json;
 using System.Reflection;
 
 class Program
@@ -13,8 +17,8 @@ class Program
                     {
                         // Ensure that user secrets are added to the configuration
                         config.AddUserSecrets<Program>();
-                    })
-                .ConfigureServices(AddServices);
+                    });
+            builder.ConfigureServices(AddServices);
 
             var host = builder.Build();
             host.Run();
@@ -55,7 +59,7 @@ class Program
         foreach (ServiceDetail serviceDtl in services.ServiceSet)
         {
             string itmJsn;
-            //if (serviceDtl.Name.Contains("GeneralJournalEntryEntities"))
+            //if (serviceDtl.Name.Contains("InventDims", StrComp))
                 if (serviceDtl.Enable)
             {
                 //ServiceConfiguration serviceConfig = serviceDtl.ServiceConfiguration;
@@ -72,6 +76,8 @@ class Program
 
                         if (service != null && entityTypes.Contains(service) && registeredTypes.Add(service))
                         {
+                            serviceCln.AddHttpClient();
+                            serviceCln.AddAutoMapper(typeof(AutoMapperProfiles));
                             // Register the worker as a singleton serviceDtl
                             serviceCln.AddSingleton<IHostedService>(provider =>
                             {

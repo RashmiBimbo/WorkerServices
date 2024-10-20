@@ -21,7 +21,7 @@ namespace CommonCode.Models.Dtos.Requests
         public string? QueryString { get; set; }
 
         //public TimeSpan Period { get; set; }
-        public int Period { get; set; }
+        public TimeSpan Period { get; set; }
 
         [Required]
         [StringLength(255, ErrorMessage = "The table name has to be maximum of 255 characters")]

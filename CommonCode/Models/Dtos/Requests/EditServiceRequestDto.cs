@@ -31,7 +31,7 @@ namespace CommonCode.Models.Dtos.Requests
 
         public DateTime? ModifiedDate { get; set; }
 
-        [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
+        [StringLength(255, ErrorMessage = "The endpoint has to be of 3-255 characters")]
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
         [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string? ModifiedBy { get; set; }

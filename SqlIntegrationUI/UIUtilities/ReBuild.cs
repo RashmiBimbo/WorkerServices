@@ -514,10 +514,10 @@ namespace SqlIntegrationUI.UIUtilities
                     DeletedServices.Remove(service);
                     try
                     {
-                        var response = await client.DeleteAsync($"{BaseUrl}/Services/{service.Endpoint}");
+                        var response = await client.DeleteAsync($"{ApiBaseUrl}/{service.Endpoint}");
                         if (response == null)
-                        { }
-                        response.EnsureSuccessStatusCode();
+                        { return; }
+                        //response.EnsureSuccessStatusCode();
                         if (!response.IsSuccessStatusCode)
                         {
                             string msg = $"HTTP request failed with status code: {response.StatusCode}";
