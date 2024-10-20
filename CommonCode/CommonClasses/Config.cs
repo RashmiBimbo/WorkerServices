@@ -46,7 +46,7 @@ namespace CommonCode.CommonClasses
 
         [Required]
         [JsonProperty("Period")]
-        public int Period { get; set; } = 30;
+        public double Period { get; set; } = 30;
 
         [Required]
         [JsonProperty("Table")]
@@ -65,18 +65,17 @@ namespace CommonCode.CommonClasses
 
         public string? Status { get; set; }
 
-        public string? LastRun { get; set; }
+        public DateTime? LastRun { get; set; }
 
         public long? TotalRecordsTracked { get; set; }
-                   
+
         public long? TotalRecordsAdded { get; set; }
-                   
+
         public long? TotalRecordsUpdated { get; set; }
 
         public double? TimeTaken { get; set; }
 
-        [StringLength(255)]
-        public string? NextRun { get; set; }
+        public DateTime? NextRun { get; set; }
 
         [JsonProperty("Columns")]
         public List<Column> Columns { get; set; }
