@@ -15,6 +15,7 @@ namespace CommonCode.CommonClasses
         private string ServiceName;
         private string ServiceTable;
         private string ServiceEndpoint;
+        private TimeSpan _period = TimeSpan.FromMinutes(30); // Default value set here
 
         [JsonProperty("Enable")]
         public bool Enable { get; set; } = true;
@@ -43,10 +44,28 @@ namespace CommonCode.CommonClasses
 
         [JsonProperty("QueryString")]
         public string? QueryString { get; set; } = "cross-company=true";
-
         [Required]
         [JsonProperty("Period")]
-        public double Period { get; set; } = 30;
+        public TimeSpan Period
+        {
+            get => _period;
+            set
+            {
+                // Set default value if no value is provided or a wrong type is assigned
+                if (value == TimeSpan.Zero)
+                {
+                    _period = TimeSpan.FromMinutes(30);
+                }
+                else if (value.TotalMinutes is double)
+                {
+                    _period = TimeSpan.FromMinutes(300);
+                }
+                else
+                {
+                    _period = value;
+                }
+            }
+        }
 
         [Required]
         [JsonProperty("Table")]
@@ -73,7 +92,7 @@ namespace CommonCode.CommonClasses
 
         public long? TotalRecordsUpdated { get; set; }
 
-        public double? TimeTaken { get; set; }
+        public TimeSpan? TimeTaken { get; set; }
 
         public DateTime? NextRun { get; set; }
 

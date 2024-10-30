@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommonCode.CommonClasses;
+using static CommonCode.CommonClasses.Common;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace CommonCode.Models.Dtos
@@ -19,9 +21,9 @@ namespace CommonCode.Models.Dtos
         [RegularExpression("^[a-zA-Z0-9\\-_]*$")]
         public string Endpoint { get; set; }
 
-        public string? QueryString { get; set; }
+        public string? QueryString { get; set; } = "cross-company=true";
 
-        public TimeSpan Period { get; set; }
+        public TimeSpan Period { get; set; } = TimeSpan.FromMinutes(30);
 
         [Required]
         [StringLength(255, ErrorMessage = "The service name has to be maximum of 255 characters")]
@@ -29,7 +31,7 @@ namespace CommonCode.Models.Dtos
         [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string Table { get; set; }
 
-        public bool? TableAltered { get; set; }
+        public bool TableAltered { get; set; } = false;
 
         public string? Status { get; set; }
 
@@ -47,7 +49,7 @@ namespace CommonCode.Models.Dtos
 
         public string Columns { get; set; }
 
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [Required]
         [StringLength(255, ErrorMessage = "The service name has to be maximum of 255 characters")]

@@ -1,4 +1,5 @@
 ﻿using CommonCode.CommonClasses;
+using CommonCode.Models.Dtos;
 using CommonCode.Models.Dtos.Requests;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -115,15 +116,15 @@ namespace SqlIntegrationUI.Controllers
             bool success = true;
             try
             {
-                var dto = new CreateServiceRequestDto()
+                var dto = new PartialServiceDto()
                 {
                     Name = service.Name,
                     Endpoint = service.Endpoint,
                     Enable = true,
-                    Period = TimeSpan.FromMinutes(service.Period),
+                    Period = service.Period,
                     Table = service.Table,
                     QueryString = service.QueryString,
-                    Columns = "null",
+                    Columns = null,
                     CreatedBy = "Rashmi",
                     CreatedDate = DateTime.Now
                 };
@@ -269,7 +270,7 @@ namespace SqlIntegrationUI.Controllers
                     {
                         Name = GetCellValueByColumn(doc, row, columnMappings, "NAME"),
                         Endpoint = endPoint,
-                        Period = Convert.ToInt16(GetCellValueByColumn(doc, row, columnMappings, "PERIOD")),
+                        Period = TimeSpan.FromMinutes(Convert.ToDouble(GetCellValueByColumn(doc, row, columnMappings, "PERIOD"))),
                         Table = GetCellValueByColumn(doc, row, columnMappings, "TABLE")
                     };
 

@@ -207,7 +207,7 @@ namespace CommonCode.CommonClasses
             }
         }
 
-        public static async Task<JObject> GetServiceJObject(ServiceDetail service)
+        public static async Task<JObject> GetServiceJObject(dynamic service)
         {
             JObject jObjRslt = null;
             string result = Emp;
@@ -262,7 +262,7 @@ namespace CommonCode.CommonClasses
             }
         }
 
-        public static async Task<List<Column>> GetColumns(JObject jObj = null, ServiceDetail service = null)
+        public static async Task<List<Column>> GetColumns(JObject jObj = null, dynamic service = null)
         {
             List<Column> columns = null;
             try

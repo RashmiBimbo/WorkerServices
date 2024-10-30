@@ -24,12 +24,13 @@ public class Program
             var logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .WriteTo.File(LogFile, rollingInterval: RollingInterval.Month)
-                .MinimumLevel.Error()
+                .MinimumLevel.Information()
                 .CreateBootstrapLogger();
 
             // Add services to the container.
             builder.Logging.ClearProviders();
             builder.Logging.AddSerilog(logger);
+            builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error); // Show only warnings and errors
             builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -45,8 +46,9 @@ public class Program
             {
                 throw new InvalidOperationException("Connection string 'ERP_SQL_ConnStr' not found or is empty.");
             }
-            builder.Services.AddDbContext<ErpSqlDbContext>(options => options.UseSqlServer(erp_SQL_ConnStr, sqlOptions =>
-                sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
+            builder.Services.AddDbContext<ErpSqlDbContext>(options => options
+            .UseSqlServer(erp_SQL_ConnStr, sqlOptions => sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null))
+            .LogTo(Console.WriteLine, LogLevel.Error));
 
             builder.Services.AddDbContext<ApplicationDbContext>();
 

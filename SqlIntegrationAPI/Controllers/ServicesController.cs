@@ -6,6 +6,7 @@ using CommonCode.Models.Dtos.Responses;
 using SqlIntegrationAPI.Repositories;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using CommonCode.Models.Dtos;
 
 namespace SqlIntegrationAPI.Controllers
 {
@@ -21,7 +22,7 @@ namespace SqlIntegrationAPI.Controllers
         // GET: api/Services
         [HttpGet()]
         //[Authorize]
-        public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetServices(string? sortBy, string? filterOn, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
+        public async Task<ActionResult<IEnumerable<ServiceDto>>> GetServices(string? sortBy, string? filterOn, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
             //logger.LogInformation("GetServices get called");
             //throw new Exception("Hi exception");
@@ -31,11 +32,11 @@ namespace SqlIntegrationAPI.Controllers
                 return NoContent();
             }
             // Map domain models to DTOs for response
-            var serviceDtos = _mapper.Map<List<GetServiceResponseDto>>(services);
+            var serviceDtos = _mapper.Map<List<ServiceDto>>(services);
 
             return Ok(serviceDtos);
         }
-
+        
         // GET: api/Services/Diagnostics
         [HttpGet("Diagnostics")]
         public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnostics(string? sortBy, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
@@ -54,7 +55,7 @@ namespace SqlIntegrationAPI.Controllers
         // GET: api/Services/{endPoint}
         [HttpGet("{endPoint}")]
         //[Authorize]
-        public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetService(string endPoint)
+        public async Task<ActionResult<IEnumerable<ServiceDto>>> GetService([FromRoute]string endPoint)
         {
             var services = await _serviceRepository.GetByEndpointAsync(endPoint);
 
@@ -64,7 +65,7 @@ namespace SqlIntegrationAPI.Controllers
             }
 
             // Map domain models to DTOs for response
-            var serviceDtos = _mapper.Map<List<GetServiceResponseDto>>(services);
+            var serviceDtos = _mapper.Map<List<ServiceDto>>(services);
             return Ok(serviceDtos);
         }
 
@@ -88,7 +89,7 @@ namespace SqlIntegrationAPI.Controllers
         // POST: api/Services/Services
         [HttpPost()]
         //[Authorize]
-        public async Task<ActionResult> CreateService([FromBody] CreateServiceRequestDto createService)
+        public async Task<ActionResult> CreateService([FromBody] PartialServiceDto createService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -113,7 +114,7 @@ namespace SqlIntegrationAPI.Controllers
         // PUT: api/Services/{endPoint}
         [HttpPut("{endPoint}")]
         //[Authorize]
-        public async Task<IActionResult> UpdateService([FromRoute] string endPoint, [FromBody] EditServiceRequestDto editService)
+        public async Task<IActionResult> UpdateService([FromRoute] string endPoint, [FromBody] PartialServiceDto editService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             return await Update(endPoint, editService);
@@ -160,7 +161,7 @@ namespace SqlIntegrationAPI.Controllers
             {
                 return BadRequest("Please provide all the required parameters.");
             }
-            if (!(editService is EditDiagnosRequestDto || editService is EditServiceRequestDto))
+            if (!(editService is EditDiagnosRequestDto || editService is PartialServiceDto))
             {
                 return BadRequest("Please provide all the required parameters in correct format.");
             }

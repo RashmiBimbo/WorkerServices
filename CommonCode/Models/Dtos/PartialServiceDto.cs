@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CommonCode.CommonClasses;
+using System.ComponentModel.DataAnnotations;
 
-namespace CommonCode.Models.Dtos.Requests
+namespace CommonCode.Models.Dtos
 {
-    public class EditServiceRequestDto
+    public class PartialServiceDto
     {
         [StringLength(255, ErrorMessage = "The endpoint has to be maximum of 255 characters")]
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
@@ -35,5 +36,12 @@ namespace CommonCode.Models.Dtos.Requests
         [MinLength(3, ErrorMessage = "The endpoint has to be minimum of 3 characters")]
         [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
         public string? ModifiedBy { get; set; }
+
+        public DateTime CreatedDate { get; set; }
+
+        [Required]
+        [StringLength(255, ErrorMessage = "The Created By field has to be maximum of 255 characters")]
+        [RegularExpression("^[a-zA-Z0-9\\s-_]*$")]
+        public string CreatedBy { get; set; }
     }
 }

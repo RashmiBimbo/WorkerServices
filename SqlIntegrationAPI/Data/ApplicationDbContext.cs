@@ -13,7 +13,7 @@ namespace SqlIntegrationAPI.Data
             base.OnConfiguring(optionsBuilder);
 
             optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ESIAngularApp;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False", sqlOptions =>
-            sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null));
+            sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)).LogTo(Console.WriteLine, LogLevel.Warning);
 
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
