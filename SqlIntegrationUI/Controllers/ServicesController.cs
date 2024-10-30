@@ -9,6 +9,10 @@ using static System.Net.WebRequestMethods;
 using CommonCode.Models.Dtos;
 using CommonCode.CommonClasses;
 using static CommonCode.CommonClasses.Common;
+using Humanizer;
+using System.Text;
+using Azure;
+using System.Collections.Generic;
 
 namespace SqlIntegrationUI.Controllers
 {
@@ -25,13 +29,13 @@ namespace SqlIntegrationUI.Controllers
                 HttpClientFactory = httpClientFactory;
                 Client = HttpClientFactory.CreateClient();
 
-                if (ConfigServices is null)
-                {
-                    Log("ConfigServices not found");
-                    ConfigServices = new Services { ServiceSet = [] };
+                //if (ConfigServices is null)
+                //{
+                //    Log("ConfigServices not found");
+                //    ConfigServices = new Services { ServiceSet = [] };
 
-                    //throw new Exception("ConfigServices not found")};
-                }
+                //    //throw new Exception("ConfigServices not found")};
+                //}ed
                 //    ViewData["SuccessMessage"] = Emp;
                 //    ViewData["ErrorMessage"] = Emp;
                 //    ViewData["Message"] = Emp;
@@ -48,16 +52,17 @@ namespace SqlIntegrationUI.Controllers
         {
             try
             {
+                List<ServiceDto> result = null;
                 try
                 {
-                    var response = await Client.GetAsync($"{BaseUrl}/Services");
+                    using HttpResponseMessage response = await Client.GetAsync($"{ApiBaseUrl}");
                     if (response == null)
                     {
                         Log("ConfigServices could not be loaded!");
                         //return Problem("ConfigServices could not be loaded!");
                         return View();
                     }
-                    response.EnsureSuccessStatusCode();
+                    //response.EnsureSuccessStatusCode();
                     if (!response.IsSuccessStatusCode)
                     {
                         string msg = $"HTTP request failed with status code: {response.StatusCode}";
@@ -65,21 +70,21 @@ namespace SqlIntegrationUI.Controllers
                         //return Problem("ConfigServices could not be loaded!");
                         return View();
                     }
-                    var result = await response.Content.ReadFromJsonAsync<GetServiceResponseDto[]>();
+                    result = await response.Content.ReadFromJsonAsync<List<ServiceDto>>();
                 }
                 catch (Exception)
                 { }
-                if (ConfigServices is null)
+                if (!(result?.Count > 0))
                 {
-                    Log("ConfigServices could not be loaded!");
+                    Log("Services not found!");
                     //return Problem("ConfigServices could not be loaded!");
                     return View();
                 }
-                IEnumerable<ServiceDetail> genreQry = from serviceDtl in ConfigServices.ServiceSet orderby serviceDtl.Name select serviceDtl;
+                IEnumerable<ServiceDto> genreQry = from service in result orderby service.Name select service;
 
-                if (genreQry is null || genreQry.Count() < 1) return View();
+                if (genreQry is null || !genreQry.Any()) return View();
 
-                List<ServiceDetail> ServiceListOrgnl = genreQry.Distinct().ToList();
+                List<ServiceDto> ServiceListOrgnl = genreQry.Distinct().ToList();
 
                 if (!string.IsNullOrEmpty(searchString))
                     genreQry = genreQry.Where(s => s.Name!.Contains(searchString));
@@ -88,7 +93,7 @@ namespace SqlIntegrationUI.Controllers
                 ViewData["ServiceSet"] = new SelectList(ServiceListOrgnl, "Name", "Name");
                 ViewData["ServiceListFltrd"] = new SelectList(ServiceListFltrd, "Name", "Name");
 
-                List<List<ServiceDetail>> lst = [ServiceListOrgnl, ServiceListFltrd];
+                List<List<ServiceDto>> lst = [ServiceListOrgnl, ServiceListFltrd];
                 return View(lst);
             }
             catch (Exception ex)
@@ -101,25 +106,55 @@ namespace SqlIntegrationUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string Endpoint, string colSearch)
         {
+            List<Column> lst;
+            PartialServiceDto? service = null;
             if (IsEmpty(Endpoint))
                 return NotFound();
             try
             {
-                ServiceDetail service = ConfigServices.ServiceSet.First(s => s.Endpoint == Endpoint);
+                //ServiceDetail service = ConfigServices.ServiceSet.First(s => s.Endpoint == Endpoint);
 
-                if (service == null)
-                    return NotFound();
+                try
+                {
+                    using HttpResponseMessage response = await Client.GetAsync($"{ApiBaseUrl}/{Endpoint}");
 
-                List<Column> lst;
+                    if (response == null)
+                    {
+                        Log("Requested service could not be loaded!");
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
+                    //response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                        Log(msg);
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
+                    var rslt = await response.Content.ReadFromJsonAsync<List<PartialServiceDto>>();
+
+                    service = rslt[0];
+                }
+                catch (Exception)
+                { }
+                if (service is null)
+                {
+                    Log("Services not found!");
+                    //return Problem("ConfigServices could not be loaded!");
+                    return View();
+                }
+
                 if (service.Columns is null)
                 {
-                    ConfigServices.ServiceSet.Remove(service);
+                    //ConfigServices.ServiceSet.Remove(service);
                     lst = await GetColumns(null, service) ?? [];
-                    service.Columns ??= lst;
-                    ConfigServices.ServiceSet.Add(service);
+                    //service.Columns ??= lst;
+                    //ConfigServices.ServiceSet.Add(service);
                 }
                 else
-                    lst = service.Columns;
+                    lst = DeserializeJson<List<Column>>.Deserialize(service.Columns);
+                //lst = DeserializeJson<List<Column>>.Deserialize(service.Columns);
 
                 lst = lst.OrderBy(c => c?.Name)?.ToList();
 
@@ -129,8 +164,17 @@ namespace SqlIntegrationUI.Controllers
                     lst = lst.Where(col => col.Name.Contains(colSearch, StrComp)).ToList();
 
                 ViewData["FiltrdColumnList"] = new SelectList(lst, "Name", "Name");
-
-                return View(service);
+                var model = new ServiceDetail()
+                {
+                    Name = service.Name,
+                    Endpoint = service.Endpoint,
+                    Enable = (bool)service.Enable,
+                    Columns = lst,
+                    QueryString = service.QueryString,
+                    Period = (TimeSpan)service.Period,
+                    Table = service.Table
+                };
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -161,50 +205,63 @@ namespace SqlIntegrationUI.Controllers
 
                 //if (ModelState.IsValid)
                 //{
-                HashSet<ServiceDetail> set = (ConfigServices.ServiceSet) ?? throw new ArgumentNullException("Error: ConfigServices are null!");
-                ServiceDetail? existingService = set.FirstOrDefault(s => s.Endpoint == service.Endpoint);
-                if (existingService != null)
+                //HashSet<ServiceDetail> set = (ConfigServices.ServiceSet) ?? throw new ArgumentNullException("Error: ConfigServices are null!");
+                //ServiceDetail? existingService = set.FirstOrDefault(s => s.Endpoint == service.Endpoint);
+                //if (existingService != null)
+                //{
+                try
                 {
+                    //set.Remove(existingService);
+                    List<Column> cols = await GetColumns(null, service) ?? [];
+                    //service.Columns ??= JsonConvert.SerializeObject(cols);
+
+                    //bool success = set.Add(service);
+                    //if (!success)
+                    //    throw new Exception("Error: Passed Service could not be added to ServiceList!");
+
+                    //set = [.. set.OrderBy(s => s.Name)];
+                    //ConfigServices = new Services() { ServiceSet = set };
+
                     try
                     {
-                        set.Remove(existingService);
-                        service.Columns ??= await GetColumns(null, service) ?? [];
-
-                        bool success = set.Add(service);
-                        if (!success)
-                            throw new Exception("Error: Passed Service could not be added to ServiceList!");
-
-                        set = [.. set.OrderBy(s => s.Name)];
-                        ConfigServices = new Services() { ServiceSet = set };
-
-                        try
+                        PartialServiceDto dto = new()
                         {
-                            var response = await Client.GetAsync($"{BaseUrl}/Services/{service.Endpoint}");
-                            if (response == null)
-                            {
-                                Log("ConfigServices could not be loaded!");
-                                //return Problem("ConfigServices could not be loaded!");
-                                return View();
-                            }
-                            response.EnsureSuccessStatusCode();
-                            if (!response.IsSuccessStatusCode)
-                            {
-                                string msg = $"HTTP request failed with status code: {response.StatusCode}";
-                                Log(msg);
-                                //return Problem("ConfigServices could not be loaded!");
-                                return View();
-                            }
-                            var result = await response.Content.ReadFromJsonAsync<GetServiceResponseDto[]>();
+                            Endpoint = service.Endpoint,
+                            Enable = service.Enable,
+                            Name = service.Name,
+                            Table = service.Table,
+                            QueryString = service.QueryString,
+                            Period = service.Period,
+                            Columns = service.Columns.ToJson(),
+                            TableAltered = service.TableAltered
+                        };
+                        string json = Serialize.ToJson(dto);
+
+                        var content = new StringContent(json, Encoding.UTF8, "application/json");
+                        var response = await Client.PutAsync($"{ApiBaseUrl}/{service.Endpoint}", content);
+                        if (response == null)
+                        {
+                            Log("Falied to update service!");
+                            //return Problem("ConfigServices could not be loaded!");
+                            return View(service);
                         }
-                        catch (Exception)
-                        { }
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            string msg = $"HTTP put request failed with status code: {response.StatusCode}";
+                            Log(msg);
+                            //return Problem("ConfigServices could not be loaded!");
+                            return View(service);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        LogInfo(ex, LogFile, NameSpacesUsed);
-                        throw;
-                    }
+                    catch (Exception)
+                    { }
                 }
+                catch (Exception ex)
+                {
+                    LogInfo(ex, LogFile, NameSpacesUsed);
+                    throw;
+                }
+                //}
                 //}
                 return RedirectToAction(nameof(Index));
             }
@@ -269,6 +326,23 @@ namespace SqlIntegrationUI.Controllers
                     ConfigServices?.ServiceSet?.Remove(service);
                     DeletedServices ??= [];
                     DeletedServices.Add(service);
+
+                    using HttpResponseMessage response = await Client.DeleteAsync($"{ApiBaseUrl}/{endPoint}");
+
+                    if (response == null)
+                    {
+                        Log("ConfigServices could not be loaded!");
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
+                    //response.EnsureSuccessStatusCode();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                        Log(msg);
+                        //return Problem("ConfigServices could not be loaded!");
+                        return View();
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -299,7 +373,7 @@ namespace SqlIntegrationUI.Controllers
 
                 for (int i = 0; i < 2; i++)
                 {
-                    restartServices = await ReBuild.RestartServices(Client);
+                    //restartServices = await ReBuild.RestartServices(Client);
                     if (restartServices) break;
                 }
                 if (!restartServices)
@@ -317,5 +391,54 @@ namespace SqlIntegrationUI.Controllers
                 throw;
             }
         }
+
+        public async Task<IActionResult> Diagnostics(string? searchStr)
+        {
+            List<GetDiagnosResponseDto> result = [];
+            try
+            {
+                using HttpResponseMessage response = await Client.GetAsync($"{ApiBaseUrl}/Diagnostics");
+                if (response == null)
+                {
+                    Log("Services could not be loaded!");
+                    //return Problem("Services could not be loaded!");
+                    return View();
+                }
+                //response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                    Log(msg);
+                    //return Problem("Services could not be loaded!");
+                    return View();
+                }
+                result = await response.Content.ReadFromJsonAsync<List<GetDiagnosResponseDto>>();
+            }
+            catch (Exception)
+            { }
+
+            if (ConfigServices is null)
+            {
+                Log("Services could not be loaded!");
+                //return Problem("Services could not be loaded!");
+                return View();
+            }
+            IEnumerable<GetDiagnosResponseDto> genreQry = from service in result orderby service.Name select service;
+
+            if (genreQry is null || !genreQry.Any()) return View();
+
+            List<GetDiagnosResponseDto> ServiceListOrgnl = genreQry.Distinct().ToList();
+
+            if (!string.IsNullOrEmpty(searchStr))
+                genreQry = genreQry.Where(s => s.Name!.Contains(searchStr));
+
+            List<GetDiagnosResponseDto> ServiceListFltrd = genreQry.Distinct().ToList();
+            ViewData["ServiceSet"] = new SelectList(ServiceListOrgnl, "Name", "Name");
+            ViewData["ServiceListFltrd"] = new SelectList(ServiceListFltrd, "Name", "Name");
+
+            List<List<GetDiagnosResponseDto>> lst = [ServiceListOrgnl, ServiceListFltrd];
+            return View("Diagnostics", lst);
+        }
     }
+
 }

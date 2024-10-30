@@ -2,8 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.EntityFrameworkCore;
-using SqlIntegrationUI;
 using Microsoft.AspNetCore.Identity;
+
+namespace SqlIntegrationUI;
 
 public class Program
 {
@@ -26,8 +27,9 @@ public class Program
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ErpSqlDbContext>();
 
-            builder.Services.AddDbContext<ErpSqlDbContext>(options => options.UseSqlServer(erp_SQL_ConnStr, sqlOptions =>
-                sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null)));
+            builder.Services.AddDbContext<ErpSqlDbContext>(options => options
+            .UseSqlServer(erp_SQL_ConnStr, sqlOptions => sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null))
+            .LogTo(Console.WriteLine, LogLevel.Error));
 
             builder.Services.AddHttpClient();
             //builder.Services.AddAuthorization(options=>

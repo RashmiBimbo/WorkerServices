@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
+[PrimaryKey("JournalNumber")]
 public abstract partial class GeneralJournalEntryEntitiesBase
 {
     [StringLength(2000)]

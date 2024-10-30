@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-[Keyless]
+[PrimaryKey("dataAreaId", "InvoiceDate", "InvoiceNumber", "LedgerVoucher")]
 public abstract partial class CustInvoiceJourBase
 {
     [StringLength(2000)]
@@ -17,15 +17,19 @@ public abstract partial class CustInvoiceJourBase
     public string? ParentReference { get; set; }
 
     [StringLength(255)]
+    [Key]
     public string dataAreaId { get; set; } = null!;
 
     [Column(TypeName = "datetime")]
+    [Key]
     public DateTime InvoiceDate { get; set; }
 
     [StringLength(255)]
+    [Key]
     public string InvoiceNumber { get; set; } = null!;
 
     [StringLength(255)]
+    [Key]
     public string LedgerVoucher { get; set; } = null!;
 
     [StringLength(2000)]

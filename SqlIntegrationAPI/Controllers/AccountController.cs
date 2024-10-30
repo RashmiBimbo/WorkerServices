@@ -12,13 +12,13 @@ namespace SqlIntegrationAPI.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager, IMapper mapper, ILogger<ServicesAPIController> logger, IJwtService jwtService) : ControllerBase
+public class AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager, IMapper mapper, ILogger<ServicesController> logger, IJwtService jwtService) : ControllerBase
 {
     private readonly UserManager<AppUser> userManager = userManager;
     private readonly SignInManager<AppUser> signInManager = signInManager;
     private readonly RoleManager<AppRole> roleManager = roleManager;
     private readonly IMapper mapper = mapper;
-    private readonly ILogger<ServicesAPIController> logger = logger;
+    private readonly ILogger<ServicesController> logger = logger;
     private readonly IJwtService jwtService = jwtService;
 
     [HttpPost("Register")]

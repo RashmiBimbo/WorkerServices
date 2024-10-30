@@ -1,12 +1,16 @@
-﻿using CommonCode.Config;
-using Newtonsoft.Json.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
+﻿using AutoMapper;
+using CommonCode.Models.Dtos;
+using CommonCode.Models.Dtos.Requests;
+using CommonCode.Models.Dtos.Responses;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Newtonsoft.Json.Linq;
+using SqlIntegrationServices;
 using System.Data;
+using System.Linq.Expressions;
+using System.Net.Http.Json;
+using System.Reflection;
 using static System.DateTime;
-using static CommonCode.ExceptionLogger;
 
 namespace SqlIntegrationServices
 {
@@ -15,35 +19,57 @@ namespace SqlIntegrationServices
         protected int ExecutionCount;
         protected ServiceDbContext cntxt;
         protected string msg;
-        protected readonly double period = 30;
+        protected readonly TimeSpan period = TimeSpan.FromMinutes(30);
+        protected const string DateFromat = "dd-MMM-yyyy:HH:mm:ss.fff";
         protected readonly IServiceScopeFactory serviceScopeFactory;
         protected readonly ILogger<BaseWorker> logger;
         protected Timer timer;
         protected Thread BackgroundThread;
         private CancellationTokenSource? _stoppingCts;
-        private readonly ServiceDetail CrntService;
-        private readonly Services Services;
+        private ServiceDto CrntService;
+        private readonly IHttpClientFactory HttpClientFactory;
+        private readonly HttpClient Client;
+        private readonly IServiceScope Scope;
+        //private readonly Services Services;
         private readonly string logFile, ServiceName, ServiceEndpoint, ServiceTbl, QueryString;
-        private static long? TrkCnt, AddCnt, UpdtCnt;
-        //private readonly List<long> msngRecIds = [5702217655, 5702217684, 5702206797, 5702206804, 5702217735, 5702217653, 5702217651, 5702206800, 5702219121];
-        //private ExceptionLogger ErrMsgFltr;
+        private long? PgTrkCnt = 0, PgAddCnt = 0, PgUpdtCnt = 0;
+        private readonly IMapper Mapper;
+        private const int BatchSize = 1000; // Define an appropriate batch size
 
-        public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDetail service)
+        public BaseWorker(IServiceScopeFactory serviceScopeFactory, ILogger<BaseWorker> logger, ServiceDto service)
         {
-            TrkCnt = 0; AddCnt = 0; UpdtCnt = 0;
-            this.serviceScopeFactory = serviceScopeFactory;
-            this.logger = logger;
-            CrntService = service;
-            ServiceTbl = CrntService.Table;
-            logFile = AppDomain.CurrentDomain.BaseDirectory + $"{CrntService.Endpoint}Service_Log.txt";
-            ServiceEndpoint = CrntService.Endpoint;
-            ServiceName = CrntService.Name;
-            period = CrntService.Period;
             try
             {
-                if (!File.Exists(logFile))
-                    File.Create(logFile);
-                Services = ReadConfig();
+                //ArgumentNullException.ThrowIfNull(httpClientFactory);
+                //HttpClientFactory = httpClientFactory;
+                this.serviceScopeFactory = serviceScopeFactory;
+                this.logger = logger;
+                CrntService = service;
+                ServiceTbl = CrntService.Table;
+                try
+                {
+                    string logFolder = Comb(CrntProjLogFolder, "ServiceLogs");
+                    if (!Directory.Exists(logFolder))
+                    {
+                        Directory.CreateDirectory(logFolder);
+                    }
+                    logFile = Comb(logFolder, $"{CrntService.Endpoint}Service_Log.txt");
+                    //logFile = AppDomain.CurrentDomain.BaseDirectory + $"{CrntService.Endpoint}Service_Log.txt";
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+                ServiceEndpoint = CrntService.Endpoint;
+                ServiceName = CrntService.Name;
+                period = CrntService.Period;
+
+                Scope = serviceScopeFactory.CreateScope();
+                Client = Scope.ServiceProvider.GetService<HttpClient>();
+                Mapper = Scope.ServiceProvider.GetRequiredService<IMapper>();
+                //if (!File.Exists(logFile))
+                //    File.Create(logFile);
+                //Services = ReadConfig();
             }
             catch (Exception ex)
             {
@@ -94,50 +120,76 @@ namespace SqlIntegrationServices
             string resource = "https://mfprod.operations.dynamics.com";
             try
             {
-                // When the timer should have no due-time, then do the work once now.
-                using PeriodicTimer timer = new(TimeSpan.FromMinutes(period));
+                using PeriodicTimer timer = new(period);
+
                 do
                 {
-                    //string deflFltr = "&cross-company=true";
-                    //string s = " and ";
-                    //msngRecIds.ForEach(action: r => s += $"RecId1 eq {r} or ");
-                    //s = s.Remove(s.LastIndexOf("or"));
-                    //CrntService.QueryString += CrntService.QueryString.Replace(deflFltr, Emp) + s + deflFltr;
+                    long? tTrkCnt = 0, tAddCnt = 0, tUpdtCnt = 0, tI = 0;
 
+                    var startTime = Now;
                     int count = Interlocked.Increment(ref ExecutionCount);
-                    
-                    string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
-
                     string msg = $"{Now}: {ServiceName} Service is running; Count: {count}";
                     LogInfo(msg);
 
-                    var startTime = Now;
+                    string defFltr = "&cross-company=true";
+                    string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
+
                     msg = $"{Entr}{Now}: Data migration started.";
                     LogInfo(msg);
 
                     CrntService.Status = "Running";
-                    await WriteToConfig();
+                    CrntService.LastRun = startTime;
+                    CrntService.TotalRecordsTracked = null;
+                    CrntService.TotalRecordsAdded = null;
+                    CrntService.TotalRecordsUpdated = null;
+                    CrntService.NextRun = null;
+                    CrntService.TimeTaken = null;
+
+                    await UpdateDiagnostics(CrntService);
 
                     int i = 0;
                     while (!IsEmpty(url))
                     {
-                        LogInfo($"{Entr}{Now}: Page no. {++i}");
-                        url = await DoWork(resource, url);
+                        CrntService = await CheckServiceExists(CrntService.Endpoint);
+                        if (CrntService is not null)
+                            if (CrntService.Enable)
+                            {      // When the timer should have no due-time, then do the work once now.
+                                LogInfo($"{Entr}{Now}: Page no. {++i}");
+                                url = await DoWork(resource, url);
+                                LogInfo($"{Entr}{Now}: Total no. of records tracked:{PgTrkCnt}, added: {PgAddCnt}, updated: {PgUpdtCnt}.");
+
+                                tAddCnt += PgAddCnt; tTrkCnt += PgTrkCnt; tUpdtCnt += PgUpdtCnt; tI += i;
+                                PgAddCnt = 0; PgTrkCnt = 0; PgUpdtCnt = 0;
+
+                                CrntService.TotalRecordsTracked = tTrkCnt;
+                                CrntService.TotalRecordsAdded = tAddCnt;
+                                CrntService.TotalRecordsUpdated = tUpdtCnt;
+
+                                await UpdateDiagnostics(CrntService);
+                            }
                     }
-                    var endTime = Now;
-                    var elapsedTime = endTime - startTime;
+                    TimeSpan elapsedTime = Now - startTime;
+                    DateTime nxtRun = Now.AddMinutes(period.TotalMinutes);
+
+                    CrntService.Status = "Paused";
+                    CrntService.LastRun = Now;
+                    CrntService.TimeTaken = elapsedTime /*TimeSpan.FromMinutes(elapsedTime)*/;
+                    CrntService.NextRun = nxtRun;
+
+                    await UpdateDiagnostics(CrntService);
 
                     LogInfo($"{Entr}{Now}: Data migration completed."
-                          + $"{Entr}{Now}: Total pages read : {i}"
-                          + $"{Entr}{Now}: Total no. of records tracked:{TrkCnt}"
-                          + $"{Entr}{Now}: Total no. of records added: {AddCnt}"
-                          + $"{Entr}{Now}: Total no. of records updated: {UpdtCnt}"
-                          + $"{Entr}{Now}: Task execution time: {elapsedTime}"
-                          + $"{Entr}{Now}: Next iteration will start after {period} minutes at {Now.AddMinutes(period)}"
+                          + $"{Entr}{Now}: Total pages read : {i}."
+                          + $"{Entr}{Now}: Total no. of records tracked:{tTrkCnt}, added: {tAddCnt}, updated: {tUpdtCnt}."
+                          + $"{Entr}{Now}: Task execution time: {elapsedTime}.");
+
+                    LogInfo($"{Entr}{Now}: Next iteration will start after {CrntService.Period} at {nxtRun:dd-MMM-yyyy:hh:mm:ss}."
                           + $"{Entr}***********************************************************{Entr}");
 
-                    TrkCnt = 0; AddCnt = 0; UpdtCnt = 0;
-                    await Task.Delay(TimeSpan.FromMinutes(period), stoppingToken);
+                    tTrkCnt = 0; tAddCnt = 0; tUpdtCnt = 0; tI = 0;
+                    //}
+                    await Task.Delay(period, stoppingToken);
+
                 }
                 while (await timer.WaitForNextTickAsync(stoppingToken));
             }
@@ -148,6 +200,79 @@ namespace SqlIntegrationServices
             finally
             {
                 LogInfo($"{Now}: {ServiceName} Service stopped.");
+            }
+        }
+        private async Task<ServiceDto> CheckServiceExists(string endPoint)
+        {
+            ServiceDto service = null;
+            for (int i = 0; i < 2; i++)
+            {
+                try
+                {
+                    var response = await Client.GetAsync($"{ApiBaseUrl}/{endPoint}");
+                    if (response == null)
+                    {
+                        LogInfo("ConfigServices could not be loaded!");
+                    }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                        LogInfo(msg);
+                    }
+                    var reslt = await response.Content.ReadFromJsonAsync<List<ServiceDto>>();
+                    service = reslt[0];
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    string msg = GetRelErrorMsg(ex, NameSpacesUsed);
+                    LogInfo($"{Now} : Error: {msg}");
+                }
+            }
+            return service;
+        }
+
+        private async Task UpdateDiagnostics(ServiceDto crntService)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                try
+                {
+                    TimeSpan? timetkn = crntService.TimeTaken is null ? TimeSpan.Zero : crntService.TimeTaken;
+                    //EditDiagnosRequestDto dto = Mapper.Map<EditDiagnosRequestDto>(crntService);
+                    EditDiagnosRequestDto dto = new()
+                    {
+                        Endpoint = crntService.Endpoint,
+                        LastRun = crntService.LastRun,
+                        NextRun = crntService.NextRun,
+                        TotalRecordsTracked = crntService.TotalRecordsTracked,
+                        TotalRecordsAdded = crntService.TotalRecordsAdded,
+                        TotalRecordsUpdated = crntService.TotalRecordsUpdated,
+                        Status = crntService.Status,
+                        TimeTaken = timetkn,
+                        ModifiedDate = DateTime.Now
+                    };
+                    string json = JsonConvert.SerializeObject(dto);
+                    StringContent content = new(json, Encoding.UTF8, "application/json");
+                    var response = await Client.PutAsync($"{ApiDiagnosUrl}/{dto.Endpoint}", content);
+                    if (response == null)
+                    {
+                        LogInfo("ConfigServices could not be loaded!");
+                        return;
+                    }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                        LogInfo(msg); ;
+                        return;
+                    }
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    string msg = GetRelErrorMsg(ex, NameSpacesUsed);
+                    LogInfo($"{Now} : Error: {msg}");
+                }
             }
         }
 
@@ -167,8 +292,7 @@ namespace SqlIntegrationServices
                     }
                 }
                 catch (Exception)
-                {
-                }
+                { }
             }
             if (IsEmpty(result)) return Emp;
             await RunStrategy(result);
@@ -191,15 +315,34 @@ namespace SqlIntegrationServices
             }
             try
             {
+                JObject obj = JObject.Parse(result);
+                JArray items = (JArray)obj?["value"];
+                long? i = items?.Count;
+
+                var batches = items
+                    .Select((item, index) => new { item, index })
+                    .GroupBy(x => x.index / BatchSize)
+                    .Select(g => g.Select(x => x.item).ToList())
+                    .ToList();
+
+                long addCntBatch = 0, updtCntBatch = 0, trkCntBatch = 0;
+
                 using (var scope = serviceScopeFactory.CreateScope())
                 {
-                    ServiceDbContext context = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
+                    foreach (var batch in batches)
+                    {
+                        if (batch is null) continue;
+                        ServiceDbContext context = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
 
-                    var strategy = context.Database.CreateExecutionStrategy();
+                        context.Database.SetCommandTimeout(180); // Timeout in seconds
 
-                    await strategy.ExecuteAsync(async () => await Transact(context, result));
+                        var strategy = context.Database.CreateExecutionStrategy();
+
+                        await strategy.ExecuteAsync(async () => await Transact(context, result, batch));
+                        //updtCntBatch += cnts[1]; addCntBatch += cnts[0]; trkCntBatch += batch.Count;
+                    }
+                    //await Transact(result);
                 }
-                //await Transact(result);
             }
             catch (Exception ex)
             {
@@ -208,16 +351,28 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async virtual Task Transact(ServiceDbContext context, string result)
+        protected async virtual Task Transact(ServiceDbContext context, string result, dynamic batch)
         {
             try
             {
-                JObject obj = JObject.Parse(result);
-                JArray Items = (JArray)obj?["value"];
+                //JObject obj = JObject.Parse(result);
+                //JArray items = (JArray)obj?["value"];
+                //long? i = items?.Count;
 
-                long? i = Items?.Count;
-                List<long> cnts = await CallUpdateCntxt(context, Items, CrntService.Table);
-                long updtCnt = cnts[1], addCnt = cnts[0];
+                //var batches = items
+                //    .Select((item, index) => new { item, index })
+                //    .GroupBy(x => x.index / BatchSize)
+                //    .Select(g => g.Select(x => x.item).ToList())
+                //    .ToList();
+
+                long addCntBatch = 0, updtCntBatch = 0, trkCntBatch = 0;
+
+                //foreach (var batch in batches)
+                //{
+                //    if (batch is null) continue;
+                context.ChangeTracker.Clear(); // Clear tracked entities to save memory
+                List<long> cnts = await CallUpdateCntxt(context, batch, CrntService.Table);
+                updtCntBatch += cnts[1]; addCntBatch += cnts[0]; trkCntBatch += batch.Count;
 
                 using var transaction = await context.Database.BeginTransactionAsync();
                 {
@@ -231,12 +386,12 @@ namespace SqlIntegrationServices
                         }
                         catch (Exception ex)
                         {
-                            string msg = GetRelErrorMsg(ex, NameSpacesUsed);
-                            LogInfo($"{Now}: Error: {msg}");
+                            string msg1 = GetRelErrorMsg(ex, NameSpacesUsed);
+                            LogInfo($"{Now}: Error: {msg1}");
                             if (cnt < 2)
                             {
-                                msg = $"{Now}: Error: Saving changes failed! Retrying...";
-                                LogInfo(msg);
+                                msg1 = $"{Now}: Error: Saving changes failed! Retrying...";
+                                LogInfo(msg1);
                             }
                             else
                             {
@@ -246,12 +401,14 @@ namespace SqlIntegrationServices
                         }
                     }
                 }
-                msg = $"{Entr}{Now}: Success: Saved data successfully." +
-                      $"{Entr}{Now}: No. of records tracked:{i}" +
-                      $"{Entr}{Now}: No. of records added: {addCnt}" +
-                      $"{Entr}{Now}: No. of records updated: {updtCnt}";
-                AddCnt += addCnt; UpdtCnt += updtCnt; TrkCnt += i;
-                LogInfo(msg);
+                //string msg = $"{Entr}{Now}: Success: Saved data successfully." +
+                //        $"{Entr}{Now}: No. of records tracked:{trkCntBatch}" +
+                //        $"{Entr}{Now}: No. of records added: {addCntBatch}" +
+                //        $"{Entr}{Now}: No. of records updated: {updtCntBatch}";
+
+                //LogInfo(msg);
+                //}
+                PgAddCnt += addCntBatch; PgUpdtCnt += updtCntBatch; PgTrkCnt += trkCntBatch;
             }
             catch (Exception ex)
             {
@@ -260,7 +417,7 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async Task<List<long>> CallUpdateCntxt(ServiceDbContext context, JArray Items, string tableName)
+        protected async Task<List<long>> CallUpdateCntxt(ServiceDbContext context, dynamic Items, string tableName)
         {
             string currentNamespace = typeof(BaseWorker).Namespace;
             string typeName = $"{currentNamespace}.{tableName}";
@@ -280,7 +437,7 @@ namespace SqlIntegrationServices
             }
         }
 
-        protected async Task<List<long>> UpdateDbSet<T>(ServiceDbContext context, JArray Items) where T : class, new()
+        protected async Task<List<long>> UpdateDbSet<T>(ServiceDbContext context, dynamic batch) where T : class, new()
         {
             long addCnt = 0, updtCnt = 0;
             T ent;
@@ -292,17 +449,17 @@ namespace SqlIntegrationServices
                     //LogInfo($"\r\n{Now}: Error: Could not find or create or alter the table {CrntService.Table}!");
                     throw new Exception($"Could not find or create or alter the table {CrntService.Table}!");
                 }
-
+                int i = 0;
                 DbSet<T> dbSet = context.Set<T>();
                 List<PropertyInfo> primaryKeyProperties = GetPrimaryKeyProperties(typeof(T));
-
-                foreach (var itm in Items)
+                foreach (var itm in batch)
                 {
-                    string itmJsn;
-                    T existingEntity = null;
+                    if (itm is null) continue;
+                    string itmJsn = Serialize.ToJson(itm);
 
                     for (int cnt = 1; cnt <= 2; cnt++)
                     {
+                        T existingEntity = null;
                         try
                         {
                             itmJsn = Serialize.ToJson(itm);
@@ -331,8 +488,9 @@ namespace SqlIntegrationServices
                             {
                                 ent = PrepareEntity(poco);
                                 if (ent is null) continue;
-                                //if (msngRecIds.Contains((poco as dynamic).RecId1))
-                                //    LogInfo($"{(poco as dynamic).RecId1} found in Missing RecIds!");
+                                //if (msngRecIdsL.Contains((poco as dynamic).RecId1))
+                                //    LogInfo($"{(poco as dynamic).RecId1} found in Missing RecIds!{i}");
+                                //else continue;
                                 if (existingEntity is null) // Add the new entity
                                 {
                                     dbSet.Add(ent);
@@ -340,10 +498,21 @@ namespace SqlIntegrationServices
                                 }
                                 else // Update the existing entity if modified
                                 {
-                                    if (typeof(T).GetProperties().Any(p => p.Name.ToLower().Trim() == "modifieddatetime1"))
-                                        if (((poco as dynamic).ModifiedDateTime1 != null) && !((existingEntity as dynamic).ModifiedDateTime1 != null) && ((poco as dynamic).ModifiedDateTime1 > (existingEntity as dynamic).ModifiedDateTime1))
+                                    if (typeof(T).Name is nameof(InventTransV2) && (typeof(T).GetProperties().Any(p => p.Name.ToLower().Trim() == "modifieddatetimecopy1")))
+                                    {
+                                        if (((poco as dynamic).ModifiedDateTimeCopy1 is not null) && ((existingEntity as dynamic).ModifiedDateTimeCopy1 is not null) && ((poco as dynamic).ModifiedDateTimeCopy1 > (existingEntity as dynamic).ModifiedDateTimeCopy1))
                                         {
                                             context.Entry(existingEntity).CurrentValues.SetValues(ent);
+                                            context.Entry(existingEntity).State = EntityState.Modified;
+                                            updtCnt++;
+                                        }
+                                    }
+                                    else
+                                    if (typeof(T).GetProperties().Any(p => p.Name.ToLower().Trim() == "modifieddatetime1"))
+                                        if (((poco as dynamic).ModifiedDateTime1 is not null) && ((existingEntity as dynamic).ModifiedDateTime1 is not null) && ((poco as dynamic).ModifiedDateTime1 > (existingEntity as dynamic).ModifiedDateTime1))
+                                        {
+                                            context.Entry(existingEntity).CurrentValues.SetValues(ent);
+                                            context.Entry(existingEntity).State = EntityState.Modified;
                                             updtCnt++;
                                         }
                                 }
@@ -391,7 +560,32 @@ namespace SqlIntegrationServices
                         {
                             success = await AlterTable(context, entityType);
                             CrntService.TableAltered = !success;
-                            string jsn = JsonConvert.SerializeObject(CrntService);
+                            try
+                            {
+                                PartialServiceDto dto = new()
+                                {
+                                    Endpoint = CrntService.Endpoint,
+                                    TableAltered = CrntService.TableAltered
+                                };
+                                string json = Serialize.ToJson(dto);
+
+                                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                                var response = await Client.PutAsync($"{ApiBaseUrl}/{CrntService.Endpoint}", content);
+                                if (response == null)
+                                {
+                                    LogMsg(LogFile, "Falied to update service!");
+                                }
+                                if (!response.IsSuccessStatusCode)
+                                {
+                                    string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                                    LogMsg(LogFile, msg);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                string msg1 = GetRelErrorMsg(ex, NameSpacesUsed);
+                                LogInfo($"{Now}: Error: {msg1}");
+                            }
                         }
                         return success;
                     }
@@ -467,9 +661,9 @@ namespace SqlIntegrationServices
             {
                 T ent = new T();
                 var propDicnry = typeof(T).GetProperties().ToDictionary(prop => NormalizeStr(prop.Name), prop => prop);
+                List<Column> columns = DeserializeJson<List<Column>>.Deserialize(CrntService.Columns);
                 //if (CrntService is null || CrntService.Columns is null)
-                //if (CrntService.Name.Equals("PurchaseAgreements")) return default;
-                foreach (var col in CrntService.Columns!)
+                foreach (var col in columns!)
                 {
                     string propName = NormalizeStr(col.Name);
                     if (propDicnry.TryGetValue(propName, out PropertyInfo propInfo))
@@ -493,7 +687,6 @@ namespace SqlIntegrationServices
         {
             return str.Replace(" ", Emp).ToUpperInvariant();
         }
-
 
         // Method to get the primary key comparison expression
         protected Expression<Func<T, bool>> GetPrimaryKeyComparisonExpression<T>(T poco, List<PropertyInfo> primaryKeyProperties)
@@ -575,9 +768,7 @@ namespace SqlIntegrationServices
                     else
                     {
                         if (!isNullable)
-                        {
                             columnDefinition.Append(" NOT NULL");
-                        }
 
                         var defaultValueSql = property.GetDefaultValueSql();
                         if (!string.IsNullOrEmpty(defaultValueSql))
@@ -781,20 +972,6 @@ namespace SqlIntegrationServices
             return cols;
         }
 
-        private async Task WriteToConfig()
-        {
-            //try
-            //{
-            //    Services.ServiceSet.Remove(CrntService);
-            //    Services.ServiceSet.Add(CrntService);
-            //    string serviceJson = Serialize.ToJson(Services);
-            //    await LockNWriteToConfig(CrntService.Name, logFile);
-            //}
-            //catch (Exception ex)
-            //{
-            //    LogInfo($"{Now}: {GetRelErrorMsg(ex, NameSpacesUsed)}");
-            //}
-        }
     }
 }
 
@@ -839,8 +1016,8 @@ namespace SqlIntegrationServices
 //                RelationalDatabaseCreator databaseCreator =
 //(RelationalDatabaseCreator)context.Database.GetService<IDatabaseCreator>();
 //                databaseCreator.CreateTables();
-//                var ServiceDetail = new DbMigrationsConfiguration<MyContext> { AutomaticMigrationsEnabled = true };
-//                var migrator = new DbMigrator(ServiceDetail); dbm
+//                var ServiceDto = new DbMigrationsConfiguration<MyContext> { AutomaticMigrationsEnabled = true };
+//                var migrator = new DbMigrator(ServiceDto); dbm
 //                migrator.Update();
 //                Shar
 //sucess = await context.Database.EnsureCreatedAsync();

@@ -6,21 +6,23 @@ using CommonCode.Models.Dtos.Responses;
 using SqlIntegrationAPI.Repositories;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using CommonCode.Models.Dtos;
 
 namespace SqlIntegrationAPI.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    public class ServicesAPIController(IServiceRepository serviceRepository, IMapper mapper, ILogger<ServicesAPIController> logger) : ControllerBase
+    //[Authorize]
+    public class ServicesController(IServiceRepository serviceRepository, IMapper mapper, ILogger<ServicesController> logger) : ControllerBase
     {
         private readonly IMapper _mapper = mapper;
-        private readonly ILogger<ServicesAPIController> logger = logger;
+        private readonly ILogger<ServicesController> logger = logger;
         private readonly IServiceRepository _serviceRepository = serviceRepository;
 
-        // GET: api/ServicesAPI/Services
-        [HttpGet("Services")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetServices(string? sortBy, string? filterOn, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
+        // GET: api/Services
+        [HttpGet()]
+        //[Authorize]
+        public async Task<ActionResult<IEnumerable<ServiceDto>>> GetServices(string? sortBy, string? filterOn, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
             //logger.LogInformation("GetServices get called");
             //throw new Exception("Hi exception");
@@ -30,14 +32,13 @@ namespace SqlIntegrationAPI.Controllers
                 return NoContent();
             }
             // Map domain models to DTOs for response
-            var serviceDtos = _mapper.Map<List<GetServiceResponseDto>>(services);
+            var serviceDtos = _mapper.Map<List<ServiceDto>>(services);
 
             return Ok(serviceDtos);
         }
-
-        // GET: api/ServicesAPI/Diagnostics
+        
+        // GET: api/Services/Diagnostics
         [HttpGet("Diagnostics")]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnostics(string? sortBy, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
         {
             var services = await _serviceRepository.GetAllAsync(sortBy, Emp, filterQuery, ascending, pageNo, pageSize);
@@ -51,10 +52,10 @@ namespace SqlIntegrationAPI.Controllers
             return Ok(serviceDtos);
         }
 
-        // GET: api/ServicesAPI/Services/{endPoint}
-        [HttpGet("Services/{endPoint}")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<GetServiceResponseDto>>> GetService(string endPoint)
+        // GET: api/Services/{endPoint}
+        [HttpGet("{endPoint}")]
+        //[Authorize]
+        public async Task<ActionResult<IEnumerable<ServiceDto>>> GetService([FromRoute]string endPoint)
         {
             var services = await _serviceRepository.GetByEndpointAsync(endPoint);
 
@@ -64,13 +65,13 @@ namespace SqlIntegrationAPI.Controllers
             }
 
             // Map domain models to DTOs for response
-            var serviceDtos = _mapper.Map<List<GetServiceResponseDto>>(services);
+            var serviceDtos = _mapper.Map<List<ServiceDto>>(services);
             return Ok(serviceDtos);
         }
 
-        // GET: api/ServicesAPI/Diagnostics/{endPoint}
+        // GET: api/Services/Diagnostics/{endPoint}
         [HttpGet("Diagnostics/{endPoint}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnosticsSingle(string endPoint)
         {
             var services = await _serviceRepository.GetByEndpointAsync(endPoint);
@@ -85,13 +86,17 @@ namespace SqlIntegrationAPI.Controllers
             return Ok(serviceDtos);
         }
 
-        // POST: api/ServicesAPI/Services
-        [HttpPost("Services")]
-        [Authorize]
-        public async Task<ActionResult> CreateService([FromBody] CreateServiceRequestDto createService)
+        // POST: api/Services/Services
+        [HttpPost()]
+        //[Authorize]
+        public async Task<ActionResult> CreateService([FromBody] PartialServiceDto createService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            if (await ServiceExists(createService.Endpoint))
+            {
+                return StatusCode(StatusCodes.Status409Conflict, "Service already exists."); 
+            }
             createService.CreatedBy = "Rashmi";
 
             var createdEntity = await _serviceRepository.CreateAsync(_mapper.Map<DbService>(createService));
@@ -106,27 +111,27 @@ namespace SqlIntegrationAPI.Controllers
             //return CreatedAtAction(nameof(GetService), new { endPoint = createService.Endpoint });
         }
 
-        // PUT: api/ServicesAPI/Services/{endPoint}
-        [HttpPut("Services/{endPoint}")]
-        [Authorize]
-        public async Task<IActionResult> UpdateService(string endPoint, [FromBody] EditServiceRequestDto editService)
+        // PUT: api/Services/{endPoint}
+        [HttpPut("{endPoint}")]
+        //[Authorize]
+        public async Task<IActionResult> UpdateService([FromRoute] string endPoint, [FromBody] PartialServiceDto editService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             return await Update(endPoint, editService);
         }
 
-        // PUT: api/ServicesAPI/Diagnostics/{endPoint}
+        // PUT: api/Services/Diagnostics/{endPoint}
         [HttpPut("Diagnostics/{endPoint}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateDiagnose(string endPoint, [FromBody] EditDiagnosRequestDto editService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             return await Update(endPoint, editService);
         }
 
-        // DELETE: api/ServicesAPI/Services/{endPoint}
-        [HttpDelete("Services/{endPoint}")]
-        [Authorize]
+        // DELETE: api/Services/{endPoint}
+        [HttpDelete("{endPoint}")]
+        //[Authorize]
         public async Task<IActionResult> DeleteService(string endPoint)
         {
             if (IsEmpty(endPoint))
@@ -156,7 +161,7 @@ namespace SqlIntegrationAPI.Controllers
             {
                 return BadRequest("Please provide all the required parameters.");
             }
-            if (!(editService is EditDiagnosRequestDto || editService is EditServiceRequestDto))
+            if (!(editService is EditDiagnosRequestDto || editService is PartialServiceDto))
             {
                 return BadRequest("Please provide all the required parameters in correct format.");
             }

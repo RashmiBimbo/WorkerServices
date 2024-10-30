@@ -1,4 +1,5 @@
 ﻿using CommonCode.CommonClasses;
+using CommonCode.Models.Dtos;
 using CommonCode.Models.Dtos.Requests;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -89,51 +90,18 @@ namespace SqlIntegrationUI.Controllers
 
                 string qStr = service.QueryString;
                 string fltr = "cross-company=true";
-                service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : "&" + fltr;
+                service.QueryString += IsEmpty(qStr) ? fltr : qStr.Contains(fltr, StrComp) ? Emp : " &" + fltr;
                 JObject jObj = await GetServiceJObject(service);
 
                 AddedServices ??= [];
                 AddedServices.TryAdd(service.Table, jObj);
 
-                if (!ConfigServices.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)))
+                if (!ConfigServices.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)) && jObj is not null)
                 {
                     service.Columns = await GetColumns(jObj);
                     ConfigServices.ServiceSet.Add(service);
                 }
-                try
-                {
-                    var dto = new CreateServiceRequestDto()
-                    {
-                        Name = service.Name,
-                        Endpoint = service.Endpoint,
-                        Enable = true,
-                        Period = service.Period,
-                        Table = service.Table,
-                        QueryString = service.QueryString,
-                        Columns = "null",
-                        CreatedBy = "Rashmi",
-                        CreatedDate = DateTime.Now
-                    };
-                    string json = Serialize.ToJson(dto);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await Client.PostAsync($"{BaseUrl}/Services", content);
-                    if (response == null)
-                    {
-                        Log("ConfigServices could not be loaded!");
-                        //return Problem("ConfigServices could not be loaded!");
-                        return View();
-                    }
-                    response.EnsureSuccessStatusCode();
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        string msg = $"HTTP request failed with status code: {response.StatusCode}";
-                        Log(msg);
-                        //return Problem("ConfigServices could not be loaded!");
-                        return View();
-                    }
-                }
-                catch (Exception)
-                { }
+                await AddtoDb(service);
                 return RedirectToAction(nameof(ServicesController.Index), nameof(ServicesController).Replace("Controller", Emp));
             }
             catch (Exception ex)
@@ -141,6 +109,49 @@ namespace SqlIntegrationUI.Controllers
                 LogInfo(ex, LogFile, NameSpacesUsed);
                 return View();
             }
+        }
+
+        private async Task<bool> AddtoDb(ServiceDetail service)
+        {
+            bool success = true;
+            try
+            {
+                var dto = new PartialServiceDto()
+                {
+                    Name = service.Name,
+                    Endpoint = service.Endpoint,
+                    Enable = true,
+                    Period = service.Period,
+                    Table = service.Table,
+                    QueryString = service.QueryString,
+                    Columns = null,
+                    CreatedBy = "Rashmi",
+                    CreatedDate = DateTime.Now
+                };
+                string json = Serialize.ToJson(dto);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await Client.PostAsync($"{ApiBaseUrl}", content);
+                if (response == null)
+                {
+                    Log("ConfigServices could not be loaded!");
+                    //return Problem("ConfigServices could not be loaded!");
+                    return false;
+                }
+                //response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                    Log(msg);
+                    //return Problem("ConfigServices could not be loaded!");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogInfo(ex, LogFile, NameSpacesUsed);
+                return false;
+            }
+            return true;
         }
 
         // GET: CreateController
@@ -185,6 +196,8 @@ namespace SqlIntegrationUI.Controllers
                         AddedServices ??= [];
                         AddedServices.TryAdd(service.Endpoint, jObj);
                     }
+
+                    await AddtoDb(service);
                 }
                 ProposedServices = null;
                 return RedirectToAction(nameof(ServicesController.Index), "Services");
@@ -241,8 +254,9 @@ namespace SqlIntegrationUI.Controllers
                 foreach (Row row in sheetData.Elements<Row>().Skip(1))
                 {
                     string endPoint = GetCellValueByColumn(doc, row, columnMappings, "ENDPOINT");
-                    if (IsEmpty(endPoint))
-                        continue;
+
+                    if (IsEmpty(endPoint)) continue;
+
                     //string name = GetCellValueByColumn(doc, row, columnMappings, "Name");
                     //if (IsEmpty(name)) name = endPoint;
 
@@ -256,7 +270,7 @@ namespace SqlIntegrationUI.Controllers
                     {
                         Name = GetCellValueByColumn(doc, row, columnMappings, "NAME"),
                         Endpoint = endPoint,
-                        Period = Convert.ToInt16(GetCellValueByColumn(doc, row, columnMappings, "PERIOD")),
+                        Period = TimeSpan.FromMinutes(Convert.ToDouble(GetCellValueByColumn(doc, row, columnMappings, "PERIOD"))),
                         Table = GetCellValueByColumn(doc, row, columnMappings, "TABLE")
                     };
 

@@ -20,6 +20,8 @@ namespace CommonCode.CommonClasses
         public static readonly string Resource = "https://mfprod.operations.dynamics.com";
         public static readonly StringComparison StrComp = StringComparison.InvariantCultureIgnoreCase;
         private static readonly object fileLock = new();
+        public static readonly string ApiBaseUrl = "https://localhost:7182/api/Services";
+        public static readonly string ApiDiagnosUrl = "https://localhost:7182/api/Services/Diagnostics";
 
         public static Func<string, string, string> Comb => Path.Combine;
 
@@ -205,7 +207,7 @@ namespace CommonCode.CommonClasses
             }
         }
 
-        public static async Task<JObject> GetServiceJObject(ServiceDetail service)
+        public static async Task<JObject> GetServiceJObject(dynamic service)
         {
             JObject jObjRslt = null;
             string result = Emp;
@@ -260,7 +262,7 @@ namespace CommonCode.CommonClasses
             }
         }
 
-        public static async Task<List<Column>> GetColumns(JObject jObj = null, ServiceDetail service = null)
+        public static async Task<List<Column>> GetColumns(JObject jObj = null, dynamic service = null)
         {
             List<Column> columns = null;
             try

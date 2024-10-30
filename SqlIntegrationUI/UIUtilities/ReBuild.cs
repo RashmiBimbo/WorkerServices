@@ -82,7 +82,7 @@ namespace SqlIntegrationUI.UIUtilities
             {
                 JObject? itmJObj = null;
                 string entityName = item.Table;
-                entityName = entityName.EndsWith("TEST", StrComp) ? entityName.Remove(entityName.LastIndexOf("Test"), 4) : entityName;
+                entityName = entityName.EndsWith("TEST", StrComp) ? entityName.Remove(entityName.LastIndexOf("Test", StrComp), 4) : entityName;
 
                 string filePath = $@"{SqlIntegrationServices}\Models\{entityName}.cs";
                 bool updated = false;
@@ -514,10 +514,10 @@ namespace SqlIntegrationUI.UIUtilities
                     DeletedServices.Remove(service);
                     try
                     {
-                        var response = await client.DeleteAsync($"{BaseUrl}/Services/{service.Endpoint}");
+                        var response = await client.DeleteAsync($"{ApiBaseUrl}/{service.Endpoint}");
                         if (response == null)
-                        { }
-                        response.EnsureSuccessStatusCode();
+                        { return; }
+                        //response.EnsureSuccessStatusCode();
                         if (!response.IsSuccessStatusCode)
                         {
                             string msg = $"HTTP request failed with status code: {response.StatusCode}";
