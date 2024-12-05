@@ -31,7 +31,7 @@
                 <br />
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <label asp-for="Period" class="control-label"></label>
-                    <input asp-for="Period" class="form-control" />
+                    <input asp-for="Period" class="form-control" name="Period" />
                     <span asp-validation-for="Period" class="text-danger"></span>
                 </div>
                 <br />
@@ -105,22 +105,26 @@
                     </tbody>
                 }
             </table>
+
+            <input type="hidden" name="CreatedBy" value="@Model.CreatedBy" />
+            <input type="hidden" name="CreatedDate" value="@Model.CreatedDate" />
+            <input type="hidden" name="ModifiedBy" value="@Model.ModifiedBy" />
+            <input type="hidden" name="ModifiedDate" value="@Model.ModifiedDate" />
             <br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" asp-action="Edit" asp-route-name="@Model.Name" />
-                <input type="submit" value="Cancel" class="btn btn-outline-secondary" asp-action="Index" id="CancelBtn" asp-controller="Services" />
+                <input type="button" value="Cancel" class="btn btn-outline-secondary" asp-action="Index" id="CancelBtn" asp-controller="Services" />
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    <script>
-        document.getElementById("CancelBtn").
-        addEventListener("click", function () {
-            window.location.href =
-            '@Url.Action("Index", "Services")';
-            });
+    document.getElementById("CancelBtn").
+    addEventListener("click", function () {
+        window.location.href =
+        '@Url.Action("Index", "Services")';
+        });
 </script>
 
 @section Scripts {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SqlIntegrationServices;
 
-[Keyless]
+[PrimaryKey("dataAreaId", "InvoiceDate", "InvoiceNumber", "LedgerVoucher")]
 public abstract partial class CustInvoiceJour_1Base
 {
     public string? URL { get; set; }

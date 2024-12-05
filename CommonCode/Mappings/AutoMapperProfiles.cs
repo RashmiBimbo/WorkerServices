@@ -12,11 +12,37 @@ namespace CommonCode.Mappings
         public AutoMapperProfiles()
         {
             CreateMap<ServiceDetail, EditDiagnosRequestDto>().ReverseMap();
-            CreateMap<ServiceDetail, PartialServiceDto>().ReverseMap();
+            //CreateMap<ServiceDetail, PartialServiceDto>().ReverseMap();
             CreateMap<GetDiagnosResponseDto, PartialServiceDto>().ReverseMap();
             CreateMap<GetDiagnosResponseDto, ServiceDto>().ReverseMap();
             CreateMap<PartialServiceDto, ServiceDto>().ReverseMap();
-            CreateMap<ServiceDetail, ServiceDto>().ReverseMap();
+
+            CreateMap<PartialServiceDto, ServiceDetail>()
+                 .ForMember(dest => dest.Columns,
+                     opt => opt.MapFrom(src =>
+                         string.IsNullOrEmpty(src.Columns)
+                             ? new List<Column>()
+                             : JsonConvert.DeserializeObject<List<Column>>(src.Columns)))
+                 .ReverseMap()
+                 .ForMember(dest => dest.Columns,
+                     opt => opt.MapFrom(src =>
+                         src.Columns != null
+                             ? JsonConvert.SerializeObject(src.Columns)
+                             : null));
+
+            CreateMap<ServiceDto, ServiceDetail>()
+                .ForMember(dest => dest.Columns,
+                    opt => opt.MapFrom(src =>
+                        string.IsNullOrEmpty(src.Columns)
+                            ? new List<Column>()
+                            : JsonConvert.DeserializeObject<List<Column>>(src.Columns)))
+                .ReverseMap()
+                .ForMember(dest => dest.Columns,
+                    opt => opt.MapFrom(src =>
+                        src.Columns != null
+                            ? JsonConvert.SerializeObject(src.Columns)
+                            : null));
+            //map.ForAllMembers(dest => dest.UseDestinationValue());
         }
     }
 }

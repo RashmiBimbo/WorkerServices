@@ -1,34 +1,35 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Caching.Memory;
 using SysFile = System.IO.File;
 using Microsoft.CodeAnalysis;
 using CommonCode.Models.Dtos.Requests;
 using CommonCode.Models.Dtos.Responses;
-using static System.Net.WebRequestMethods;
 using CommonCode.Models.Dtos;
 using CommonCode.CommonClasses;
 using static CommonCode.CommonClasses.Common;
-using Humanizer;
 using System.Text;
-using Azure;
-using System.Collections.Generic;
+using AutoMapper;
+using Column = CommonCode.CommonClasses.Column;
 
 namespace SqlIntegrationUI.Controllers
 {
+    //[Route("[Controller]")]
     public class ServicesController : Controller
     {
+        private readonly IMapper _mapper;
+        private readonly ILogger<ServicesController> logger;
         private readonly IHttpClientFactory HttpClientFactory;
         private readonly HttpClient Client;
 
-        public ServicesController(IHttpClientFactory httpClientFactory)
+        public ServicesController(IHttpClientFactory httpClientFactory, IMapper mapper, ILogger<ServicesController> logger)
         {
             ArgumentNullException.ThrowIfNull(httpClientFactory);
             try
             {
                 HttpClientFactory = httpClientFactory;
                 Client = HttpClientFactory.CreateClient();
-
+                _mapper = mapper;
+                this.logger = logger;
                 //if (ConfigServices is null)
                 //{
                 //    Log("ConfigServices not found");
@@ -55,6 +56,7 @@ namespace SqlIntegrationUI.Controllers
                 List<ServiceDto> result = null;
                 try
                 {
+                    //var services = await _serviceRepository.GetAllAsync();
                     using HttpResponseMessage response = await Client.GetAsync($"{ApiBaseUrl}");
                     if (response == null)
                     {
@@ -107,13 +109,12 @@ namespace SqlIntegrationUI.Controllers
         public async Task<IActionResult> Edit(string Endpoint, string colSearch)
         {
             List<Column> lst;
-            PartialServiceDto? service = null;
+            ServiceDto? service = null;
             if (IsEmpty(Endpoint))
                 return NotFound();
             try
             {
                 //ServiceDetail service = ConfigServices.ServiceSet.First(s => s.Endpoint == Endpoint);
-
                 try
                 {
                     using HttpResponseMessage response = await Client.GetAsync($"{ApiBaseUrl}/{Endpoint}");
@@ -132,7 +133,7 @@ namespace SqlIntegrationUI.Controllers
                         //return Problem("ConfigServices could not be loaded!");
                         return View();
                     }
-                    var rslt = await response.Content.ReadFromJsonAsync<List<PartialServiceDto>>();
+                    var rslt = await response.Content.ReadFromJsonAsync<List<ServiceDto>>();
 
                     service = rslt[0];
                 }
@@ -164,17 +165,19 @@ namespace SqlIntegrationUI.Controllers
                     lst = lst.Where(col => col.Name.Contains(colSearch, StrComp)).ToList();
 
                 ViewData["FiltrdColumnList"] = new SelectList(lst, "Name", "Name");
-                var model = new ServiceDetail()
-                {
-                    Name = service.Name,
-                    Endpoint = service.Endpoint,
-                    Enable = (bool)service.Enable,
-                    Columns = lst,
-                    QueryString = service.QueryString,
-                    Period = (TimeSpan)service.Period,
-                    Table = service.Table
-                };
+                var model = _mapper.Map<ServiceDetail>(service);
+                model.Columns = lst;
                 return View(model);
+                //var model = new ServiceDetail()
+                //{
+                //    Name = service.Name,
+                //    Endpoint = service.Endpoint,
+                //    Enable = (bool)service.Enable,
+                //    Columns = lst,
+                //    QueryString = service.QueryString,
+                //    Period = (TimeSpan)service.Period,
+                //    Table = service.Table
+                //};
             }
             catch (Exception ex)
             {
@@ -224,17 +227,18 @@ namespace SqlIntegrationUI.Controllers
 
                     try
                     {
-                        PartialServiceDto dto = new()
-                        {
-                            Endpoint = service.Endpoint,
-                            Enable = service.Enable,
-                            Name = service.Name,
-                            Table = service.Table,
-                            QueryString = service.QueryString,
-                            Period = service.Period,
-                            Columns = service.Columns.ToJson(),
-                            TableAltered = service.TableAltered
-                        };
+                        ServiceDto dto = _mapper.Map<ServiceDto>(service);
+                        //PartialServiceDto dto = new()
+                        //{
+                        //    Endpoint = service.Endpoint,
+                        //    Enable = service.Enable,
+                        //    Name = service.Name,
+                        //    Table = service.Table,
+                        //    QueryString = service.QueryString,
+                        //    Period = service.Period,
+                        //    Columns = service.Columns.ToJson(),
+                        //    TableAltered = service.TableAltere
+                        //};
                         string json = Serialize.ToJson(dto);
 
                         var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -318,14 +322,14 @@ namespace SqlIntegrationUI.Controllers
                 if (ConfigServices != null)
                 {
                     ServiceDetail service = ConfigServices.ServiceSet.FirstOrDefault(s => s.Endpoint == endPoint);
-                    if (service is null)
+                    if (service is not null)
                     {
-                        ViewData["ErrorMessage"] = $"Service '{name}' does not exist!";
-                        return RedirectToAction(nameof(Index));
-                    }
                     ConfigServices?.ServiceSet?.Remove(service);
                     DeletedServices ??= [];
                     DeletedServices.Add(service);
+                        //ViewData["ErrorMessage"] = $"Service '{name}' does not exist!";
+                        //return RedirectToAction(nameof(Index));
+                    }
 
                     using HttpResponseMessage response = await Client.DeleteAsync($"{ApiBaseUrl}/{endPoint}");
 

@@ -15,36 +15,37 @@ namespace SqlIntegrationAPI.Data
         {
             base.OnModelCreating(modelBuilder);
             SetDefaults(modelBuilder);
-            IEnumerable<Type> entityTypes = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttributes<PrimaryKeyAttribute>().Any());
 
-            foreach (Type entityType in entityTypes)
-            {
-                if (entityType.FullName.Contains("Base", StrComp)) continue;
+            //IEnumerable<Type> entityTypes = Assembly.GetExecutingAssembly().GetTypes()
+            //    .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttributes<PrimaryKeyAttribute>().Any());
 
-                var primaryKeyAttribute = entityType.GetCustomAttribute<PrimaryKeyAttribute>();
-                IReadOnlyList<string> primaryKeyProperties = primaryKeyAttribute.PropertyNames;
+            //foreach (Type entityType in entityTypes)
+            //{
+            //    if (entityType.FullName.Contains("Base", StrComp)) continue;
 
-                modelBuilder.Entity(entityType).HasKey([.. primaryKeyProperties]);
-            }
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                var tableName = entityType.GetTableName();
+            //    var primaryKeyAttribute = entityType.GetCustomAttribute<PrimaryKeyAttribute>();
+            //    IReadOnlyList<string> primaryKeyProperties = primaryKeyAttribute.PropertyNames;
 
-                foreach (var property in entityType.GetProperties())
-                {
-                    var columnName = property.GetColumnName();
+            //    modelBuilder.Entity(entityType).HasKey([.. primaryKeyProperties]);
+            //}
+            //foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            //{
+            //    var tableName = entityType.GetTableName();
 
-                    // Check if the property name doesn't match the column name
-                    if (property.Name != columnName)
-                    {
-                        // Map the property to the column name with underscores
-                        modelBuilder.Entity(entityType.ClrType)
-                                    .Property(property.Name)
-                                    .HasColumnName(columnName);
-                    }
-                }
-            }
+            //    foreach (var property in entityType.GetProperties())
+            //    {
+            //        var columnName = property.GetColumnName();
+
+            //        // Check if the property name doesn't match the column name
+            //        if (property.Name != columnName)
+            //        {
+            //            // Map the property to the column name with underscores
+            //            modelBuilder.Entity(entityType.ClrType)
+            //                        .Property(property.Name)
+            //                        .HasColumnName(columnName);
+            //        }
+            //    }
+            //}
         }
 
         private void SetDefaults(ModelBuilder modelBuilder)
@@ -74,7 +75,7 @@ namespace SqlIntegrationAPI.Data
                 entity.Property(e => e.Period)
                     .HasColumnType("Time")
                     .IsRequired()
-                    .HasDefaultValue(new TimeSpan(0, 30, 0));  // Required and default value for Period
+                    .HasDefaultValue(new TimeSpan(0, 300, 0));  // Required and default value for Period
 
                 entity.Property(e => e.Table)
                     .IsRequired();  // Required property

@@ -36,7 +36,7 @@ namespace SqlIntegrationAPI.Controllers
 
             return Ok(serviceDtos);
         }
-        
+
         // GET: api/Services/Diagnostics
         [HttpGet("Diagnostics")]
         public async Task<ActionResult<IEnumerable<GetDiagnosResponseDto>>> GetDiagnostics(string? sortBy, string? filterQuery, bool ascending = true, int pageNo = 1, int pageSize = 100)
@@ -55,7 +55,7 @@ namespace SqlIntegrationAPI.Controllers
         // GET: api/Services/{endPoint}
         [HttpGet("{endPoint}")]
         //[Authorize]
-        public async Task<ActionResult<IEnumerable<ServiceDto>>> GetService([FromRoute]string endPoint)
+        public async Task<ActionResult<IEnumerable<ServiceDto>>> GetService([FromRoute] string endPoint)
         {
             var services = await _serviceRepository.GetByEndpointAsync(endPoint);
 
@@ -89,15 +89,14 @@ namespace SqlIntegrationAPI.Controllers
         // POST: api/Services/Services
         [HttpPost()]
         //[Authorize]
-        public async Task<ActionResult> CreateService([FromBody] PartialServiceDto createService)
+        public async Task<ActionResult> CreateService([FromBody] ServiceDto createService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             if (await ServiceExists(createService.Endpoint))
             {
-                return StatusCode(StatusCodes.Status409Conflict, "Service already exists."); 
+                return StatusCode(StatusCodes.Status409Conflict, "Service already exists.");
             }
-            createService.CreatedBy = "Rashmi";
 
             var createdEntity = await _serviceRepository.CreateAsync(_mapper.Map<DbService>(createService));
 
@@ -111,10 +110,37 @@ namespace SqlIntegrationAPI.Controllers
             //return CreatedAtAction(nameof(GetService), new { endPoint = createService.Endpoint });
         }
 
+        [HttpPost("PostServices")]
+        //[Authorize]
+        public async Task<List<ActionResult>> CreateService([FromBody] List<ServiceDto> services)
+        {
+            List<ActionResult> lst = [];
+            foreach (var service in services)
+            {
+                if (!ModelState.IsValid)
+                {
+                    lst.Add(BadRequest(ModelState));
+                    continue;
+                }
+                if (await ServiceExists(service.Endpoint))
+                {
+                    lst.Add(StatusCode(StatusCodes.Status409Conflict, "Service already exists."));
+                    continue;
+                }
+
+                var createdEntity = await _serviceRepository.CreateAsync(_mapper.Map<DbService>(service));
+                if (createdEntity is null)
+                    lst.Add(StatusCode(StatusCodes.Status500InternalServerError, "Failed to create the service."));
+
+                lst.Add(CreatedAtAction(nameof(GetService), new { endPoint = service.Endpoint }, service));
+            }
+            return lst;
+        }
+
         // PUT: api/Services/{endPoint}
         [HttpPut("{endPoint}")]
         //[Authorize]
-        public async Task<IActionResult> UpdateService([FromRoute] string endPoint, [FromBody] PartialServiceDto editService)
+        public async Task<IActionResult> UpdateService([FromRoute] string endPoint, [FromBody] ServiceDto editService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             return await Update(endPoint, editService);
@@ -123,7 +149,7 @@ namespace SqlIntegrationAPI.Controllers
         // PUT: api/Services/Diagnostics/{endPoint}
         [HttpPut("Diagnostics/{endPoint}")]
         //[Authorize]
-        public async Task<IActionResult> UpdateDiagnose(string endPoint, [FromBody] EditDiagnosRequestDto editService)
+        public async Task<IActionResult> UpdateDiagnose(string endPoint, [FromBody] dynamic editService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             return await Update(endPoint, editService);
@@ -161,7 +187,7 @@ namespace SqlIntegrationAPI.Controllers
             {
                 return BadRequest("Please provide all the required parameters.");
             }
-            if (!(editService is EditDiagnosRequestDto || editService is PartialServiceDto))
+            if (!(editService is EditDiagnosRequestDto || editService is PartialServiceDto || editService is ServiceDto))
             {
                 return BadRequest("Please provide all the required parameters in correct format.");
             }
@@ -176,8 +202,6 @@ namespace SqlIntegrationAPI.Controllers
             {
                 return NotFound();
             }
-            editService.ModifiedBy = "Rashmi";
-            editService.ModifiedDate = DateTime.Now;
 
             var updatedResult = await _serviceRepository.UpdateAsync(endPoint, _mapper.Map<DbService>(editService));
 

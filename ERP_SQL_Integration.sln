@@ -10,7 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{95E9AC15-5159-4CC5-9BA8-9FF07530DADD}"
 	ProjectSection(SolutionItems) = preProject
 		Config-OLD.json = Config-OLD.json
-		..\..\..\..\..\..\ProgramData\ErpSqlIntegration\Config.json = ..\..\..\..\..\..\ProgramData\ErpSqlIntegration\Config.json
+		..\..\..\..\..\ProgramData\ErpSqlIntegration\Config.json = ..\..\..\..\..\ProgramData\ErpSqlIntegration\Config.json
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
 		C_5_4Users_4rashmi_1gupta_4source_4repos_4WorkerServices_4Config_1json__JsonSchema = https://api.airplane.dev/v0/schemas/task.json
@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlIntegrationAPI", "SqlInt
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ESIAngularApp", "ESIAngularApp\", "{526EF48F-90EA-4857-B398-4E060ED48AFB}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_61816"
 		Debug.AspNetCompiler.PhysicalPath = "ESIAngularApp\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_61816\"

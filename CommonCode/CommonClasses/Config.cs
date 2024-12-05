@@ -15,7 +15,7 @@ namespace CommonCode.CommonClasses
         private string ServiceName;
         private string ServiceTable;
         private string ServiceEndpoint;
-        private TimeSpan _period = TimeSpan.FromMinutes(30); // Default value set here
+        private TimeSpan _period = TimeSpan.FromMinutes(300); // Default value set here
 
         [JsonProperty("Enable")]
         public bool Enable { get; set; } = true;
@@ -44,6 +44,7 @@ namespace CommonCode.CommonClasses
 
         [JsonProperty("QueryString")]
         public string? QueryString { get; set; } = "cross-company=true";
+
         [Required]
         [JsonProperty("Period")]
         public TimeSpan Period
@@ -53,10 +54,6 @@ namespace CommonCode.CommonClasses
             {
                 // Set default value if no value is provided or a wrong type is assigned
                 if (value == TimeSpan.Zero)
-                {
-                    _period = TimeSpan.FromMinutes(30);
-                }
-                else if (value.TotalMinutes is double)
                 {
                     _period = TimeSpan.FromMinutes(300);
                 }
@@ -98,6 +95,21 @@ namespace CommonCode.CommonClasses
 
         [JsonProperty("Columns")]
         public List<Column> Columns { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        [Required]
+        [StringLength(255, ErrorMessage = "The service name has to be maximum of 255 characters")]
+        [MinLength(3, ErrorMessage = "The service name has to be minimum of 3 characters")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$")]
+        public string CreatedBy { get; set; } = "Rashmi";
+
+        public DateTime? ModifiedDate { get; set; } = DateTime.Now;
+
+        [StringLength(255, ErrorMessage = "The service name has to be maximum of 255 characters")]
+        [MinLength(3, ErrorMessage = "The service name has to be minimum of 3 characters")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$")]
+        public string? ModifiedBy { get; set; }
     }
 
     public partial class Column

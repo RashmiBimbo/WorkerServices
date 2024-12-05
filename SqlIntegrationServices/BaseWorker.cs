@@ -19,7 +19,7 @@ namespace SqlIntegrationServices
         protected int ExecutionCount;
         protected ServiceDbContext cntxt;
         protected string msg;
-        protected readonly TimeSpan period = TimeSpan.FromMinutes(30);
+        protected TimeSpan period;
         protected const string DateFromat = "dd-MMM-yyyy:HH:mm:ss.fff";
         protected readonly IServiceScopeFactory serviceScopeFactory;
         protected readonly ILogger<BaseWorker> logger;
@@ -118,20 +118,28 @@ namespace SqlIntegrationServices
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             string resource = "https://mfprod.operations.dynamics.com";
+            PeriodicTimer timer = new(period);
             try
             {
-                using PeriodicTimer timer = new(period);
-
                 do
                 {
-                    long? tTrkCnt = 0, tAddCnt = 0, tUpdtCnt = 0, tI = 0;
+                    CrntService = await CheckServiceExists(CrntService.Endpoint);
+                    if (CrntService is null) continue;
+                    if (!CrntService.Enable)
+                    {
+                        CrntService.Status = "Paused";
+                        await UpdateDiagnostics(CrntService);
+                        continue;
+                    }
 
+                    long? tTrkCnt = 0, tAddCnt = 0, tUpdtCnt = 0;
+                    period = CrntService.Period;
+                    timer = new(period);
                     var startTime = Now;
                     int count = Interlocked.Increment(ref ExecutionCount);
                     string msg = $"{Now}: {ServiceName} Service is running; Count: {count}";
                     LogInfo(msg);
 
-                    string defFltr = "&cross-company=true";
                     string url = $"{resource}/data/{ServiceEndpoint}?{CrntService.QueryString}";
 
                     msg = $"{Entr}{Now}: Data migration started.";
@@ -151,45 +159,55 @@ namespace SqlIntegrationServices
                     while (!IsEmpty(url))
                     {
                         CrntService = await CheckServiceExists(CrntService.Endpoint);
-                        if (CrntService is not null)
-                            if (CrntService.Enable)
-                            {      // When the timer should have no due-time, then do the work once now.
-                                LogInfo($"{Entr}{Now}: Page no. {++i}");
-                                url = await DoWork(resource, url);
-                                LogInfo($"{Entr}{Now}: Total no. of records tracked:{PgTrkCnt}, added: {PgAddCnt}, updated: {PgUpdtCnt}.");
+                        if (CrntService is null) break;
+                        if (CrntService.Enable)
+                        {
+                            LogInfo($"{Entr}{Now}: Page no. {++i}");
 
-                                tAddCnt += PgAddCnt; tTrkCnt += PgTrkCnt; tUpdtCnt += PgUpdtCnt; tI += i;
-                                PgAddCnt = 0; PgTrkCnt = 0; PgUpdtCnt = 0;
+                            url = await DoWork(resource, url);
 
-                                CrntService.TotalRecordsTracked = tTrkCnt;
-                                CrntService.TotalRecordsAdded = tAddCnt;
-                                CrntService.TotalRecordsUpdated = tUpdtCnt;
+                            LogInfo($"{Entr}{Now}: Total no. of records tracked:{PgTrkCnt}, added: {PgAddCnt}, updated: {PgUpdtCnt}.");
 
-                                await UpdateDiagnostics(CrntService);
-                            }
+                            tAddCnt += PgAddCnt; tTrkCnt += PgTrkCnt; tUpdtCnt += PgUpdtCnt;
+                            PgAddCnt = 0; PgTrkCnt = 0; PgUpdtCnt = 0;
+
+                            CrntService.TotalRecordsTracked = tTrkCnt;
+                            CrntService.TotalRecordsAdded = tAddCnt;
+                            CrntService.TotalRecordsUpdated = tUpdtCnt;
+                            await UpdateDiagnostics(CrntService);
+                        }
+                        else
+                        {
+                            CrntService.Status = "Paused";
+                            await UpdateDiagnostics(CrntService);
+                            break;
+                        }
                     }
                     TimeSpan elapsedTime = Now - startTime;
                     DateTime nxtRun = Now.AddMinutes(period.TotalMinutes);
 
-                    CrntService.Status = "Paused";
-                    CrntService.LastRun = Now;
-                    CrntService.TimeTaken = elapsedTime /*TimeSpan.FromMinutes(elapsedTime)*/;
-                    CrntService.NextRun = nxtRun;
+                    if (CrntService is not null)
+                    {
+                        CrntService.Status = "Paused";
+                        CrntService.LastRun = Now;
+                        CrntService.TimeTaken = elapsedTime /*TimeSpan.FromMinutes(elapsedTime)*/;
+                        CrntService.NextRun = nxtRun;
 
-                    await UpdateDiagnostics(CrntService);
+                        await UpdateDiagnostics(CrntService);
 
-                    LogInfo($"{Entr}{Now}: Data migration completed."
-                          + $"{Entr}{Now}: Total pages read : {i}."
-                          + $"{Entr}{Now}: Total no. of records tracked:{tTrkCnt}, added: {tAddCnt}, updated: {tUpdtCnt}."
-                          + $"{Entr}{Now}: Task execution time: {elapsedTime}.");
 
-                    LogInfo($"{Entr}{Now}: Next iteration will start after {CrntService.Period} at {nxtRun:dd-MMM-yyyy:hh:mm:ss}."
-                          + $"{Entr}***********************************************************{Entr}");
+                        LogInfo($"{Entr}{Now}: Data migration completed."
+                              + $"{Entr}{Now}: Total pages read : {i}."
+                              + $"{Entr}{Now}: Total no. of records tracked:{tTrkCnt}, added: {tAddCnt}, updated: {tUpdtCnt}."
+                              + $"{Entr}{Now}: Task execution time: {elapsedTime}.");
 
-                    tTrkCnt = 0; tAddCnt = 0; tUpdtCnt = 0; tI = 0;
-                    //}
-                    await Task.Delay(period, stoppingToken);
+                        LogInfo($"{Entr}{Now}: Next iteration will start after {CrntService.Period.Days} days, {CrntService.Period.Hours} hours, {CrntService.Period.Minutes} minutes, {CrntService.Period.Seconds} seconds at {nxtRun:dd-MMM-yyyy:hh:mm:ss}."
+                              + $"{Entr}***********************************************************{Entr}");
 
+                        tTrkCnt = 0; tAddCnt = 0; tUpdtCnt = 0;
+                        //}
+                        await Task.Delay(CrntService.Period, stoppingToken);
+                    }
                 }
                 while (await timer.WaitForNextTickAsync(stoppingToken));
             }
@@ -199,9 +217,11 @@ namespace SqlIntegrationServices
             }
             finally
             {
+                timer.Dispose();
                 LogInfo($"{Now}: {ServiceName} Service stopped.");
             }
         }
+
         private async Task<ServiceDto> CheckServiceExists(string endPoint)
         {
             ServiceDto service = null;
@@ -239,19 +259,19 @@ namespace SqlIntegrationServices
                 try
                 {
                     TimeSpan? timetkn = crntService.TimeTaken is null ? TimeSpan.Zero : crntService.TimeTaken;
-                    //EditDiagnosRequestDto dto = Mapper.Map<EditDiagnosRequestDto>(crntService);
-                    EditDiagnosRequestDto dto = new()
-                    {
-                        Endpoint = crntService.Endpoint,
-                        LastRun = crntService.LastRun,
-                        NextRun = crntService.NextRun,
-                        TotalRecordsTracked = crntService.TotalRecordsTracked,
-                        TotalRecordsAdded = crntService.TotalRecordsAdded,
-                        TotalRecordsUpdated = crntService.TotalRecordsUpdated,
-                        Status = crntService.Status,
-                        TimeTaken = timetkn,
-                        ModifiedDate = DateTime.Now
-                    };
+                    var dto = crntService;
+                    //EditDiagnosRequestDto dto = new()
+                    //{
+                    //    Endpoint = crntService.Endpoint,
+                    //    LastRun = crntService.LastRun,
+                    //    NextRun = crntService.NextRun,
+                    //    TotalRecordsTracked = crntService.TotalRecordsTracked,
+                    //    TotalRecordsAdded = crntService.TotalRecordsAdded,
+                    //    TotalRecordsUpdated = crntService.TotalRecordsUpdated,
+                    //    Status = crntService.Status,
+                    //    TimeTaken = timetkn,
+                    //    ModifiedDate = DateTime.Now
+                    //};
                     string json = JsonConvert.SerializeObject(dto);
                     StringContent content = new(json, Encoding.UTF8, "application/json");
                     var response = await Client.PutAsync($"{ApiDiagnosUrl}/{dto.Endpoint}", content);
@@ -291,7 +311,7 @@ namespace SqlIntegrationServices
                         LogInfo($"{Now}: Error: Getting JSON failed! Retrying...");
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 { }
             }
             if (IsEmpty(result)) return Emp;
@@ -562,7 +582,7 @@ namespace SqlIntegrationServices
                             CrntService.TableAltered = !success;
                             try
                             {
-                                PartialServiceDto dto = new()
+                                ServiceDto dto = new()
                                 {
                                     Endpoint = CrntService.Endpoint,
                                     TableAltered = CrntService.TableAltered
