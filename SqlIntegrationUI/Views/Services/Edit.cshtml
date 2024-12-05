@@ -55,7 +55,7 @@
                 </div>
             </div>
             <br />
-            <br />
+            @* <br /> *@
             <legend>Columns</legend>
             @*    <div class="row">
             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -69,43 +69,44 @@
             </div>
             </div> *@
             <br />
-            <table class="table table-hover table-bordered table-responsive table-group-divider">
-                @{
-                    SelectList colList = ViewData["FiltrdColumnList"] as SelectList;
-                    <thead>
-                        <tr>
-                            <th>Sno</th>
-                            <th scope="col">@Html.DisplayNameFor(model => model!.Columns![0].Name)</th>
-                            <th scope="col">@Html.DisplayNameFor(model => model!.Columns![0].Include)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!(colList is null))
-                        {
-                            int cnt = colList.Count();
-                            List<Column> lst = Model.Columns;
-                            for (int i = 0; i < cnt; i++)
+            <div class="table-container">
+                <table class="table table-hover table-bordered table-responsive table-group-divider responsive-table table-wrapper">
+                    @{
+                        SelectList colList = ViewData["FiltrdColumnList"] as SelectList;
+                        <thead>
+                            <tr>
+                                <th>Sno</th>
+                                <th scope="col">@Html.DisplayNameFor(model => model!.Columns![0].Name)</th>
+                                <th scope="col">@Html.DisplayNameFor(model => model!.Columns![0].Include)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!(colList is null))
                             {
-                                var item = colList.ElementAt(i);
-                                Column column = lst.First(col => col.Name == item.Text);
-                                int indx = lst.IndexOf(column);
-                                <tr>
-                                    <td> @(i + 1)</td>
-                                    <td>
-                                        <input type="hidden" asp-for="@Model!.Columns[indx].Name" value="@Model.Columns[indx].Name" />
-                                        @item.Text
-                                    </td>
-                                    <td>
-                                        <input class="form-check-input" type="checkbox" asp-for="@Model!.Columns![indx]!.Include"
-                                               checked="@Model!.Columns![indx]!.Include" />
-                                    </td>
-                                </tr>
+                                int cnt = colList.Count();
+                                List<Column> lst = Model.Columns;
+                                for (int i = 0; i < cnt; i++)
+                                {
+                                    var item = colList.ElementAt(i);
+                                    Column column = lst.First(col => col.Name == item.Text);
+                                    int indx = lst.IndexOf(column);
+                                    <tr>
+                                        <td> @(i + 1)</td>
+                                        <td>
+                                            <input type="hidden" asp-for="@Model!.Columns[indx].Name" value="@Model.Columns[indx].Name" />
+                                            @item.Text
+                                        </td>
+                                        <td>
+                                            <input class="form-check-input" type="checkbox" asp-for="@Model!.Columns![indx]!.Include"
+                                                   checked="@Model!.Columns![indx]!.Include" />
+                                        </td>
+                                    </tr>
+                                }
                             }
-                        }
-                    </tbody>
-                }
-            </table>
-
+                        </tbody>
+                    }
+                </table>
+            </div>
             <input type="hidden" name="CreatedBy" value="@Model.CreatedBy" />
             <input type="hidden" name="CreatedDate" value="@Model.CreatedDate" />
             <input type="hidden" name="ModifiedBy" value="@Model.ModifiedBy" />

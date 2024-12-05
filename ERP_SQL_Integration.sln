@@ -20,26 +20,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlIntegrationUI", "SqlInte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlIntegrationAPI", "SqlIntegrationAPI\SqlIntegrationAPI.csproj", "{6F01C6C8-BF7A-44D3-A972-9BA27D1F7341}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ESIAngularApp", "ESIAngularApp\", "{526EF48F-90EA-4857-B398-4E060ED48AFB}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_61816"
-		Debug.AspNetCompiler.PhysicalPath = "ESIAngularApp\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_61816\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_61816"
-		Release.AspNetCompiler.PhysicalPath = "ESIAngularApp\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_61816\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "61816"
-		SlnRelativePath = "ESIAngularApp\"
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitiesManager.Core", "CitiesManager.Core\CitiesManager.Core.csproj", "{1FFC7FDD-AD57-4077-B985-8ED3F5672AB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitiesManager.Infrastructure", "CitiesManager.Infrastructure\CitiesManager.Infrastructure.csproj", "{111589CC-1E6A-4E34-BF3D-8C820156CA98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,9 +46,10 @@ Global
 		{6F01C6C8-BF7A-44D3-A972-9BA27D1F7341}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F01C6C8-BF7A-44D3-A972-9BA27D1F7341}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F01C6C8-BF7A-44D3-A972-9BA27D1F7341}.Release|Any CPU.Build.0 = Release|Any CPU
-		{526EF48F-90EA-4857-B398-4E060ED48AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{526EF48F-90EA-4857-B398-4E060ED48AFB}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{526EF48F-90EA-4857-B398-4E060ED48AFB}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{1FFC7FDD-AD57-4077-B985-8ED3F5672AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FFC7FDD-AD57-4077-B985-8ED3F5672AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{111589CC-1E6A-4E34-BF3D-8C820156CA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{111589CC-1E6A-4E34-BF3D-8C820156CA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

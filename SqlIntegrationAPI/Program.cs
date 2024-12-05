@@ -51,7 +51,7 @@ public class Program
             .UseSqlServer(erp_SQL_ConnStr, sqlOptions => sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null))
             .LogTo(Console.WriteLine, LogLevel.Error));
 
-            builder.Services.AddDbContext<ApplicationDbContext>();
+            //builder.Services.AddDbContext<ApplicationDbContext>();
 
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ErpSqlDbContext>();
 

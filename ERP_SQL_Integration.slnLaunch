@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "All Projects",
+    "Projects": [
+      {
+        "Path": "SqlIntegrationServices\\SqlIntegrationServices.csproj",
+        "Action": "Start",
+        "DebugTarget": "SqlIntegrationServices"
+      },
+      {
+        "Path": "SqlIntegrationUI\\SqlIntegrationUI.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "SqlIntegrationAPI\\SqlIntegrationAPI.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]

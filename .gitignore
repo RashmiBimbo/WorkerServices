@@ -615,3 +615,5 @@ FodyWeavers.xsd
 /SqlIntegrationAPI/Migrations/20241117152327_InitialMigration.Designer.cs
 /SqlIntegrationAPI/Migrations/ErpSqlDbContextModelSnapshot.cs
 /SqlIntegrationAPI/Controllers/CitiesController.cs
+/CitiesManager.Core
+/CitiesManager.Infrastructure
