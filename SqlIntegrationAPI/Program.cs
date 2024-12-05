@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using SqlIntegrationAPI.Models.Domains.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using CommonCode.Jwt;
-using CitiesManager.Infrastructure.Data;
+//using CitiesManager.Infrastructure.Data;
 
 namespace SqlIntegrationAPI;
 
