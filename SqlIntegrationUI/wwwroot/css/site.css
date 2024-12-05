@@ -1,22 +1,128 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+
+/*.table-wrapper {
+    max-height: 300px;*/
+    /* Set a fixed height */
+    /*overflow-y: auto;*/
+    /* Enable vertical scrolling */
+    /*border: 1px solid #ddd;
+    position: relative;
+}*/
+
+/* Webkit-based browsers (Chrome, Safari, Edge) scrollbar styles */
+/*.table-wrapper::-webkit-scrollbar {
+    width: 10px;*/
+    /* Slightly wider scrollbar */
+/*}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;*/
+    /* Light track background */
+    /*border-radius: 10px;*/
+    /* Rounded corners */
+/*}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #888;*/
+    /* Grey thumb */
+    /*border-radius: 10px;*/
+    /* Rounded corners for the thumb */
+    /*transition: background-color 0.3s ease-in-out;*/
+    /* Smooth color transition */
+/*}*/
+
+/* Thumb color when hovering */
+/*.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;*/
+    /* Darker thumb color on hover */
+/*}*/
+
+/* Container to make table scrollable */
+.table-container {
+    max-width: 100%;
+    /* Ensure responsiveness */
+
+    max-height: 500px;
+    /* Set max height for vertical scrolling */
+
+    overflow-x: auto;
+    /* Adds horizontal scrollbar */
+
+    overflow-y: auto;
+    /* Adds vertical scrollbar */
+
+    display: block;
+    /* Makes it block to allow scrolling */
+
+    scrollbar-width: thin;
+    /* For Firefox */
+    scrollbar-color: #888 #f1f1f1;
+}
+
+/* Table styling */
+.responsive-table {
+    width: 100%;
+    /* Ensures table takes full width */
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Table borders */
+.responsive-table td {
+    /*border: 1px solid #ddd;*/
+    padding: 8px;
+    text-align: left;
+}
+
+/* Responsive Table Header */
+    .responsive-table thead th {
+        /*background-color: #f4f4f4;*/
+        position: sticky;
+        /* Optional: Keeps header fixed during scroll */
+        top: 0;
+        /* Required for sticky to work */
+        z-index: 1;
+        border: 1px solid #ddd;
+        line-height: 1.5; /* Adjust line-height for compactness */
+        font-size: 14px; /* Optional: reduce font size */
+        text-align: left; /* Center the text if needed */
+    }
+
+/* Reduce padding to make rows shorter */
+.responsive-table td {
+    padding: 4px 8px;
+    /* Decrease vertical padding */
+    line-height: 1.5;
+    /* Optional: Adjust line height for tighter text */
+}
+
+/* Optional: Reduce font size for compact rows */
+.responsive-table td {
+    font-size: 17px;
+    /* Make text smaller if needed */
 }

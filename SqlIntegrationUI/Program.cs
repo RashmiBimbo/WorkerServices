@@ -2,7 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+using CommonCode.Mappings;
+using Microsoft.Extensions.Options;
 
 namespace SqlIntegrationUI;
 
@@ -15,7 +16,10 @@ public class Program
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.ModelBinderProviders.Insert(0, new TimeSpanModelBinderProvider());
+            });
             builder.Services.AddMemoryCache();
 
             string erp_SQL_ConnStr = builder.Configuration.GetValue("ERP_SQL_ConnStr", Emp);
@@ -25,13 +29,16 @@ public class Program
             if (string.IsNullOrEmpty(erp_SQL_ConnStr))
                 throw new InvalidOperationException("Connection string 'ERP_SQL_ConnStr' not found or is empty.");
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ErpSqlDbContext>();
+            //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ErpSqlDbContext>();
 
             builder.Services.AddDbContext<ErpSqlDbContext>(options => options
             .UseSqlServer(erp_SQL_ConnStr, sqlOptions => sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null))
             .LogTo(Console.WriteLine, LogLevel.Error));
 
             builder.Services.AddHttpClient();
+
+            builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
             //builder.Services.AddAuthorization(options=>
             //{ 
             //    options.FallbackPolicy = new authpolicybuilder

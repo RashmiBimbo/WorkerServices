@@ -47,55 +47,57 @@
     @if (Model is null) return;
     <br />
     <legend>Services</legend>
-    <table class="table table-hover table-bordered table-responsive table-group-divider w-auto ">
-        <thead>
-            <tr>
-                <th>Sno</th>
-                <th scope="col">@Html.DisplayNameFor(model => model![0].Name)</th>
-                <th scope="col">@Html.DisplayNameFor(model => model![0].Enable)</th>
-                <th scope="col">@Html.DisplayNameFor(model => model![0].Period)</th>
-                <th scope="col">@Html.DisplayNameFor(model => model![0].Table)</th>
-                <th scope="col">@Html.DisplayNameFor(model => model![0].Endpoint)</th>
-                <th scope="col">Query String</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                for (int i = 0; i < Model.Count; i++)
-                {
-                    <tr>
-                        <td> @(i + 1)</td>
-                        <td title="@Model[i].Name">
-                            <input name="ServiceList[@i].Name" value="@Model[i].Name" class="form-control-plaintext inputWidth" style="max-width:max-content" />
-                            <span asp-validation-for="@Model[i].Name" class="text-danger"></span>
-                        </td>
-                        <td>
-                            <input class="form-check-input" type="checkbox" name="ServiceList[@i].Enable" value="true" @(Model[i].Enable ? "checked" : "") />
-                            @* <input type="hidden" name="ServiceList[@i].Enable" value="false" /> *@
-                            <span asp-validation-for="@Model[i].Enable" class="text-danger"></span>
-                        </td>
-                        <td title="@Model[i].Period">
-                            <input type="number" name="ServiceList[@i].Period" value="@Model[i].Period" class="form-control-plaintext" />
-                            <span asp-validation-for="@Model[i].Period" class="text-danger"></span>
-                            @* <input type="text" name="ServiceList[@i].Period" value="@Model[i].Period" class="form-control-plaintext" />
+    <div class="table-container">
+        <table class="table table-hover table-bordered table-responsive table-group-divider w-auto responsive-table table-wrapper">
+            <thead>
+                <tr>
+                    <th>Sno</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model![0].Name)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model![0].Enable)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model![0].Period)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model![0].Table)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model![0].Endpoint)</th>
+                    <th scope="col">Query String</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td> @(i + 1)</td>
+                            <td title="@Model[i].Name">
+                                <input name="ServiceList[@i].Name" value="@Model[i].Name" class="form-control-plaintext inputWidth" style="max-width:max-content" />
+                                <span asp-validation-for="@Model[i].Name" class="text-danger"></span>
+                            </td>
+                            <td>
+                                <input class="form-check-input" type="checkbox" name="ServiceList[@i].Enable" value="true" @(Model[i].Enable ? "checked" : "") />
+                                @* <input type="hidden" name="ServiceList[@i].Enable" value="false" /> *@
+                                <span asp-validation-for="@Model[i].Enable" class="text-danger"></span>
+                            </td>
+                            <td title="@Model[i].Period">
+                                <input type="number" name="ServiceList[@i].Period" value="@Model[i].Period" class="form-control-plaintext" />
+                                <span asp-validation-for="@Model[i].Period" class="text-danger"></span>
+                                @* <input type="text" name="ServiceList[@i].Period" value="@Model[i].Period" class="form-control-plaintext" />
                     <span asp-validation-for="@Model[i].Period" class="text-danger"></span> *@
-                        </td>
-                        <td title="@Model[i].Table">
-                            <input type="text" name="ServiceList[@i].Table" value="@Model[i].Table" class="form-control-plaintext" />
-                            <span asp-validation-for="@Model[i].Table" class="text-danger"></span>
-                        </td>
-                        <td title="@Model[i].Endpoint">
-                            <input type="text" name="ServiceList[@i].Endpoint" value="@Model[i].Endpoint" class="form-control-plaintext" />
-                            <span asp-validation-for="@Model[i].Endpoint" class="text-danger"></span>
-                        </td>
-                        <td title="@Model[i].QueryString">
-                            <input type="text" name="ServiceList[@i].QueryString" value="@Model[i].QueryString" class="form-control-plaintext" data-val="false" />
-                        </td>
-                    </tr>
+                            </td>
+                            <td title="@Model[i].Table">
+                                <input type="text" name="ServiceList[@i].Table" value="@Model[i].Table" class="form-control-plaintext" />
+                                <span asp-validation-for="@Model[i].Table" class="text-danger"></span>
+                            </td>
+                            <td title="@Model[i].Endpoint">
+                                <input type="text" name="ServiceList[@i].Endpoint" value="@Model[i].Endpoint" class="form-control-plaintext" />
+                                <span asp-validation-for="@Model[i].Endpoint" class="text-danger"></span>
+                            </td>
+                            <td title="@Model[i].QueryString">
+                                <input type="text" name="ServiceList[@i].QueryString" value="@Model[i].QueryString" class="form-control-plaintext" data-val="false" />
+                            </td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
     <br />
     <input type="submit" value="Add" class="btn btn-primary" asp-action="CreateFromExcel" />
     <button type="button" class="btn btn-outline-secondary" onclick="location.href='@Url.Action("Reset", "Create")'">Reset</button>
@@ -109,7 +111,7 @@
     // Update the label to show the selected file name or default message
     document.getElementById('TxtXlUpload').addEventListener('change', function (event) {
         const input = event.target;
-        debugger;
+    @* debugger; *@
         const label = input.ariaLabel;
         const fileName = input.files.length > 0 ? input.files[0].name : 'Upload Excel';
         label.textContent = fileName;

@@ -11,7 +11,12 @@ namespace SqlIntegrationAPI.Repositories
         public ServiceRepository(ErpSqlDbContext dbContext)
         {
             _context = dbContext;
-            _context.Database.EnsureCreated();
+            try
+            {
+                _context.Database.EnsureCreated();
+            }
+            catch (Exception  ex)
+            { }
         }
 
         /// <summary>
@@ -25,7 +30,7 @@ namespace SqlIntegrationAPI.Repositories
             {
                 services = services.Where(x => x.Name.Contains(filterQuery)).ToList();
             }
-            services = ascending ? [.. services.OrderBy(s => s.Name)] : [.. services.OrderByDescending(s => s.Name)];
+            services = ascending ? [.. services.OrderBy(s => s.Name)] : [..services.OrderByDescending(s => s.Name)];
 
             int skipRows = (pageNo - 1) * pageSize;
             services = [.. services.Skip(skipRows)];

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using SqlIntegrationAPI.Models.Domains.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using CommonCode.Jwt;
+//using CitiesManager.Infrastructure.Data;
 
 namespace SqlIntegrationAPI;
 
@@ -40,7 +41,7 @@ public class Program
             // Get the connection string from configuration/User-Secrets
             //string erp_SQL_ConnStr = builder.Configuration.GetValue("ERP_SQL_ConnStr", Emp);
 
-            string erp_SQL_ConnStr = "Data Source=10.10.1.138;Initial Catalog=ERP_SQL_Integration;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            string erp_SQL_ConnStr = "Data Source=10.10.1.138;Initial Catalog=Test_ERP_SQL_Integration;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
             if (string.IsNullOrEmpty(erp_SQL_ConnStr))
             {
@@ -50,30 +51,30 @@ public class Program
             .UseSqlServer(erp_SQL_ConnStr, sqlOptions => sqlOptions.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null))
             .LogTo(Console.WriteLine, LogLevel.Error));
 
-            builder.Services.AddDbContext<ApplicationDbContext>();
+            //builder.Services.AddDbContext<ApplicationDbContext>();
 
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ErpSqlDbContext>();
 
-            //CORS: localhost:4200, localhost:4100
+            //CORS: localhost:4200, 
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policyBuilder =>
                 {
                     policyBuilder
-                    .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()[0])
+                    .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>())
                     .WithHeaders("Authorization", "origin", "accept", "content-type")
-                    .WithMethods("GET", "POST", "PUT", "DELETE")
-                    ;
+                    .WithMethods("GET", "POST", "PUT", "DELETE");
                 });
 
-                options.AddPolicy("7182Client", policyBuilder =>
+                options.AddPolicy("4100Client", policyBuilder =>
                 {
                     policyBuilder
-                    .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()[0])
+                    .WithOrigins(builder.Configuration.GetSection("AllowedOrigins2").Get<string[]>())
                     .WithHeaders("Authorization", "origin", "accept")
                     .WithMethods("GET")
                     ;
                 });
+
             });
 
             builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
@@ -111,6 +112,7 @@ public class Program
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
 

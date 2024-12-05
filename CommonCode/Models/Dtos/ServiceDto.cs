@@ -57,5 +57,12 @@ namespace CommonCode.Models.Dtos
         [RegularExpression("^[a-zA-Z0-9\\s]*$")]
         public string CreatedBy { get; set; }
 
+        public DateTime? ModifiedDate { get; set; } = DateTime.Now;
+
+        [StringLength(255, ErrorMessage = "The service name has to be maximum of 255 characters")]
+        [MinLength(3, ErrorMessage = "The service name has to be minimum of 3 characters")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$")]
+        public string? ModifiedBy { get; set; }
+
     }
 }

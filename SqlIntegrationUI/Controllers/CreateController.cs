@@ -1,4 +1,5 @@
-﻿using CommonCode.CommonClasses;
+﻿using AutoMapper;
+using CommonCode.CommonClasses;
 using CommonCode.Models.Dtos;
 using CommonCode.Models.Dtos.Requests;
 using DocumentFormat.OpenXml.Packaging;
@@ -16,11 +17,13 @@ namespace SqlIntegrationUI.Controllers
     {
         private readonly HttpClient Client;
         private readonly IHttpClientFactory HttpClientFactory;
+        private readonly IMapper mapper;
 
-        public CreateController(IHttpClientFactory httpClientFactory)
+        public CreateController(IHttpClientFactory httpClientFactory, IMapper mapper)
         {
             ArgumentNullException.ThrowIfNull(httpClientFactory);
             HttpClientFactory = httpClientFactory;
+            this.mapper = mapper;
             Client = HttpClientFactory.CreateClient();
         }
 
@@ -95,11 +98,13 @@ namespace SqlIntegrationUI.Controllers
 
                 AddedServices ??= [];
                 AddedServices.TryAdd(service.Table, jObj);
-
-                if (!ConfigServices.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)) && jObj is not null)
+                if (jObj is not null)
                 {
                     service.Columns = await GetColumns(jObj);
-                    ConfigServices.ServiceSet.Add(service);
+                    if (!ConfigServices.ServiceSet.Any(s => s.Name.Equals(service.Endpoint, StrComp)))
+                    {
+                        ConfigServices.ServiceSet.Add(service);
+                    }
                 }
                 await AddtoDb(service);
                 return RedirectToAction(nameof(ServicesController.Index), nameof(ServicesController).Replace("Controller", Emp));
@@ -116,18 +121,19 @@ namespace SqlIntegrationUI.Controllers
             bool success = true;
             try
             {
-                var dto = new PartialServiceDto()
-                {
-                    Name = service.Name,
-                    Endpoint = service.Endpoint,
-                    Enable = true,
-                    Period = service.Period,
-                    Table = service.Table,
-                    QueryString = service.QueryString,
-                    Columns = null,
-                    CreatedBy = "Rashmi",
-                    CreatedDate = DateTime.Now
-                };
+                //var dto = new PartialServiceDto()
+                //{
+                //    Name = service.Name,
+                //    Endpoint = service.Endpoint,
+                //    Enable = true,
+                //    Period = service.Period,
+                //    Table = service.Table,
+                //    QueryString = service.QueryString,
+                //    Columns = null,
+                //    CreatedBy = "Rashmi",
+                //    CreatedDate = DateTime.Now
+                //};
+                var dto = mapper.Map<ServiceDto>(service);
                 string json = Serialize.ToJson(dto);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await Client.PostAsync($"{ApiBaseUrl}", content);
@@ -176,28 +182,45 @@ namespace SqlIntegrationUI.Controllers
             try
             {
                 ProposedServices = serviceList;
-                foreach (ServiceDetail service in serviceList)
+                //foreach (ServiceDetail service in serviceList)
+                //{
+                //    if (service is null || IsEmpty(service.Endpoint))
+                //        continue;
+
+                //    if (!ConfigServices.ServiceSet.Any(s => s.Endpoint.Equals(service.Endpoint, StrComp)))
+                //    {
+                //        JObject jObj = await GetServiceJObject(service);
+                //        service.Columns = await GetColumns(jObj, service);
+                //        if (IsEmpty(service.QueryString))
+                //            service.QueryString = "cross-company = true";
+                //        else
+                //        {
+                //            _ = service.QueryString.Replace("?", Emp);
+                //            service.QueryString += service.QueryString.Contains("cross-company=true") ? Emp : "cross-company = true";
+                //        }
+                //        ConfigServices.ServiceSet.Add(service);
+                //        AddedServices ??= [];
+                //        AddedServices.TryAdd(service.Endpoint, jObj);
+                //    }
+                //}
+
+                List<ServiceDto> dtos = mapper.Map<List<ServiceDto>>(serviceList);
+                string json = Serialize.ToJson(dtos);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await Client.PostAsync($"{ApiBaseUrl}/PostServices", content);
+                if (response == null)
                 {
-                    if (service is null || IsEmpty(service.Endpoint))
-                        continue;
-
-                    if (!ConfigServices.ServiceSet.Any(s => s.Endpoint.Equals(service.Endpoint, StrComp)))
-                    {
-                        JObject jObj = await GetServiceJObject(service);
-                        service.Columns = await GetColumns(jObj, service);
-                        if (IsEmpty(service.QueryString))
-                            service.QueryString = "cross-company = true";
-                        else
-                        {
-                            _ = service.QueryString.Replace("?", Emp);
-                            service.QueryString += service.QueryString.Contains("cross-company=true") ? Emp : "cross-company = true";
-                        }
-                        ConfigServices.ServiceSet.Add(service);
-                        AddedServices ??= [];
-                        AddedServices.TryAdd(service.Endpoint, jObj);
-                    }
-
-                    await AddtoDb(service);
+                    Log("ConfigServices could not be loaded!");
+                    //return Problem("ConfigServices could not be loaded!");
+                    //return false;
+                }
+                //response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    string msg = $"HTTP request failed with status code: {response.StatusCode}";
+                    Log(msg);
+                    //return Problem("ConfigServices could not be loaded!");
+                    //return false;
                 }
                 ProposedServices = null;
                 return RedirectToAction(nameof(ServicesController.Index), "Services");

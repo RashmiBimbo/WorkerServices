@@ -47,43 +47,45 @@
                 </div>
             </div>
             <br />
-            <br />
+            // <br />
             @* <legend>Services</legend> *@
-            <table class="table table-hover table-bordered table-responsive table-group-divider">
-                <thead>
-                    <tr>
-                        <th>Sno</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Name)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].Status)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].LastRun)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsTracked)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsAdded)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsUpdated)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].TimeTaken)</th>
-                        <th scope="col">@Html.DisplayNameFor(model => model[1][0].NextRun)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int i = 0;
-                        foreach (GetDiagnosResponseDto itm in Model![1])
-                        {
-                            i++;
-                            <tr>
-                                <td>@i</td>
-                                <td scope="col">@itm.Name</td>
-                                <td scope="col">@itm.Status</td>
-                                <td scope="col">@itm.LastRun</td>
-                                <td scope="col">@itm.TotalRecordsTracked</td>
-                                <td scope="col">@itm.TotalRecordsAdded</td>
-                                <td scope="col">@itm.TotalRecordsUpdated</td>
-                                <td scope="col">@itm.TimeTaken</td>
-                                <td scope="col">@itm.NextRun</td>
-                            </tr>
+            <div class="table-container">
+                <table class="table table-hover table-bordered table-responsive table-group-divider responsive-table table-wrapper">
+                    <thead>
+                        <tr>
+                            <th>Sno</th>
+                            <th scope="col">@Html.DisplayNameFor(model => model[1][0].Name)</th>
+                            <th scope="col">@Html.DisplayNameFor(model => model[1][0].Status)</th>
+                            <th scope="col">@Html.DisplayNameFor(model => model[1][0].LastRun)</th>
+                            <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsTracked)</th>
+                            <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsAdded)</th>
+                            <th scope="col">@Html.DisplayNameFor(model => model[1][0].TotalRecordsUpdated)</th>
+                            <th scope="col">@Html.DisplayNameFor(model => model[1][0].TimeTaken)</th>
+                            <th scope="col">@Html.DisplayNameFor(model => model[1][0].NextRun)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 0;
+                            foreach (GetDiagnosResponseDto itm in Model![1])
+                            {
+                                i++;
+                                <tr>
+                                    <td>@i</td>
+                                    <td scope="col">@itm.Name</td>
+                                    <td scope="col">@itm.Status</td>
+                                    <td scope="col">@itm.LastRun</td>
+                                    <td scope="col">@itm.TotalRecordsTracked</td>
+                                    <td scope="col">@itm.TotalRecordsAdded</td>
+                                    <td scope="col">@itm.TotalRecordsUpdated</td>
+                                    <td scope="col">@itm.TimeTaken</td>
+                                    <td scope="col">@itm.NextRun</td>
+                                </tr>
+                            }
                         }
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
             <form>
                 <button type="button" class="btn btn-outline-primary" onclick="location.href='@Url.Action("Reset", "Services")'">Back</button>
             </form>

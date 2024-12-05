@@ -18,10 +18,10 @@ class Program
             Services = GetServices();
             var builder = Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
-                    {
-                        // Ensure that user secrets are added to the configuration
-                        config.AddUserSecrets<Program>();
-                    });
+                {
+                    // Ensure that user secrets are added to the configuration
+                    config.AddUserSecrets<Program>();
+                });
             builder.ConfigureServices(AddServices);
             var host = builder.Build();
             host.Run();
@@ -98,7 +98,8 @@ class Program
         }
         foreach (ServiceDto serviceDto in Services)
         {
-            if (serviceDto.Endpoint.Contains("SalesInvoiceV2Lines", StrComp)|| serviceDto.Endpoint.Contains("SalesInvoiceHeadersV2", StrComp))
+            //if (serviceDto.Endpoint.Contains("SalesInvoiceV2Lines", StrComp) || serviceDto.Endpoint.Contains("SalesInvoiceHeadersV2", StrComp))
+            //if (serviceDto.Endpoint.Contains("SalesInvoiceV2Lines", StrComp))
                 if (serviceDto.Enable)
                 {
                     //ServiceConfiguration serviceConfig = serviceDtl.ServiceConfiguration;
