@@ -67,7 +67,8 @@ body {
     max-width: 100%;
     /* Ensure responsiveness */
 
-    max-height: 500px;
+    height: auto; /* Automatically adjusts height based on content */
+    max-height: 67vh; /* Restricts the container height to 70% of the viewport height */
     /* Set max height for vertical scrolling */
 
     overflow-x: auto;
@@ -125,4 +126,10 @@ body {
 .responsive-table td {
     font-size: 17px;
     /* Make text smaller if needed */
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        max-height: 50vh; /* Reduce max height for smaller devices */
+    }
 }

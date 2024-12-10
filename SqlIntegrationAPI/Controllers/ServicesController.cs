@@ -149,7 +149,7 @@ namespace SqlIntegrationAPI.Controllers
         // PUT: api/Services/Diagnostics/{endPoint}
         [HttpPut("Diagnostics/{endPoint}")]
         //[Authorize]
-        public async Task<IActionResult> UpdateDiagnose(string endPoint, [FromBody] dynamic editService)
+        public async Task<IActionResult> UpdateDiagnose(string endPoint, [FromBody] ServiceDto editService)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             return await Update(endPoint, editService);
@@ -181,16 +181,16 @@ namespace SqlIntegrationAPI.Controllers
             return await _serviceRepository.ExistsAsync(endPoint);
         }
 
-        private async Task<IActionResult> Update(string endPoint, dynamic editService)
+        private async Task<IActionResult> Update(string endPoint, ServiceDto editService)
         {
             if (editService is null || IsEmpty(endPoint))
             {
                 return BadRequest("Please provide all the required parameters.");
             }
-            if (!(editService is EditDiagnosRequestDto || editService is PartialServiceDto || editService is ServiceDto))
-            {
-                return BadRequest("Please provide all the required parameters in correct format.");
-            }
+            //if (!(editService is EditDiagnosRequestDto || editService is PartialServiceDto || editService is ServiceDto))
+            //{
+            //    return BadRequest("Please provide all the required parameters in correct format.");
+            //}
             if (IsEmpty(editService.Endpoint))
             {
                 editService.Endpoint = endPoint;

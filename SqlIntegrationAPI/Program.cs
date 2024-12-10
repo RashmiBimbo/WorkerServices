@@ -41,7 +41,7 @@ public class Program
             // Get the connection string from configuration/User-Secrets
             //string erp_SQL_ConnStr = builder.Configuration.GetValue("ERP_SQL_ConnStr", Emp);
 
-            string erp_SQL_ConnStr = "Data Source=10.10.1.138;Initial Catalog=Test_ERP_SQL_Integration;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            string erp_SQL_ConnStr = "Data Source=10.10.1.138;Initial Catalog=ERP_SQL_Integration;User ID=sa;Password='=*fj9*N*uLBRNZV';Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
             if (string.IsNullOrEmpty(erp_SQL_ConnStr))
             {
