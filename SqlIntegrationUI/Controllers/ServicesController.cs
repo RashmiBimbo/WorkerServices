@@ -319,8 +319,8 @@ namespace SqlIntegrationUI.Controllers
         {
             try
             {
-                if (ConfigServices != null)
-                {
+                //if (ConfigServices != null)
+                //{
                     ServiceDetail service = ConfigServices.ServiceSet.FirstOrDefault(s => s.Endpoint == endPoint);
                     if (service is not null)
                     {
@@ -347,7 +347,7 @@ namespace SqlIntegrationUI.Controllers
                         //return Problem("ConfigServices could not be loaded!");
                         return View();
                     }
-                }
+                //}
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

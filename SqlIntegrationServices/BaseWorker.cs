@@ -20,7 +20,7 @@ namespace SqlIntegrationServices
         protected ServiceDbContext cntxt;
         protected string msg;
         protected TimeSpan period;
-        protected const string DateFromat = "dd-MMM-yyyy:HH:mm:ss.fff";
+        protected const string DateFomat = "dd-MMM-yyyy:HH:mm:ss.fff";
         protected readonly IServiceScopeFactory serviceScopeFactory;
         protected readonly ILogger<BaseWorker> logger;
         protected Timer timer;
@@ -152,7 +152,11 @@ namespace SqlIntegrationServices
                     CrntService.TotalRecordsUpdated = null;
                     CrntService.NextRun = null;
                     CrntService.TimeTaken = null;
-
+                    if (CrntService.Endpoint.Equals("SalesInvoiceHeadersV2", StrComp) || CrntService.Endpoint.Equals("SalesInvoiceV2Lines", StrComp))
+                    {
+                        string dateBefore1Month = DateTime.Now.AddMonths(-1).Date.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        CrntService.QueryString = $"$filter=InvoiceDate ge {dateBefore1Month} &cross-company=true&$orderby= InvoiceDate desc";
+                    }
                     await UpdateDiagnostics(CrntService);
 
                     int i = 0;
@@ -259,22 +263,9 @@ namespace SqlIntegrationServices
                 try
                 {
                     TimeSpan? timetkn = crntService.TimeTaken is null ? TimeSpan.Zero : crntService.TimeTaken;
-                    var dto = crntService;
-                    //EditDiagnosRequestDto dto = new()
-                    //{
-                    //    Endpoint = crntService.Endpoint,
-                    //    LastRun = crntService.LastRun,
-                    //    NextRun = crntService.NextRun,
-                    //    TotalRecordsTracked = crntService.TotalRecordsTracked,
-                    //    TotalRecordsAdded = crntService.TotalRecordsAdded,
-                    //    TotalRecordsUpdated = crntService.TotalRecordsUpdated,
-                    //    Status = crntService.Status,
-                    //    TimeTaken = timetkn,
-                    //    ModifiedDate = DateTime.Now
-                    //};
-                    string json = JsonConvert.SerializeObject(dto);
+                    string json = JsonConvert.SerializeObject(crntService);
                     StringContent content = new(json, Encoding.UTF8, "application/json");
-                    var response = await Client.PutAsync($"{ApiDiagnosUrl}/{dto.Endpoint}", content);
+                    var response = await Client.PutAsync($"{ApiDiagnosUrl}/{crntService.Endpoint}", content);
                     if (response == null)
                     {
                         LogInfo("ConfigServices could not be loaded!");
@@ -320,6 +311,7 @@ namespace SqlIntegrationServices
             if (strArr.Length > 1 && !IsEmpty(strArr[1]))
             {
                 string? nxtUrl = strArr?[1]?.Replace("\":\"", Emp).Replace("\"\r\n}", Emp);
+                LogInfo($"{Now}:{nxtUrl}");
                 return !IsEmpty(nxtUrl) ? nxtUrl : Emp;
             }
             else return Emp;
